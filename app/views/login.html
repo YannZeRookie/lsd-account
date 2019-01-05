@@ -1,0 +1,13 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Login{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+<h1>Connexion</h1>
+
+<article>
+    {% if error %}<div class="errorExplanation"><p>{{error}}</p></div>{% endif %}
+</article>
+{% endblock %}

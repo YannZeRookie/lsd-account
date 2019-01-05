@@ -1,0 +1,29 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Accueil{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+<h1>Bienvenue {{user.discord_username}}</h1>
+<img src="{{user.avatar}}" >
+
+<article>
+    <ul>
+        {% for section in sections %}
+        <li>{{ section.tag}}: {{ section.name|e}}</li>
+        {% endfor %}
+    </ul>
+
+    <p>Session:</p>
+    <pre>
+        {{session}}
+    </pre>
+
+    <p>User:</p>
+    <pre>
+        {{user_data}}
+    </pre>
+
+</article>
+{% endblock %}
