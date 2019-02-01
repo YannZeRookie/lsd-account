@@ -40,6 +40,4 @@ CREATE TABLE IF NOT EXISTS `lsd_roles` (
 );
 
 -- To do: change section_id and sub_year into a generic 'data' field.
---        how do we note the Officer who validated a Scorpion?
-
--- Test data
+--        how do we track the Officer who validated a Scorpion?
