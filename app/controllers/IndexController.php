@@ -25,6 +25,8 @@ class IndexController
             \Slim\Slim::getInstance()->redirect('/login/expired');
         }
 
+        $isScorpion = $user->isScorpion();
+
         return [
             'sections' => $sections,
             'session' => print_r($_SESSION,true),

@@ -21,3 +21,7 @@ $app->get('/signup', function () use ($app) {
     $app->render('signup.html', SignupController::signup());
 });
 
+require_once 'controllers/HelloController.php';
+$app->get('/hello', function () use ($app) {
+    $app->render('hello.html', HelloController::hello());
+});
