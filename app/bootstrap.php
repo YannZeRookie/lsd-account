@@ -20,7 +20,7 @@ ActiveRecord::setDb(new PDO("mysql:host={$db_host};port={$db_port};dbname={$db_d
 
 # Discord API
 require_once __DIR__ . '/libs/Discord.php';
-Discord::init($discord_api, $discord_client_id, $discord_client_secret);
+Discord::init($discord_api, $discord_bot_token, $discord_guild_id);
 
 # Create app
 $app = new \Slim\Slim([

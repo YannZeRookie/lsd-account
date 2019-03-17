@@ -17,7 +17,8 @@ class IndexController
         $sections = $section->findAll();
 
         //-- Do we have a connected user? If not, bail out
-        if ($_SESSION['user_id']) {
+        $user = null;
+        if (!empty($_SESSION['user_id'])) {
             $users = new User;
             $user = $users->find($_SESSION['user_id']);
         }

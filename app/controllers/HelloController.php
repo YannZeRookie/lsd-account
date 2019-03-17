@@ -11,10 +11,9 @@ require_once __DIR__ . '/../libs/Discord.php';
 class HelloController
 {
     static public function hello() {
-        $end_point = '/users/@me';
-        $res = Discord::api_get($end_point);
+        $res = Discord::discord_get_roles();
         return [
-            'debug' => "GET $end_point\n" . print_r($res, true),
+            'debug' => print_r($res, true),
             'status' => Discord::$status,
         ];
     }

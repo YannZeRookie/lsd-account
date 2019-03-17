@@ -12,17 +12,15 @@
 class Discord
 {
     protected static $api = '';
-    protected static $client_id = '';       // OAuth2 Client ID
-    protected static $client_secret = '';   // OAuth2 Client secret
+    protected static $bot_token = '';       // No need to use OAuth2: we'll pass directly the Bot token. Otherwise, we will be too limited
     public static $status = '';             // Status of the last query
-    protected static $token = null;         // Discord token
-    protected static $token_ts = 0;         // Token timestamp
+    protected static $guild_id = '';        // Our Guild ID (=Discord server ID)
 
-    public static function init($api, $client_id, $client_secret)
+    public static function init($api, $bot_token, $guild_id)
     {
         self::$api = $api;
-        self::$client_id = $client_id;
-        self::$client_secret = $client_secret;
+        self::$bot_token = $bot_token;
+        self::$guild_id = $guild_id;
     }
 
     /**
@@ -96,31 +94,6 @@ class Discord
     }
 
     /**
-     * Get the Discord access token
-     * There is a small caching system to avoid calling Discord if we already have a valid token
-     *
-     * @return mixed|null
-     */
-    public static function oauth2_get_access_token()
-    {
-        if (!self::$token || self::$token_ts + self::$token['access_token'] > time()) {
-            self::$token = null;
-            $params = [
-                'grant_type' => 'client_credentials',
-                'scope' => 'identify connections guilds',
-                'client_id' => self::$client_id,
-                'client_secret' => self::$client_secret,
-            ];
-            $result = self::post(self::$api . '/oauth2/token', $params, []);
-            if ($result) {
-                self::$token = json_decode($result, FALSE, 512, JSON_NUMERIC_CHECK + JSON_BIGINT_AS_STRING);
-                self::$token_ts = time();
-            }
-        }
-        return self::$token;
-    }
-
-    /**
      * General-purpose JSON query
      *
      * @param $url
@@ -150,13 +123,24 @@ class Discord
      */
     public static function api_get($end_point, $params = [])
     {
-        $token = self::oauth2_get_access_token();
-        if ($token) {
-            $headers = [
-                'Authorization:Bearer ' . $token->access_token,
-            ];
-        }
-        return self::query_json(self::$api . $end_point, 'GET', $params, $headers);
+        return self::query_json(self::$api . $end_point, 'GET', $params, ['Authorization: Bot '. self::$bot_token]);
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // Discord API end-points wrappers
+    //------------------------------------------------------------------------------------------------------------------
+    /**
+     * Get our server info
+     */
+    public static function discord_get_guild()
+    {
+        return self::api_get('/guilds/' . self::$guild_id);
+    }
+    /**
+     * Get the Roles of our server
+     */
+    public static function discord_get_roles()
+    {
+        return self::api_get('/guilds/' . self::$guild_id . '/roles');
+    }
 }

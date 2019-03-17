@@ -19,5 +19,5 @@ $db_pass = 'ENTER DB PASSWORD HERE';
 
 // Discord API
 $discord_api = 'https://discordapp.com/api';
-$discord_client_id = 'DISCORD CLIENT ID';
-$discord_client_secret = 'DISCORD CLIENT SECRET';
+$discord_bot_token = 'BOT TOKEN GOES HERE';
+$discord_guild_id = 'YOUR GUILD ID';
