@@ -42,7 +42,7 @@ class LoginController
             $user = $user->insert();
 
             if ($user) {
-                Role::importDiscordRole($login_key->discord_id);    // Import user's role from Discord
+                Role::importDiscordRole($user->id, $login_key->discord_id);    // Import user's role from Discord
             }
         }
 

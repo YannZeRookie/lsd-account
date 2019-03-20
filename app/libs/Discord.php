@@ -123,11 +123,12 @@ class Discord
      */
     public static function api_get($end_point, $params = [])
     {
-        return self::query_json(self::$api . $end_point, 'GET', $params, ['Authorization: Bot '. self::$bot_token]);
+        return self::query_json(self::$api . $end_point, 'GET', $params, ['Authorization: Bot ' . self::$bot_token]);
     }
 
     //------------------------------------------------------------------------------------------------------------------
     // Discord API end-points wrappers
+    // See @doc https://discordapp.com/developers/docs/reference
     //------------------------------------------------------------------------------------------------------------------
     /**
      * Get our server info
@@ -136,11 +137,46 @@ class Discord
     {
         return self::api_get('/guilds/' . self::$guild_id);
     }
+
+    protected static function sort_roles($a, $b)
+    {
+        if ($a->position == $b->position) {
+            return 0;
+        }
+        return ($a->position < $b->position) ? -1 : 1;
+    }
+
     /**
      * Get the Roles of our server
+     * Make a well-sorted list, using the Roles IDs as entries keys
      */
     public static function discord_get_roles()
     {
-        return self::api_get('/guilds/' . self::$guild_id . '/roles');
+        $roles = self::api_get('/guilds/' . self::$guild_id . '/roles');
+        uasort($roles, ['self', 'sort_roles']);
+        $result = [];
+        foreach ($roles as $role) {
+            $result[$role->id] = $role;
+        }
+        return $result;
+    }
+
+    /**
+     * Get the Roles of a uset
+     */
+    public static function discord_get_user_roles($discord_id, $roles = null)
+    {
+        if (!$roles) {
+            $roles = self::discord_get_roles();
+        }
+        $user_info = self::api_get('/guilds/' . self::$guild_id . '/members/' . $discord_id);
+        if ($user_info) {
+            $user_roles = [];
+            foreach ($user_info->roles as $role_id) {
+                $user_roles[$role_id] = $roles[$role_id];
+            }
+            $user_info->roles = $user_roles;
+        }
+        return $user_info;
     }
 }

@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `lsd_login` (
   `discord_discriminator` varchar(255),
   `discord_avatar` varchar(255),
   PRIMARY KEY( `id` )
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Users database
 DROP TABLE IF EXISTS `lsd_users`;
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `lsd_users` (
   `minor` tinyint default 0,
   PRIMARY KEY( `id` ),
   KEY(`discord_id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Users Roles
 DROP TABLE IF EXISTS `lsd_roles`;
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `lsd_roles` (
   `section_id` int(10) NULL,  -- Section (when it makes sense, i.e. for 'membre' and 'officier')
   `sub_year` int(10) NULL,     -- Adherant subscription year
   PRIMARY KEY( `id` )
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- To do: change section_id and sub_year into a generic 'data' field.
 --        how do we track the Officer who validated a Scorpion?
