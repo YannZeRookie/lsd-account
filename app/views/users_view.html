@@ -1,0 +1,33 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Info utilisateur{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+{% if user %}
+<h1>Info sur {{user.discord_username|e}}</h1>
+<img src="{{user.avatar}}">
+isScorpion: {{cur_user.isScorpion}}
+<article>
+    <p>Rôles :</p>
+    <ul>
+        {% for r in roles %}
+        <li>{{r}}</li>
+        {% endfor %}
+    </ul>
+    {# Example of restricted display: only Admins or myself can see the user's e-mail #}
+    {% if cur_user.isAdmin or is_myself %}
+    <p>E-mail: {{cur_user.email|e}}</p>
+    {% else %}
+    <p>Inscription à la mailing list: {% if cur_user.email %}Oui{% else %}Non{% endif %}</p>
+    {% endif %}
+
+</article>
+{% else %}
+<p class="errorExplanation">Erreur : cet utilisateur n'existe pas.</p>
+{% endif %}
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

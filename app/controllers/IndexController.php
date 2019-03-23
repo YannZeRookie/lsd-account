@@ -17,16 +17,10 @@ class IndexController
         $sections = $section->findAll();
 
         //-- Do we have a connected user? If not, bail out
-        $user = null;
-        if (!empty($_SESSION['user_id'])) {
-            $users = new User;
-            $user = $users->find($_SESSION['user_id']);
-        }
+        $user = User::getConnectedUser();
         if (!$user) {
             \Slim\Slim::getInstance()->redirect('/login/expired');
         }
-
-        $isScorpion = $user->isScorpion();
 
         return [
             'sections' => $sections,

@@ -11,6 +11,7 @@ $app->get('/', function () use ($app) {
     $app->render('index.html', IndexController::get());
 });
 
+//-- Login and sign-up
 require_once 'controllers/LoginController.php';
 $app->get('/login/:key', function ($key) use ($app) {
     $app->render('login.html', LoginController::login($key));
@@ -21,7 +22,21 @@ $app->get('/signup', function () use ($app) {
     $app->render('signup.html', SignupController::signup());
 });
 
+//-- Users CRUD
+require_once 'controllers/UsersController.php';
+// List of all users
+$app->get('/users', function () use ($app) {
+    $app->render('users_list.html', UsersController::all());
+});
+// User View
+$app->get('/users/:id', function ($id) use ($app) {
+    $app->render('users_view.html', UsersController::view($id));
+});
+
+
+//-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';
 $app->get('/hello', function () use ($app) {
     $app->render('hello.html', HelloController::hello());
 });
+

@@ -1,0 +1,23 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Liste des Scorpions{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+<h1>Liste des Scorpions</h1>
+
+<article>
+    <table>
+        {% for u in users %}
+        <tr>
+            <td><a href="/users/{{u.id}}">{{u.id}}</a></td>
+            <td>{{u.discord_username|e}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
