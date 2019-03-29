@@ -72,6 +72,37 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Get the highest Role of this user
+     * @return mixed|string
+     */
+    public function getHighestRole()
+    {
+        return Role::getHighestRole($this->id);
+    }
+
+    /**
+     * Get the highest Role level (=an integer) of this user
+     * Convenient to compare two users
+     * @return mixed|integer
+     */
+    public function getHighestRoleLevel()
+    {
+        return Role::getRoleLevel($this->getHighestRole());
+    }
+
+    /**
+     * Does the user belong to a Section?
+     * If yes, return Role::kMembre or Role::kOfficier
+     * If no, return false
+     * @param $tag string Section tag
+     * @return mixed
+     */
+    public function belongsToSection($tag)
+    {
+        return Role::userBelongsToSection($this->id, $tag);
+    }
+
+    /**
      * Get the currently connected user
      * @return ActiveRecord|bool
      */

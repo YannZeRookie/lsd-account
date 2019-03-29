@@ -8,22 +8,51 @@
 {% if user %}
 <h1>Info sur {{user.discord_username|e}}</h1>
 <img src="{{user.avatar}}">
-isScorpion: {{cur_user.isScorpion}}
-<article>
-    <p>Rôles :</p>
-    <ul>
-        {% for r in roles %}
-        <li>{{r}}</li>
-        {% endfor %}
-    </ul>
+<form method="post">
+    <h2>Message de candidature :</h2>
+    <p>{{user.testimony|e}}</p>
+
     {# Example of restricted display: only Admins or myself can see the user's e-mail #}
-    {% if cur_user.isAdmin or is_myself %}
-    <p>E-mail: {{cur_user.email|e}}</p>
-    {% else %}
-    <p>Inscription à la mailing list: {% if cur_user.email %}Oui{% else %}Non{% endif %}</p>
+    {% if is_myself or cur_user.isAdmin %}
+    <p>E-mail: <input type="text" name="email" value="{{user.email|e}}"></p>
+    {% elseif cur_user.isConseiller %}
+        {# Conseillers can only turn the newsletter option off. Which deletes the e-mail from the table #}
+        {% if user.email %}
+            <p><input type="checkbox" name="newsletter" value="1" checked> Newsletter</p>
+        {% else %}
+            <p>Non inscrit à la mailing list</p>
+        {% endif %}
     {% endif %}
 
-</article>
+    <div id="roles">
+        Rôle :<br>
+        {% for r in roles_table %}
+            <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user.highest_role %}checked{% endif %} {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
+        {% endfor %}
+    </div>
+
+    <div id="sections">
+        Sections :<br>
+        <table>
+            <tr><th>M</th><th>O</th><th>Section</th></tr>
+            {% for s in sections %}
+            <tr>
+                <td><input type="checkbox" name="{{s.tag}}_M" {% if s.belong=='membre' %}checked{% endif %} {% if not(cur_user.canNameMembers) %}disabled{% endif %}></td>
+                <td><input type="checkbox" name="{{s.tag}}_O" {% if s.belong=='officier' %}checked{% endif %} {% if not(cur_user.canNameOfficiers) %}disabled{% endif %}></td>
+                <td>{{s.name|e}} ({{s.tag}})</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div id="other_roles">
+        Autres :<br>
+        <label><input type="checkbox" name="adherent" value="1" {% if user.adherent %}checked{% endif %} {% if not(cur_user.canSetOtherRoles) %}disabled{% endif %}> Adhérent de cette année</label><br>
+        <label><input type="checkbox" name="cm" value="1" {% if user.cm %}checked{% endif %} {% if not(cur_user.canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
+    </div>
+
+    <input type="submit" value="Mettre à jour">
+</form>
 {% else %}
 <p class="errorExplanation">Erreur : cet utilisateur n'existe pas.</p>
 {% endif %}
