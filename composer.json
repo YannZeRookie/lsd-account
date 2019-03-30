@@ -2,6 +2,6 @@
     "require": {
         "slim/slim": "^2.5",
         "twig/twig": "~1.18",
-        "bephp/activerecord": "~2.0"
+        "bephp/activerecord": "~2.2"
     }
 }

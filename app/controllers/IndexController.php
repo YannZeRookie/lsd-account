@@ -17,10 +17,7 @@ class IndexController
         $sections = $section->findAll();
 
         //-- Do we have a connected user? If not, bail out
-        if ($_SESSION['user_id']) {
-            $users = new User;
-            $user = $users->find($_SESSION['user_id']);
-        }
+        $user = User::getConnectedUser();
         if (!$user) {
             \Slim\Slim::getInstance()->redirect('/login/expired');
         }

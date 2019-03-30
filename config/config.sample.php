@@ -16,3 +16,8 @@ $db_port = 3306;
 $db_database = 'ENTER DB NAME HERE';
 $db_user = 'ENTER DB USER HERE';
 $db_pass = 'ENTER DB PASSWORD HERE';
+
+// Discord API
+$discord_api = 'https://discordapp.com/api';
+$discord_bot_token = 'BOT TOKEN GOES HERE';
+$discord_guild_id = 'YOUR GUILD ID';

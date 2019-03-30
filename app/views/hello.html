@@ -1,0 +1,16 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Test{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+<h1>Test Page</h1>
+
+<article>
+    <p>HTTP Status: {{status}}</p>
+    <pre>
+{{debug}}
+    </pre>
+</article>
+{% endblock %}

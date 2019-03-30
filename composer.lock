@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b360ff7eb7cb297dc29bf806e2449928",
+    "content-hash": "ecb6cfa7d24ae40b74615ce98d1af7ac",
     "packages": [
         {
             "name": "bephp/activerecord",
-            "version": "v2.0.6",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bephp/activerecord.git",
-                "reference": "3c6fda44f2fa7f00d5368c2373e123e68c8b71e8"
+                "reference": "2a022a65c28f41c20d1c6954903d5e8379d63205"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bephp/activerecord/zipball/3c6fda44f2fa7f00d5368c2373e123e68c8b71e8",
-                "reference": "3c6fda44f2fa7f00d5368c2373e123e68c8b71e8",
+                "url": "https://api.github.com/repos/bephp/activerecord/zipball/2a022a65c28f41c20d1c6954903d5e8379d63205",
+                "reference": "2a022a65c28f41c20d1c6954903d5e8379d63205",
                 "shasum": ""
             },
             "require": {
@@ -48,7 +48,7 @@
                 "pdo",
                 "relation"
             ],
-            "time": "2015-10-22 02:16:40"
+            "time": "2018-03-01T09:46:33+00:00"
         },
         {
             "name": "slim/slim",
@@ -94,7 +94,7 @@
                 "rest",
                 "router"
             ],
-            "time": "2015-03-08 18:41:17"
+            "time": "2015-03-08T18:41:17+00:00"
         },
         {
             "name": "twig/twig",
@@ -155,7 +155,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2016-01-25 21:22:18"
+            "time": "2016-01-25T21:22:18+00:00"
         }
     ],
     "packages-dev": [],
