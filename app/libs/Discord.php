@@ -162,7 +162,7 @@ class Discord
     }
 
     /**
-     * Get the Roles of a uset
+     * Get the Roles of a user
      */
     public static function discord_get_user_roles($discord_id, $roles = null)
     {
