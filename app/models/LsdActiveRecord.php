@@ -8,6 +8,37 @@
 
 class LsdActiveRecord extends ActiveRecord {
 
+    protected $private = [];    // Add the possibility to store private data through the magic __set() and __get() methods
+
+    /**
+     * magic function to SET values of the current object.
+     * We consider variables that start by '_' as private instance variables
+     */
+    public function __set($var, $val) {
+        if ($var{0} == '_') {
+            $this->private[$var] = $val;
+        } else {
+            parent::__set($var, $val);
+        }
+    }
+
+    /**
+     * magic function to GET the values of current object.
+     * We consider variables that start by '_' as private instance variables
+     */
+    public function & __get($var) {
+        if ($var{0} == '_') {
+            if (isset($this->private[$var])) {
+                return $this->private[$var];
+            } else {
+                return null;
+            }
+        }
+        else {
+            return parent::__get($var);
+        }
+    }
+
     /**
      * Find does not always return false as promised
      * @param null $id

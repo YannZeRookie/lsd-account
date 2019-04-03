@@ -28,11 +28,14 @@ require_once 'controllers/UsersController.php';
 $app->get('/users', function () use ($app) {
     $app->render('users_list.html', UsersController::all());
 });
-// User View
+// User View (GET)
 $app->get('/users/:id', function ($id) use ($app) {
     $app->render('users_view.html', UsersController::view($id));
 });
-
+// User Change (POST)
+$app->post('/users/:id', function ($id) use ($app) {
+    $app->render('users_view.html', UsersController::post($id, $app->request()->post()));
+});
 
 //-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';

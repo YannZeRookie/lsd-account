@@ -14,6 +14,70 @@ class User extends LsdActiveRecord
     public $table = 'lsd_users';
 
     /**
+     * Check the data and return errors if any found.
+     * Use before saving to database.
+     * @return array List of: 'Human readable field name' => 'Human readable error message'
+     */
+    public function validate()
+    {
+        $errors = [];
+        if ($this->email && filter_var($this->email, FILTER_VALIDATE_EMAIL) === false) {
+            $errors['E-mail'] = 'format invalide';
+        }
+        return $errors;
+    }
+
+    /**
+     * Grant a new Role to this user
+     * @param $newRole
+     * @param $data optional extra data
+     */
+    public function setRole($newRole, $data = null)
+    {
+        Role::setRole($this->id, $newRole, $data);
+    }
+
+    /**
+     * Remove a Role from this user
+     * @param $role
+     * @param null $data
+     */
+    public function removeRole($role, $data = null)
+    {
+        Role::removeRole($this->id, $role, $data);
+    }
+
+    /**
+     * Toggle a Role on or off
+     * @param $role
+     * @param $turnOn
+     * @param null $data
+     */
+    public function toggleRole($role, $turnOn, $data = null)
+    {
+        if ($turnOn) {
+            $this->setRole($role, $data);
+        } else {
+            $this->removeRole($role, $data);
+        }
+    }
+
+    /**
+     * Set a Bureau role
+     * @param $newRole
+     */
+    public function setBureauRole($newRole)
+    {
+        if ($newRole && $this->hasRole($newRole)) {
+            return;
+        }
+        Role::removeRoles($this->id, [Role::kSecretaire, Role::kTresorier, Role::kPresident]);
+        if ($newRole) {
+            Role::setRole($this->id, $newRole);
+        }
+    }
+
+    /**
      * Build the url of the user's Discord avatar
      * @return string
      */
@@ -72,6 +136,16 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Has the user this role?
+     * @param $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return Role::hasRole($this->id, $role);
+    }
+
+    /**
      * Get the highest Role of this user
      * @return mixed|string
      */
@@ -99,7 +173,20 @@ class User extends LsdActiveRecord
      */
     public function belongsToSection($tag)
     {
-        return Role::userBelongsToSection($this->id, $tag);
+        return Role::belongsToSection($this->id, $tag);
+    }
+
+    /**
+     * Set (or reset) membership of a user to a Section
+     * Note that $isOfficier takes precedence on $isMembre
+     * @param $tag string Section tag
+     * @param $isMembre bool
+     * @param $isOfficier bool|null If null, it means 'don't do anything'
+     * @param $oldRole string previous role for this Section - if any
+     */
+    public function setSectionMembership($tag, $isMembre, $isOfficier, $oldRole = null)
+    {
+        Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $oldRole);
     }
 
     /**

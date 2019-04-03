@@ -9,13 +9,24 @@
 <h1>Info sur {{user.discord_username|e}}</h1>
 <img src="{{user.avatar}}">
 <form method="post">
+    {% if errors %}
+    <div class="errorExplanation">
+        <h2>Erreur</h2>
+        <ul>
+            {% for k,v in errors %}
+            <li>{{k}} : {{v}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <h2>Message de candidature :</h2>
     <p>{{user.testimony|e}}</p>
 
     {# Example of restricted display: only Admins or myself can see the user's e-mail #}
-    {% if is_myself or cur_user.isAdmin %}
+    {% if can_change_email == 'full' %}
     <p>E-mail: <input type="text" name="email" value="{{user.email|e}}"></p>
-    {% elseif cur_user.isConseiller %}
+    {% elseif can_change_email == 'checkbox' %}
         {# Conseillers can only turn the newsletter option off. Which deletes the e-mail from the table #}
         {% if user.email %}
             <p><input type="checkbox" name="newsletter" value="1" checked> Newsletter</p>
@@ -27,8 +38,17 @@
     <div id="roles">
         Rôle :<br>
         {% for r in roles_table %}
-            <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user.highest_role %}checked{% endif %} {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
+            <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{% endif %} {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
         {% endfor %}
+    </div>
+    <div id="bureau">
+        Bureau :
+        <select name="bureau" {% if not(cur_user.isAdmin) %}disabled{% endif %}>
+            <option value="" {% if not(user.isBureau) %}selected{% endif %}>-</option>
+            {% for r in bureau_table %}
+            <option value="{{r.role}}" {% if r.selected %}selected{% endif %}>{{r.name}}</option>
+            {% endfor %}
+        </select>
     </div>
 
     <div id="sections">
@@ -37,8 +57,8 @@
             <tr><th>M</th><th>O</th><th>Section</th></tr>
             {% for s in sections %}
             <tr>
-                <td><input type="checkbox" name="{{s.tag}}_M" {% if s.belong=='membre' %}checked{% endif %} {% if not(cur_user.canNameMembers) %}disabled{% endif %}></td>
-                <td><input type="checkbox" name="{{s.tag}}_O" {% if s.belong=='officier' %}checked{% endif %} {% if not(cur_user.canNameOfficiers) %}disabled{% endif %}></td>
+                <td><input type="checkbox" name="{{s.tag}}_M" {% if s._belong=='membre' %}checked{% endif %} {% if not(cur_user._canNameMembres) %}disabled{% endif %}></td>
+                <td><input type="checkbox" name="{{s.tag}}_O" {% if s._belong=='officier' %}checked{% endif %} {% if not(cur_user._canNameOfficiers) %}disabled{% endif %}></td>
                 <td>{{s.name|e}} ({{s.tag}})</td>
             </tr>
             {% endfor %}
@@ -47,8 +67,12 @@
 
     <div id="other_roles">
         Autres :<br>
-        <label><input type="checkbox" name="adherent" value="1" {% if user.adherent %}checked{% endif %} {% if not(cur_user.canSetOtherRoles) %}disabled{% endif %}> Adhérent de cette année</label><br>
-        <label><input type="checkbox" name="cm" value="1" {% if user.cm %}checked{% endif %} {% if not(cur_user.canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
+        Adhérent :
+            <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
+            <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
+            <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
+        <br>
+        <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
     </div>
 
     <input type="submit" value="Mettre à jour">
