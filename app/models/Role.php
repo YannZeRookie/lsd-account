@@ -167,17 +167,17 @@ class Role extends LsdActiveRecord
      * Generic Role query method
      * @param $user_id
      * @param $role
-     * @param $data
+     * @param $extra
      * @return bool
      */
-    static public function hasRole($user_id, $role, $data = null)
+    static public function hasRole($user_id, $role, $extra = null)
     {
         $roles = new Role;
-        if ($data) {
-            if ($role == self::kMembre && $data == 'JDM') {
+        if ($extra) {
+            if ($role == self::kMembre && $extra == 'JDM') {
                 return self::isScorpion();  // Each Scorpion is automatically member of the JDM Section
             } else {
-                return $roles->equal('user_id', $user_id)->equal('role', $role)->equal('data', $data)->find() !== false;
+                return $roles->equal('user_id', $user_id)->equal('role', $role)->equal('extra', $extra)->find() !== false;
             }
         } else {
             return $roles->equal('user_id', $user_id)->equal('role', $role)->find() !== false;
@@ -213,23 +213,41 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Return a simple list of the roles names of a user
+     * @param $user_id
+     * @return array of Role Names
+     */
+    static public function getRolesNames($user_id)
+    {
+        $res = [];
+        $rr = new Role;
+        $roles = $rr->equal('user_id', $user_id)->findAll();
+        $roles_table = self::getRolesTable(true, true, true);
+        foreach($roles as $role) {
+            $r = ($role->role == self::kAdherant) ? (self::kAdherant . '_' . $role->extra) : $role->role;
+            $res[$r] = $roles_table[$role->role]['name'] . (($role->role == self::kAdherant) ? ' ' . $role->extra : '');    // This will also de-duplicate the list
+        }
+        return $res;
+    }
+
+    /**
      * Grant a new Role to this user
      * @param $user_id
      * @param $newRole
-     * @param $data optional extra data
+     * @param $extra optional extra data
      */
-    static public function setRole($user_id, $newRole, $data = null)
+    static public function setRole($user_id, $newRole, $extra = null)
     {
         if (empty($newRole)) {
             return;
         }
         $role = new Role;
         //-- Do we already have this role?
-        if (self::hasRole($user_id, $newRole, $data)) {
+        if (self::hasRole($user_id, $newRole, $extra)) {
             return;
         }
         //-- Officier, Membre and Adherant should have some data
-        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherant) && empty($data)) {
+        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherant) && empty($extra)) {
             return;
         }
 
@@ -241,7 +259,7 @@ class Role extends LsdActiveRecord
         //-- Add it
         $role->user_id = $user_id;
         $role->role = $newRole;
-        $role->data['data'] = $role->dirty['data'] = $data;
+        $role->extra = $extra;
         $role->insert();
     }
 
@@ -263,12 +281,12 @@ class Role extends LsdActiveRecord
      * Remove a Role from this user
      * @param $user_id
      * @param $role
-     * @param null $data
+     * @param null $extra
      */
-    static public function removeRole($user_id, $role, $data = null)
+    static public function removeRole($user_id, $role, $extra = null)
     {
-        if ($data) {
-            self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND data = ?", [$user_id, $role, $data]);
+        if ($extra) {
+            self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ?", [$user_id, $role, $extra]);
         } else {
             self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? ", [$user_id, $role]);
         }
@@ -330,7 +348,7 @@ class Role extends LsdActiveRecord
     static public function belongsToSection($user_id, $tag)
     {
         $r = new Role;
-        $role = $r->equal('user_id', $user_id)->in('role', [self::kMembre, self::kOfficier])->equal('data', $tag)->find();
+        $role = $r->equal('user_id', $user_id)->in('role', [self::kMembre, self::kOfficier])->equal('extra', $tag)->find();
         if ($tag == 'JDM' && !$role && self::isScorpion($user_id)) {
             return self::kMembre;   // All Scorpions are automatically Membre if they are not already Officier of JDM
         }
@@ -359,12 +377,12 @@ class Role extends LsdActiveRecord
                 $rm = new Role;
                 $rm->user_id = $user_id;
                 $rm->role = self::kMembre;
-                $rm->data['data'] = $rm->dirty['data'] = $tag;  // Hmmm. It was not a good idea to have a column named 'data' in the table. It makes ActiveRecord screw up
+                $rm->extra = $tag;
                 $rm->insert();
             }
         } else {
             if ($oldRole == self::kMembre) {
-                self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND data = ? ", [$user_id, self::kMembre, $tag]);
+                self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ? ", [$user_id, self::kMembre, $tag]);
             }
         }
         if ($isOfficier !== null) {
@@ -373,17 +391,17 @@ class Role extends LsdActiveRecord
                     $ro = new Role;
                     $ro->user_id = $user_id;
                     $ro->role = self::kOfficier;
-                    $ro->data['data'] = $ro->dirty['data'] = $tag;
+                    $ro->extra = $tag;
                     $ro->insert();
                 }
             } else {
                 if ($oldRole == self::kOfficier) {
-                    self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND data = ? ", [$user_id, self::kOfficier, $tag]);
+                    self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ? ", [$user_id, self::kOfficier, $tag]);
                 }
             }
         }
     }
-    
+
     /**
      * Can a user assign members to Sections?
      * @param $user_id

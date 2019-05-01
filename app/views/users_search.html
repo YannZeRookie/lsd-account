@@ -1,0 +1,17 @@
+{% for u in users %}
+<tr>
+    <td nowrap class="account">
+        <img src="{{u.avatar}}">
+        <a href="/users/{{u.id}}">{{u.discord_username|e}}</a>
+    </td>
+    <td>{{u.roles}}</td>
+    <td>{{u.sections}}</td>
+    <td>{{u.vb}}</td>
+</tr>
+{% else %}
+<tr>
+    <td colspan="99">
+        <i>Aucun utilisateur trouvé</i>
+    </td>
+</tr>
+{% endfor %}

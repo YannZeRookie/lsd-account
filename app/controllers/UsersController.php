@@ -22,12 +22,58 @@ class UsersController
             \Slim\Slim::getInstance()->redirect('/');
         }
         //--
-        $u = new User;
-        $users = $u->findAll();
         $debug = '';
         return [
-            'users' => $users,
+            'years' => self::buildYears(),
+            'sections' => Section::getActiveSections(),
             'debug' => print_r($debug, true),
+        ];
+    }
+
+    /**
+     * AJAX search of users
+     * @param array $params
+     * @return array
+     */
+    static public function search($params = [])
+    {
+        //-- Check rights: the connected user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+        //--
+        $u = new User;
+        //-- Analyse the search parameters and build the SQL query
+        //--- User name
+        if (isset($params['s_name']) && $params['s_name'] !== '') {
+            $u->like('discord_username', '%' . $params['s_name'] . '%');
+        }
+        //--- Role
+        if (isset($params['s_role']) && $params['s_role'] !== '') {
+            $u->join('lsd_roles as r1', "r1.user_id=lsd_users.id", 'INNER');     // Notice the use of aliasing
+            if (preg_match('/adherant_(\d+)/', $params['s_role'], $reg)) { // Special case for adherents: extract the year
+                $u->addCondition('r1.role', '=', 'adherant', 'AND', 'join');
+                $u->addCondition('r1.extra', '=', $reg[1], 'AND', 'join');
+            } else {
+                $u->addCondition('r1.role', '=', $params['s_role'], 'AND', 'join');  // This is how you add a condition to the JOIN part
+            }
+        }
+        //--- Section
+        if (isset($params['s_section']) && $params['s_section'] !== '') {
+            $u->join('lsd_roles as r2', "r2.user_id=lsd_users.id AND r2.role in ('membre', 'officier')", 'INNER');
+            $u->addCondition('r2.extra', '=', $params['s_section'], 'AND', 'join');
+        }
+        //--- VB Pseudo
+        if (isset($params['s_vb']) && $params['s_vb'] !== '') {
+            $u->join('vb_user as vb', "vb.userid=lsd_users.vb_id", 'INNER');
+            $u->addCondition('vb.username', 'like', '%' . $params['s_vb'] . '%', 'AND', 'join');
+        }
+
+        //-- Search
+        $users = $u->order('discord_username')->findAll();
+        return [
+            'users' => $users,
         ];
     }
 
@@ -118,8 +164,7 @@ class UsersController
 
     static protected function buildSectionsTable($user)
     {
-        $s = new Section;
-        $sections = $s->equal('archived', 0)->order('`order`')->findAll();
+        $sections = Section::getActiveSections();
         foreach ($sections as &$section) {
             $section->_belong = $user->belongsToSection($section->tag);
         }
@@ -164,6 +209,9 @@ class UsersController
 
     static public function post($id, $params = [])
     {
+        $defaults = ['adherent_ly' => false, 'adherent_cy' => false, 'adherent_ny' => false, 'cm' => false];
+        $params = array_merge($defaults, $params); // Set defaults, as these might be missing from the $params
+
         $cur_user = self::canEditUser($id);
         $user = self::getTargetUser($id);
 

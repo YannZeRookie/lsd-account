@@ -30,35 +30,35 @@ class User extends LsdActiveRecord
     /**
      * Grant a new Role to this user
      * @param $newRole
-     * @param $data optional extra data
+     * @param $extra optional extra data
      */
-    public function setRole($newRole, $data = null)
+    public function setRole($newRole, $extra = null)
     {
-        Role::setRole($this->id, $newRole, $data);
+        Role::setRole($this->id, $newRole, $extra);
     }
 
     /**
      * Remove a Role from this user
      * @param $role
-     * @param null $data
+     * @param null $extra
      */
-    public function removeRole($role, $data = null)
+    public function removeRole($role, $extra = null)
     {
-        Role::removeRole($this->id, $role, $data);
+        Role::removeRole($this->id, $role, $extra);
     }
 
     /**
      * Toggle a Role on or off
      * @param $role
      * @param $turnOn
-     * @param null $data
+     * @param null $extra
      */
-    public function toggleRole($role, $turnOn, $data = null)
+    public function toggleRole($role, $turnOn, $extra = null)
     {
         if ($turnOn) {
-            $this->setRole($role, $data);
+            $this->setRole($role, $extra);
         } else {
-            $this->removeRole($role, $data);
+            $this->removeRole($role, $extra);
         }
     }
 
@@ -165,6 +165,17 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Get this list of roles as a comma-separated string
+     * @return string
+     */
+    public function roles()
+    {
+        $roles_names = Role::getRolesNames($this->id);
+        unset($roles_names[Role::kMembre]); // No use to keep this one
+        return implode(', ', $roles_names);
+    }
+
+    /**
      * Does the user belong to a Section?
      * If yes, return Role::kMembre or Role::kOfficier
      * If no, return false
@@ -174,6 +185,26 @@ class User extends LsdActiveRecord
     public function belongsToSection($tag)
     {
         return Role::belongsToSection($this->id, $tag);
+    }
+
+    /**
+     * Get the user's sections as a comma-separated list
+     * @return string
+     */
+    public function sections()
+    {
+        $res = [];
+        $s = new Section;
+        $sections = $s->equal('archived', 0)->order('`order`')->findAll();
+        foreach ($sections as $section) {
+            $belongs = $this->belongsToSection($section->tag);
+            if ($belongs == Role::kMembre) {
+                $res[] = $section->tag;
+            }  elseif ($belongs == Role::kOfficier) {
+                $res[] = $section->tag . '*';
+            }
+        }
+        return implode(', ', $res);
     }
 
     /**
@@ -187,6 +218,19 @@ class User extends LsdActiveRecord
     public function setSectionMembership($tag, $isMembre, $isOfficier, $oldRole = null)
     {
         Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $oldRole);
+    }
+
+    /**
+     * Get the VB login names - if there was an original VB account
+     * @return string
+     */
+    public function vb()
+    {
+        if ($this->vb_id) {
+            return '';  // TODO
+        } else {
+            return '';
+        }
     }
 
     /**

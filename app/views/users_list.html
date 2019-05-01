@@ -4,20 +4,123 @@
 {% block title %}Liste des Scorpions{% endblock %}
 {% block banner %}{% endblock %}
 
+{% block css %}
+<style>
+    #users_table th input {
+        width:100%;
+    }
+    #users_table td.account {
+        vertical-align: middle;
+        padding-right: 1em;
+    }
+
+    #users_table td.account img {
+        display: inline;
+        max-height: 48px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h1>Liste des Scorpions</h1>
+<h1 class="h1">Liste des Scorpions</h1>
 
 <article>
-    <table>
-        {% for u in users %}
+    <table id="users_table" class="table table-striped table-sm">
+        <thead>
         <tr>
-            <td><a href="/users/{{u.id}}">{{u.id}}</a></td>
-            <td>{{u.discord_username|e}}</td>
+            <th>Compte Discord</th>
+            <th>Rôles</th>
+            <th>Sections</th>
+            <th nowrap>Pseudo VB</th>
         </tr>
-        {% endfor %}
+        <tr id="search_fields">
+            <th class="col-4">
+                <input id="s_name">
+            </th>
+            <th class="col-4">
+                <select id="s_role" class="custom-select" onchange="searchUsers()">
+                    <option value="" selected>-</option>
+                    <option value="visiteur">Visiteur</option>
+                    <option value="invite">Invité</option>
+                    <option value="scorpion">Scorpion</option>
+                    <option value="membre">Membre d'une Section</option>
+                    <option value="officier">Officier d'une Section</option>
+                    <option value="conseiller">Conseiller</option>
+                    <option value="secretaire">Secrétaire</option>
+                    <option value="tresorier">Trésorier</option>
+                    <option value="president">Président</option>
+                    <option value="admin">Admin</option>
+                    <option value="cm">Community Manager</option>
+                    <option value="adherant_{{years.last}}">Adhérent {{years.last}}</option>
+                    <option value="adherant_{{years.current}}">Adhérent {{years.current}}</option>
+                    <option value="adherant_{{years.next}}">Adhérent {{years.next}}</option>
+                </select>
+            </th>
+            <th class="col-2">
+                <select id="s_section" class="custom-select" onchange="searchUsers()">
+                    <option value="" selected>-</option>
+                    {% for s in sections %}
+                    <option value="{{s.tag}}">{{s.tag}}: {{s.name}}</option>
+                    {% endfor %}
+                </select>
+            </th>
+            <th class="col-2">
+                <input id="s_vb">
+            </th>
+        </tr>
+        </thead>
+        <tbody id="users">
+        </tbody>
     </table>
 </article>
 <pre>
 {{debug}}
 </pre>
+{% endblock %}
+
+{% block footer %}
+{{ parent() }}
+<script>
+    function delay(callback, ms) {
+        var timer = 0;
+        return function () {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback.apply(context, args);
+            }, ms || 0);
+        };
+    }
+
+    function addFilter(id, query) {
+        var value = $('#' + id).val();
+        if (value) {
+            if (query) {
+                query += '&';
+            }
+            query += id + '=' + escape(value);
+        }
+        return query;
+    }
+
+    function searchUsers() {
+        $('#users').html('<tr><td colspan="99" align="center"><img src="/img/ajax-loader.gif"></td></tr>');
+        var query = '';
+        query = addFilter('s_name', query);
+        query = addFilter('s_role', query);
+        query = addFilter('s_section', query);
+        query = addFilter('s_vb', query);
+        $('#users').load('/users/search', query);
+    }
+
+    $(function () {
+        searchUsers();
+
+        $('#search_fields input').keyup(delay(function (e) {
+            // Build a search string and launch an AJAX call
+            searchUsers();
+        }, 500))
+    });
+
+</script>
 {% endblock %}

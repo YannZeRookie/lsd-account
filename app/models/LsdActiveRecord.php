@@ -1,12 +1,13 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: yann
  * Date: 26/12/2018
  * Time: 16:34
  */
-
-class LsdActiveRecord extends ActiveRecord {
+class LsdActiveRecord extends ActiveRecord
+{
 
     protected $private = [];    // Add the possibility to store private data through the magic __set() and __get() methods
 
@@ -14,7 +15,8 @@ class LsdActiveRecord extends ActiveRecord {
      * magic function to SET values of the current object.
      * We consider variables that start by '_' as private instance variables
      */
-    public function __set($var, $val) {
+    public function __set($var, $val)
+    {
         if ($var{0} == '_') {
             $this->private[$var] = $val;
         } else {
@@ -26,15 +28,15 @@ class LsdActiveRecord extends ActiveRecord {
      * magic function to GET the values of current object.
      * We consider variables that start by '_' as private instance variables
      */
-    public function & __get($var) {
+    public function & __get($var)
+    {
         if ($var{0} == '_') {
             if (isset($this->private[$var])) {
                 return $this->private[$var];
             } else {
                 return null;
             }
-        }
-        else {
+        } else {
             return parent::__get($var);
         }
     }
@@ -55,6 +57,22 @@ class LsdActiveRecord extends ActiveRecord {
     }
 
     /**
+     * helper function to add condition into JOIN with values!
+     * create the SQL Expressions.
+     * @param string $table The join table name
+     * @param string $on The condition of ON
+     * @param string\array $value
+     * @param string $type The join type, like "LEFT", "INNER", "OUTER"
+     */
+    public function join2($table, $on, $value, $type = 'LEFT')
+    {
+        $this->join = new Expressions(array('source' => $this->join ?: '', 'operator' => $type . ' JOIN', 'target' => new Expressions(
+            array('source' => $table, 'operator' => 'ON', 'target' => $on)
+        )));
+        return $this;
+    }
+
+    /**
      * Update or insert, depending on if the id is known or not
      * @return ActiveRecord|bool
      */
@@ -62,8 +80,7 @@ class LsdActiveRecord extends ActiveRecord {
     {
         if (empty($this->data['id'])) {
             return $this->insert();
-        }
-        else {
+        } else {
             return $this->update();
         }
     }
@@ -79,11 +96,10 @@ class LsdActiveRecord extends ActiveRecord {
     {
         try {
             return parent::__call($name, $args);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             // Try as a __get(), to help Twig
             $val = $this->__get($name);
-            if (is_null($val))  {
+            if (is_null($val)) {
                 throw new Exception("Method or Field '$name' does not exist.");;
             }
             return $val;
