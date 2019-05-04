@@ -41,6 +41,22 @@ $app->post('/users/:id', function ($id) use ($app) {
     $app->render('users_view.html', UsersController::post($id, $app->request()->post()));
 });
 
+//-- Sections CRUD
+require_once 'controllers/SectionsController.php';
+// List of all Sections
+$app->get('/sections', function () use ($app) {
+    $app->render('sections_list.html', SectionsController::all());
+});
+// Section View (GET)
+$app->get('/sections/:tag', function ($tag) use ($app) {
+    $app->render('sections_edit.html', SectionsController::edit($tag));
+});
+// Section Change (POST)
+$app->post('/sections/:tag', function ($tag) use ($app) {
+    $app->render('sections_edit.html', SectionsController::post($tag, $app->request()->post()));
+});
+
+
 //-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';
 $app->get('/hello', function () use ($app) {

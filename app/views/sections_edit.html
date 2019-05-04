@@ -1,0 +1,73 @@
+{% extends "app.html" %}
+{% set category = 'section' %}
+
+{% block title %}Section{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Section : {{section.name | e}}</h1>
+
+{% if errors %}
+<div class="errorExplanation">
+    <h2>Erreur</h2>
+    <ul>
+        {% for k,v in errors %}
+        <li>{{k}} : {{v}}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+<form method="post">
+    <div class="form-group row">
+        <label for="name" class="col-sm-1 col-form-label">Tag :</label>
+        <div class="col-sm-11">
+            <input type="text" class="form-control col-sm-4 {% if errors.tag %}is-invalid{% endif %}" id="tag" name="tag" placeholder="Tag" value="{{section.tag | e}}" {% if not(new_tag) %}disabled{% endif %}>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="name" class="col-sm-1 col-form-label">Nom :</label>
+        <div class="col-sm-11">
+            <input type="text" class="form-control col-sm-4 {% if errors.nom %}is-invalid{% endif %}" id="name" name="name" placeholder="Nom" value="{{section.name | e}}">
+        </div>
+    </div>
+    <fieldset class="form-group">
+        <div class="row">
+            <legend class="col-form-label col-sm-1 pt-0">État :</legend>
+            <div class="col-sm-11">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="archived" id="archived1" value="0" {% if
+                           not(section.archived) %}checked{% endif %}>
+                    <label class="form-check-label" for="archived1">Active</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input {% if errors.état %}is-invalid{% endif %}" type="radio" name="archived" id="archived2" value="1" {% if
+                           section.archived %}checked{% endif %}>
+                    <label class="form-check-label" for="archived2">Archivée</label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <a href="/sections" class="btn btn-secondary">Annuler</a>
+            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+
+        </div>
+        <div class="col-sm-6">
+        </div>
+    </div>
+</form>
+
+<article>
+
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

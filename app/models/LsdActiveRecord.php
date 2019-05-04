@@ -49,7 +49,7 @@ class LsdActiveRecord extends ActiveRecord
     public function find($id = null)
     {
         $res = parent::find($id);
-        if (!is_object($res) || empty($res->data['id'])) {
+        if (!is_object($res) || empty($res->data[$res->primaryKey])) {
             return false;
         } else {
             return $res;
@@ -57,28 +57,13 @@ class LsdActiveRecord extends ActiveRecord
     }
 
     /**
-     * helper function to add condition into JOIN with values!
-     * create the SQL Expressions.
-     * @param string $table The join table name
-     * @param string $on The condition of ON
-     * @param string\array $value
-     * @param string $type The join type, like "LEFT", "INNER", "OUTER"
-     */
-    public function join2($table, $on, $value, $type = 'LEFT')
-    {
-        $this->join = new Expressions(array('source' => $this->join ?: '', 'operator' => $type . ' JOIN', 'target' => new Expressions(
-            array('source' => $table, 'operator' => 'ON', 'target' => $on)
-        )));
-        return $this;
-    }
-
-    /**
      * Update or insert, depending on if the id is known or not
+     * @param bool $force_insert
      * @return ActiveRecord|bool
      */
-    public function save()
+    public function save($force_insert = false)
     {
-        if (empty($this->data['id'])) {
+        if ($force_insert || empty($this->data[$this->primaryKey])) {
             return $this->insert();
         } else {
             return $this->update();
@@ -105,5 +90,32 @@ class LsdActiveRecord extends ActiveRecord
             return $val;
         }
     }
+
+    /**
+     * Helper function to get a single object from a raw SQL query
+     * @param string $sql
+     * @param array $params
+     * @return bool|mixed
+     */
+    static public function q_singleobj($sql, $params = [])
+    {
+        $stmt = self::$db->prepare($sql);
+        $res = $stmt->execute($params);
+        return $res ? $stmt->fetchObject() : false;
+    }
+
+    /**
+     * Helper function to get a single value from a raw SQL query
+     * @param $sql
+     * @param array $params
+     * @return bool|string
+     */
+    static public function q_singleval($sql, $params = [])
+    {
+        $stmt = self::$db->prepare($sql);
+        $res = $stmt->execute($params);
+        return $res ? $stmt->fetchColumn() : false;
+    }
+
 }
 

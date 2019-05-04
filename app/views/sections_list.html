@@ -1,0 +1,47 @@
+{% extends "app.html" %}
+{% set category = 'section' %}
+
+{% block title %}Liste des Sections{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Liste des Sections</h1>
+
+<article>
+    <a class="btn btn-primary" href="/sections/new" style="float: right;">Créer une nouvelle Section...</a>
+    {% for n,l in sections %}
+    <h2>{{ n }}</h2>
+    <table class="sections_table table table-striped table-sm">
+        <thead>
+        <tr>
+            <th width="10%">Tag</th>
+            <th width="20%">Nom</th>
+            <th width="70%">Officiers</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for s in l %}
+        <tr>
+            <td nowrap><a href="/sections/{{s.tag}}">{{ s.tag |e}}</a></td>
+            <td>{{ s.name |e}}</td>
+            <td>
+                {% for u in s._officers %}
+                <a href="/users/{{u.id}}">{{u.discord_username | e}}</a>{% if not(loop.last) %}, {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
