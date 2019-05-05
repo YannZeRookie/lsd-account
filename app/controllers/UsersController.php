@@ -16,11 +16,7 @@ class UsersController
      */
     static public function all()
     {
-        //-- Check rights: the connected user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
-        $cur_user = User::getConnectedUser();
-        if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
-            \Slim\Slim::getInstance()->redirect('/');
-        }
+        $cur_user = self::checkAccess();
         //--
         $debug = '';
         return [
@@ -37,14 +33,10 @@ class UsersController
      */
     static public function search($params = [])
     {
-        //-- Check rights: the connected user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
-        $cur_user = User::getConnectedUser();
-        if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
-            \Slim\Slim::getInstance()->redirect('/');
-        }
-        //--
-        $u = new User;
+        $cur_user = self::checkAccess();
         //-- Analyse the search parameters and build the SQL query
+        $u = new User;
+        $u->select('distinct(lsd_users.id) as uid, lsd_users.*');
         //--- User name
         if (isset($params['s_name']) && $params['s_name'] !== '') {
             $u->like('discord_username', '%' . $params['s_name'] . '%');
@@ -75,6 +67,30 @@ class UsersController
         return [
             'users' => $users,
         ];
+    }
+
+    /**
+     * Can the user list users?
+     * The user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
+     * @param $user_id
+     * @return bool
+     */
+    static public function canListUsers($user_id)
+    {
+        return Role::hasAnyRole($user_id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]);
+    }
+
+    /**
+     * Can the connected user list users?
+     * @return ActiveRecord|bool    The current user
+     */
+    static public function checkAccess()
+    {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user || !self::canListUsers($cur_user->id)) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+        return $cur_user;
     }
 
     /**
@@ -211,6 +227,7 @@ class UsersController
     {
         $defaults = ['adherent_ly' => false, 'adherent_cy' => false, 'adherent_ny' => false, 'cm' => false];
         $params = array_merge($defaults, $params); // Set defaults, as these might be missing from the $params
+        $years = self::buildYears();
 
         $cur_user = self::canEditUser($id);
         $user = self::getTargetUser($id);
@@ -258,7 +275,6 @@ class UsersController
         //-- Other Roles: Adherant, CM...
         if ($cur_user->_canSetOtherRoles) {
             $user->toggleRole(Role::kCM, $params['cm']);
-            $years = self::buildYears();
             $user->toggleRole(Role::kAdherant, $params['adherent_ly'], $years['last']);
             $user->toggleRole(Role::kAdherant, $params['adherent_cy'], $years['current']);
             $user->toggleRole(Role::kAdherant, $params['adherent_ny'], $years['next']);

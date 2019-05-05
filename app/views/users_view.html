@@ -6,9 +6,9 @@
 
 {% block content %}
 {% if user %}
-<h1>Info sur {{user.discord_username|e}}</h1>
-<img src="{{user.avatar}}">
-<form method="post">
+<img src="{{user.avatar}}" style="float: left;">
+<h1>{{user.discord_username|e}}</h1>
+<form method="post" style="clear:both;">
     {% if errors %}
     <div class="errorExplanation">
         <h2>Erreur</h2>
@@ -75,7 +75,7 @@
         <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
     </div>
 
-    <input type="submit" value="Mettre à jour">
+    <button class="btn btn-primary" type="submit">Mettre à jour</button>
 </form>
 {% else %}
 <p class="errorExplanation">Erreur : cet utilisateur n'existe pas.</p>

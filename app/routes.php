@@ -8,7 +8,7 @@
 
 require_once 'controllers/IndexController.php';
 $app->get('/', function () use ($app) {
-    $app->render('index.html', IndexController::get());
+    $app->render('index.html', IndexController::index());
 });
 
 //-- Login and sign-up

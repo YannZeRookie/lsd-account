@@ -11,22 +11,22 @@ require_once __DIR__ . '/../models/User.php';
 
 class IndexController
 {
-    static public function get()
+    static public function index()
     {
-        $section = new Section;
-        $sections = $section->findAll();
-
         //-- Do we have a connected user? If not, bail out
-        $user = User::getConnectedUser();
-        if (!$user) {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user) {
             \Slim\Slim::getInstance()->redirect('/login/expired');
         }
 
-        return [
-            'sections' => $sections,
-            'session' => print_r($_SESSION,true),
-            'user' => $user,
-            'user_data' => print_r($user, true),
-        ];
+        //-- Depending on the type of users, we redirect to one page or another:
+        //   - Regular user -> their own page
+        //   - Privileged user (officer and above...) -> users list
+        if (UsersController::canListUsers($cur_user->id)) {
+            \Slim\Slim::getInstance()->redirect('/users');
+        }
+        \Slim\Slim::getInstance()->redirect('/users/' . $cur_user->id);
+
+        return [];
     }
 }

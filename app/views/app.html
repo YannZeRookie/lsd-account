@@ -23,6 +23,19 @@
 <header>
     {% block header %}
     <!-- header begin -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a href="http://www.scorpions-du-desert.com/" title="Retourner sur le site des LSD"><img class="navbar-brand" src="/img/LSD _Logo_bleu-HD.png" /></a>
+        <div class="">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/users">Utilisateurs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sections">Sections</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <!-- header end -->
     {% endblock %}
 </header>
@@ -57,6 +70,16 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
             integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
             crossorigin="anonymous"></script>
+    <script>
+        $(function () {
+            var pathname = window.location.pathname;
+            $('nav a.nav-link').each(function() {
+                if (pathname.startsWith($(this).attr('href'))) {
+                    $(this).parent().addClass('active');
+                }
+            });
+        });
+    </script>
     <!-- footer end -->
     {% endblock %}
 </footer>
