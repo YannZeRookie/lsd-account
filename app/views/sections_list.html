@@ -31,7 +31,7 @@
             <td>{{ s.name |e}}</td>
             <td>
                 {% for u in s._officers %}
-                <a href="/users/{{u.id}}">{{u.discord_username | e}}</a>{% if not(loop.last) %}, {% endif %}
+                <a href="/users/{{u.id}}?returnto=/sections">{{u.discord_username | e}}</a>{% if not(loop.last) %}, {% endif %}
                 {% endfor %}
             </td>
         </tr>

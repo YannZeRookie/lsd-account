@@ -281,6 +281,14 @@ class UsersController
 
         }
 
+        //-- Check if we are supposed to return somewhere
+        if (count($errors) == 0) {
+            $query = \Slim\Slim::getInstance()->request()->get();
+            if (!empty($query['returnto'])) {
+                \Slim\Slim::getInstance()->redirect($query['returnto']);
+            }
+        }
+
         //-- Now that we have made all kind of changes, reload the user for the UI
         $user = self::getTargetUser($id);
 
