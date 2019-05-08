@@ -44,8 +44,8 @@ class UsersController
         //--- Role
         if (isset($params['s_role']) && $params['s_role'] !== '') {
             $u->join('lsd_roles as r1', "r1.user_id=lsd_users.id", 'INNER');     // Notice the use of aliasing
-            if (preg_match('/adherant_(\d+)/', $params['s_role'], $reg)) { // Special case for adherents: extract the year
-                $u->addCondition('r1.role', '=', 'adherant', 'AND', 'join');
+            if (preg_match('/adherent_(\d+)/', $params['s_role'], $reg)) { // Special case for adherents: extract the year
+                $u->addCondition('r1.role', '=', 'adherent', 'AND', 'join');
                 $u->addCondition('r1.extra', '=', $reg[1], 'AND', 'join');
             } else {
                 $u->addCondition('r1.role', '=', $params['s_role'], 'AND', 'join');  // This is how you add a condition to the JOIN part
@@ -272,12 +272,12 @@ class UsersController
             }
         }
 
-        //-- Other Roles: Adherant, CM...
+        //-- Other Roles: Adherent, CM...
         if ($cur_user->_canSetOtherRoles) {
             $user->toggleRole(Role::kCM, $params['cm']);
-            $user->toggleRole(Role::kAdherant, $params['adherent_ly'], $years['last']);
-            $user->toggleRole(Role::kAdherant, $params['adherent_cy'], $years['current']);
-            $user->toggleRole(Role::kAdherant, $params['adherent_ny'], $years['next']);
+            $user->toggleRole(Role::kAdherent, $params['adherent_ly'], $years['last']);
+            $user->toggleRole(Role::kAdherent, $params['adherent_cy'], $years['current']);
+            $user->toggleRole(Role::kAdherent, $params['adherent_ny'], $years['next']);
 
         }
 

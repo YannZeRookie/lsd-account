@@ -24,11 +24,11 @@ class Role extends LsdActiveRecord
     const kPresident = 'president';     // Bureau member
     const kAdmin = 'admin';
     const kCM = 'cm';
-    const kAdherant = 'adherant';
+    const kAdherent = 'adherent';
 
     /**
      * Return the Roles as a sorted list: key => name
-     * @param bool $all TRUE if you want to get the non-leveled ranks: kMembre, kCM, kAdherant...
+     * @param bool $all TRUE if you want to get the non-leveled ranks: kMembre, kCM, kAdherent...
      * @return array
      */
     static public function getRolesTable($main = true, $bureau = false, $others = false)
@@ -50,7 +50,7 @@ class Role extends LsdActiveRecord
         if ($others) {
             $result[self::kMembre] = ['role' => self::kMembre, 'name' => 'Membre', 'level' => self::getRoleLevel(self::kMembre)];
             $result[self::kCM] = ['role' => self::kCM, 'name' => 'Gestionnaire de Communauté', 'level' => self::getRoleLevel(self::kCM)];
-            $result[self::kAdherant] = ['role' => self::kAdherant, 'name' => 'Adhérant', 'level' => self::getRoleLevel(self::kAdherant)];
+            $result[self::kAdherent] = ['role' => self::kAdherent, 'name' => 'Adhérent', 'level' => self::getRoleLevel(self::kAdherent)];
         }
         return $result;
     }
@@ -224,8 +224,8 @@ class Role extends LsdActiveRecord
         $roles = $rr->equal('user_id', $user_id)->findAll();
         $roles_table = self::getRolesTable(true, true, true);
         foreach($roles as $role) {
-            $r = ($role->role == self::kAdherant) ? (self::kAdherant . '_' . $role->extra) : $role->role;
-            $res[$r] = $roles_table[$role->role]['name'] . (($role->role == self::kAdherant) ? ' ' . $role->extra : '');    // This will also de-duplicate the list
+            $r = ($role->role == self::kAdherent) ? (self::kAdherent . '_' . $role->extra) : $role->role;
+            $res[$r] = $roles_table[$role->role]['name'] . (($role->role == self::kAdherent) ? ' ' . $role->extra : '');    // This will also de-duplicate the list
         }
         return $res;
     }
@@ -246,8 +246,8 @@ class Role extends LsdActiveRecord
         if (self::hasRole($user_id, $newRole, $extra)) {
             return;
         }
-        //-- Officier, Membre and Adherant should have some data
-        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherant) && empty($extra)) {
+        //-- Officier, Membre and Adherent should have some data
+        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherent) && empty($extra)) {
             return;
         }
 
@@ -439,6 +439,6 @@ class Role extends LsdActiveRecord
      */
     static public function isAdherent($user_id, $year)
     {
-        return self::hasRole($user_id, self::kAdherant, $year);
+        return self::hasRole($user_id, self::kAdherent, $year);
     }
 }
