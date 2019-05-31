@@ -38,3 +38,14 @@ Merci au mode serveur Web intégré à PHP :
 
 Il n'y a plus qu'à aller sur http://localhost:8080/ et voilà !
 
+En production
+=============
+Il faudra là aussi configurer le fichier `config.php`.
+Renommer le fichier `htaccess` en `.htaccess` (si config Apache).
+Créer un dossier `cache` à la racine et donner au serveur web les droits d'écriture dessus. Par exemple si www-data est le groupe de la hiérarchie des dossiers:
+
+```
+mkdir cache
+chmod g+w cache
+chmod g+s cache
+```
