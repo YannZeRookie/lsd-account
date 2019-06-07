@@ -49,10 +49,8 @@ class AdminController
      */
     static public function updateweb($update_pid)
     {
-        $pid = trim(file_get_contents($update_pid));
-        if ($pid) {
-            $ok = posix_kill($pid, SIGUSR1);
-        }
+        $ok = file_put_contents($update_pid, 'web');
+
         $debug = "";
         return [
             'debug' => print_r($debug, true),
