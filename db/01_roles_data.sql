@@ -1,7 +1,7 @@
 -- Change section_id and sub_year into a generic 'data' field
 -- When role = 'officier' => data = section tag
 -- When role = 'membre'   => data = section tag
--- When role = 'adherant' => data = subscription year
+-- When role = 'adherent' => data = subscription year
 ALTER TABLE lsd_roles
 CHANGE COLUMN section_id `data` varchar(255) default NULL,
 DROP COLUMN `sub_year`;

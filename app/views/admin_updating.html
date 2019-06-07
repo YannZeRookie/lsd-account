@@ -1,0 +1,35 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Admin{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block header %}
+<style>
+    article {
+        margin-top: 2em;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<h1>Le coin des Admins</h1>
+
+{% if ok %}
+<div class="alert alert-success" role="alert">
+    Mise à jour lancée, attendez une dizaine de secondes...
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    Un problème est survenu en envoyant le signal au script de mise à jour.
+</div>
+{% endif %}
+<a href="/admin">
+    <button class="btn btn-primary">OK</button>
+</a>
+
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

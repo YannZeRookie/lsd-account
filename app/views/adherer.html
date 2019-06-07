@@ -1,0 +1,147 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Adhérer{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Adhérer à l'association "Les Scorpions du Désert"</h1>
+
+<article>
+    <h2>Pourquoi adhérer ?</h2>
+    <p>Pour deux raisons :</p>
+    <ul>
+
+        <li><b>S'impliquer :</b> devenir adhérent te permettra de participer plus activement à la vie de l'association,
+            par
+            exemple en votant à l'Assemblée Générale. Tu auras l'occasion de t'impliquer et de développer l'activité,
+            nous avons besoin de tous !
+        </li>
+        <li><b>Aider financièrement :</b> L'association "Les Scorpions du Désert" met gratuitement à la disposition de
+            tous les
+            Scorpions toute une série de moyens techniques pour leur permettre de jouer ensemble : site Web, forums,
+            serveur de jeux dédié, serveur vocal, etc. Mais ce n'est pas parce que tout cela est gratuit que ça ne coûte
+            pas des sous. Frais d'hébergeur, de noms de domaine, de licences logiciels, cela finit par s'additionner. Ta
+            participation permettra de couvrir tous ces frais - et uniquement cela. Tout le monde est bénévole, et comme
+            toute association loi 1901, les comptes sont présentés chaque année à l'Assemblée Générale pour approbation,
+            donc la transparence est complète.
+        </li>
+    </ul>
+
+    <h2>Comment adhérer ?</h2>
+    <p>Deux solutions :</p>
+    <ul>
+        <li>En réglant la cotisation standard de 12 €</li>
+        <li>En faisant un don supérieur à 12 € du montant qui te convient</li>
+
+    </ul>
+
+    <p>Le paiement se fait de façon sécurisée par PayPal.</p>
+    <h2>OK c'est parti !</h2>
+
+    <p>Merci de remplir soigneusement ton formulaire d'adhésion. Tous les champs sont obligatoires pour de simples
+        raisons légales :</p>
+    {% if errors %}
+    <div class="errorExplanation">
+        <h2>Erreur</h2>
+        <ul>
+            {% for k,v in errors %}
+            <li>{{k}} : {{v}}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <form method="post" class="">
+        <div class="form-group row">
+            <label class="col-sm-2 col-form-label">Pseudo Discord :</label>
+            <div class="col-sm-4 form-control-plaintext">
+                {{ cur_user.discord_username }}
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="name" class="col-sm-2 col-form-label">Nom :</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control {% if errors.nom %}is-invalid{% endif %}" id="name"
+                       name="name" placeholder="Nom" value="{{adhesion.name | e}}" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="firstname" class="col-sm-2 col-form-label">Prénom :</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control {% if errors.prenom %}is-invalid{% endif %}"
+                       id="firstname" name="firstname" placeholder="Prénom" value="{{adhesion.firstname | e}}" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="dob" class="col-sm-2 col-form-label">Date de naissance :</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control {% if errors.naissance %}is-invalid{% endif %}" id="dob"
+                       name="dob" placeholder="Date de naissance" value="{{adhesion.dob | e}}" required>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="address" class="col-sm-2 col-form-label">Adresse :</label>
+            <div class="col-sm-4">
+                <textarea class="form-control {% if errors.adresse %}is-invalid{% endif %}" id="address"
+                          name="address" placeholder="Adresse complète" rows="4" required>{{adhesion.address | e}}</textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="telephone" class="col-sm-2 col-form-label">Téléphone :</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control {% if errors.telephone %}is-invalid{% endif %}"
+                       id="telephone" name="telephone" placeholder="Téléphone" value="{{adhesion.telephone | e}}" required>
+            </div>
+        </div>
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0">Cotisation :</legend>
+                <div class="col-sm-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="cotisation" id="cotisation1"
+                               value="standard"
+                               {% if adhesion.cotisation=="standard" %}checked{% endif %}>
+                        <label class="form-check-label" for="cotisation1">Cotisation standard : 12 &euro;</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input {% if errors.état %}is-invalid{% endif %}" type="radio"
+                               name="cotisation" id="cotisation2" value="custom" {% if
+                               adhesion.cotisation!="standard" %}checked{% endif %}>
+                        <label class="form-check-label" for="cotisation2">Don libre d'au moins 12 €</label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group row">
+            <div class="custom-control custom-checkbox col-sm-6">
+                <input type="checkbox" class="custom-control-input" id="accept" name="accept" required>
+                <label class="custom-control-label" for="accept">Je déclare avoir reçu un exemplaire des <a
+                        href="http://accueil.scorpions-du-desert.com/l-association/statuts">statuts et du règlement
+                    intérieur de l'association</a>, en avoir pris connaissance et les accepter sans réserve. Je
+                    déclare également avoir été informé des dispositions de <a
+                            href="http://fr.wikipedia.org/wiki/Loi_relative_%C3%A0_l%27informatique,_aux_fichiers_et_aux_libert%C3%A9s_du_6_janvier_1978">la
+                        loi du 6 janvier 1978</a> qui règlemente le droit de communication dans le fichier des
+                    membres de l'association des données personnelles me concernant.</label>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6">
+                <input type="hidden" name="submit" value="1"/>
+                <input type="image" src="http://www.paypalobjects.com/fr_FR/FR/i/btn/btn_paynow_LG.gif" border="0"
+                       name="submit" alt="PayPal" title="Payer par PayPal"/>
+            </div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+    </form>
+
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

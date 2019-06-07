@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS `lsd_login` (
   PRIMARY KEY( `id` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Users database
+-- Users table
 DROP TABLE IF EXISTS `lsd_users`;
 CREATE TABLE IF NOT EXISTS `lsd_users` (
   `id` int(10) NOT NULL auto_increment,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `lsd_roles` (
   `user_id` int(10) NULL,
   `role` varchar(255),        -- Can be 'visiteur', 'invite', 'scorpion', 'membre', 'officier', 'conseiller', 'secretaire', 'tresorier', 'president', 'admin', 'cm', 'adherant'
   `section_id` int(10) NULL,  -- Section (when it makes sense, i.e. for 'membre' and 'officier')
-  `sub_year` int(10) NULL,     -- Adherant subscription year
+  `sub_year` int(10) NULL,     -- Adherent subscription year
   PRIMARY KEY( `id` )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

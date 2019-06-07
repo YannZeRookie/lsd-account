@@ -1,0 +1,56 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Admin{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block header %}
+<style>
+    article {
+        margin-top: 2em;
+    }
+    article pre {
+        margin-left: 0;
+        max-width: 800px;
+        padding: 1em;
+        border: 1px solid gray;
+        background-color: #EEEEEE;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<h1>Le coin des Admins</h1>
+
+<article>
+    <h3>Site Web</h3>
+    Dernière mise à jour :
+    <pre>
+{{log_web}}
+</pre>
+    <a href="/admin/updateweb">
+        <button class="btn btn-primary">Mettre à jour le site web</button>
+    </a>
+</article>
+
+<article>
+    <h3>Bot</h3>
+    Dernière mise à jour :
+    <pre>
+{{log_bot}}
+</pre>
+    <button class="btn btn-primary">Mettre à jour le Bot</button>
+</article>
+
+<h2>Migration de base de données:</h2>
+<ul>
+    {% for fi in db_files %}
+    <li>{{fi}}</li>
+    {% endfor %}
+</ul>
+
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
