@@ -14,7 +14,7 @@ while true; do
     sleep 2
     if [ -f $PIDFILE ]; then
        mode=`cat $PIDFILE`
-       ./update $mode
+       ./update.bash $mode
        rm -f $PIDFILE
     fi
 done
