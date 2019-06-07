@@ -10,10 +10,10 @@ cd "$(dirname "$0")"
 
 if [ "$1" == "web" ]; then
     cd ..
-    git pull
+    git pull --verbose > ../cache/lsd-update.log 2>&1
 fi
 
 if [ "$1" == "bot" ]; then
     cd ../../bot
-    git pull
+    git pull --verbose > ../cache/lsd-update.log 2>&1
 fi
