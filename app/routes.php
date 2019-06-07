@@ -80,7 +80,12 @@ $app->get('/admin', function () use ($app) {
 
 $app->get('/admin/updateweb', function () use ($app) {
     global $update_pid;
-    $app->render('admin_updating.html', AdminController::updateweb($update_pid));
+    $app->render('admin_updating.html', AdminController::update($update_pid, 'web'));
+});
+
+$app->get('/admin/updatebot', function () use ($app) {
+    global $update_pid;
+    $app->render('admin_updating.html', AdminController::update($update_pid, 'bot'));
 });
 
 

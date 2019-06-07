@@ -18,11 +18,11 @@
 
 {% if ok %}
 <div class="alert alert-success" role="alert">
-    Mise à jour lancée, attendez une dizaine de secondes...
+    {{target|capitalize}} : Mise à jour lancée, attendez une dizaine de secondes...
 </div>
 {% else %}
 <div class="alert alert-danger" role="alert">
-    Un problème est survenu en envoyant le signal au script de mise à jour.
+    {{target|capitalize}} : Un problème est survenu en écrivant le fichier de trigger.
 </div>
 {% endif %}
 <a href="/admin">

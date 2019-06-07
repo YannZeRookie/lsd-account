@@ -46,14 +46,16 @@ class AdminController
      * Trigger an update the website
      * This is done by sending a SIGUSR1 signal to the background script in charge of performing updates
      * @param $update_pid
+     * @param string $target 'web' or 'bot'
      */
-    static public function updateweb($update_pid)
+    static public function update($update_pid, $target)
     {
-        $ok = file_put_contents($update_pid, 'web');
+        $ok = file_put_contents($update_pid, $target);
 
         $debug = "";
         return [
             'debug' => print_r($debug, true),
+            'target' => $target,
             'ok' => $ok,
         ];
     }
