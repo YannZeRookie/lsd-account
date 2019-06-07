@@ -4,7 +4,7 @@
 #
 # This should be run as the `deploy` user
 
-PIDFILE=/tmp/lsd-update.pid
+PIDFILE=../cache/lsd-update.pid
 
 echo 'Started trigger monitoring'
 
