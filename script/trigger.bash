@@ -13,8 +13,8 @@ cd "$(dirname "$0")"
 while true; do
     sleep 2
     if [ -f $PIDFILE ]; then
-       mode=`cat PIDFILE`
+       mode=`cat $PIDFILE`
        ./update $mode
-       rm PIDFILE
+       rm -f $PIDFILE
     fi
 done
