@@ -92,3 +92,23 @@ p {
 nav .navbar-brand {
     width: 300px;
 }
+
+nav #cur_user {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 8px;
+    width: 250px;
+    font-size: 12px;
+    text-align: right;
+}
+
+nav #cur_user img {
+    display: inline;
+    height: 32px;
+    margin-right: 8px;
+}
+
+nav #cur_user a {
+    color: white;
+}

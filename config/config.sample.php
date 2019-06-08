@@ -3,6 +3,11 @@
 // Development?
 $development = true;
 
+// Development: If you want to be logged in without having to ask the Bot for a key,
+// or if you need to test a specific user, fill-in this variable:
+//$connect_force_user = USER_ID_HERE;
+
+
 // Slim
 $slim_debug = $development;
 

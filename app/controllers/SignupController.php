@@ -28,6 +28,7 @@ class SignupController
         }
 
         return [
+            '$cur_user' => $user,
             'session' => print_r($_SESSION,true),
             'user' => $user,
             'user_data' => print_r($user, true),

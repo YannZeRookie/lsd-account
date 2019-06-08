@@ -41,6 +41,12 @@
                 </li>
             </ul>
         </div>
+        <div id="cur_user">
+            {% if cur_user %}
+            <span class="avatar"><a href="/users/{{cur_user.id}}"><img src="{{cur_user.avatar}}"></a></span>
+            <span class="name"><a href="/users/{{cur_user.id}}">{{cur_user.discord_username|e}}</a></span>
+            {% endif %}
+        </div>
     </nav>
     <!-- header end -->
     {% endblock %}

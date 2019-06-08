@@ -14,7 +14,11 @@ $app->get('/', function () use ($app) {
 //-- Login and sign-up
 require_once 'controllers/LoginController.php';
 $app->get('/login/:key', function ($key) use ($app) {
-    $app->render('login.html', LoginController::login($key));
+    global $connect_force_user;
+    if (!isset($connect_force_user)) {
+        $connect_force_user = null;
+    }
+    $app->render('login.html', LoginController::login($key, $connect_force_user));
 });
 
 require_once 'controllers/SignupController.php';

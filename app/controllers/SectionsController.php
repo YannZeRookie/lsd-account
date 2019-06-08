@@ -37,6 +37,7 @@ class SectionsController
         //--
         $debug = '';
         return [
+            'cur_user' => $cur_user,
             'sections' => $sections,
             'debug' => print_r($debug, true),
         ];
@@ -50,11 +51,12 @@ class SectionsController
      */
     static public function edit($tag)
     {
-        self::checkAccess();
+        $cur_user = self::checkAccess();
         $section = Section::getSection($tag);
 
         $debug = '';
         return [
+            'cur_user' => $cur_user,
             'new_tag' => ($tag == 'new'),
             'section' => $section,
             'errors' => null,
@@ -64,7 +66,7 @@ class SectionsController
 
     static public function post($tag, $params = [])
     {
-        self::checkAccess();
+        $cur_user = self::checkAccess();
         $params = array_merge(['tag'=>'', 'name'=>'', 'archived'=>'0'], $params);
         $section = Section::getSection($tag) ?: new Section();
 
@@ -91,6 +93,7 @@ class SectionsController
 
         $debug = '';
         return [
+            'cur_user' => $cur_user,
             'new_tag' => ($tag == 'new'),
             'section' => $section,
             'errors' => $errors,

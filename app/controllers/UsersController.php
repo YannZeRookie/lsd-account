@@ -20,6 +20,7 @@ class UsersController
         //--
         $debug = '';
         return [
+            'cur_user' => $cur_user,
             'years' => self::buildYears(),
             'sections' => Section::getActiveSections(),
             'debug' => print_r($debug, true),
@@ -65,6 +66,7 @@ class UsersController
         //-- Search
         $users = $u->order('discord_username')->findAll();
         return [
+            'cur_user' => $cur_user,
             'users' => $users,
         ];
     }

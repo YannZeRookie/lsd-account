@@ -4,11 +4,12 @@
 {% block title %}Admin{% endblock %}
 {% block banner %}{% endblock %}
 
-{% block header %}
+{% block css %}
 <style>
     article {
         margin-top: 2em;
     }
+
     article pre {
         margin-left: 0;
         max-width: 800px;
@@ -45,12 +46,14 @@
     </a>
 </article>
 
-<h2>Migration de base de données:</h2>
-<ul>
-    {% for fi in db_files %}
-    <li>{{fi}}</li>
-    {% endfor %}
-</ul>
+<article>
+    <h3>Migration de base de données</h3>
+    <ul>
+        {% for fi in db_files %}
+        <li>{{fi}}</li>
+        {% endfor %}
+    </ul>
+</article>
 
 <pre>
 {{debug}}

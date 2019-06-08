@@ -15,21 +15,31 @@ class LoginController
 {
     const LOGIN_TTL = 600;
 
-    static public function login($key)
+    static public function login($key, $connect_force_user = null)
     {
         $login = new Login;
         //-- Clear old connection keys
         Login::execute('DELETE FROM lsd_login WHERE created_on < ?', [time() - self::LOGIN_TTL]);
 
-        //-- Find the connection key
-        $login_key = $login->equal('login_key', $key)->find();
-        if (!$login_key) {
-            return ['error' => 'Votre clé de connexion est invalide ou a expiré.
-            Re-demandez au LSD-Bot de vous créer un nouveau lien de connexion en tapant !connexion dans Discord.'];
-        }
-        //-- Find the user using his Discord ID
         $users = new User;
-        $user = $users->equal('discord_id', $login_key->discord_id)->find();
+        if ($connect_force_user)    {
+            $user = $users->find($connect_force_user);
+            if (!$user) {
+                return ['error' => 'Utilisateur forcé non trouvé : ' . $connect_force_user . '. Vérifiez votre base de données.'];
+            }
+            $_SESSION['user_id'] = $user->id;
+            \Slim\Slim::getInstance()->redirect('/');
+        } else {
+            //-- Find the connection key
+            $key = preg_replace('/\W/', '', $key);  // anti-poisoning
+            $login_key = $login->equal('login_key', $key)->find();
+            if (!$login_key) {
+                return ['error' => 'Votre clé de connexion est invalide ou a expiré.
+            Re-demandez au LSD-Bot de vous créer un nouveau lien de connexion en tapant !connexion dans Discord.'];
+            }
+            //-- Find the user using his Discord ID
+            $user = $users->equal('discord_id', $login_key->discord_id)->find();
+        }
 
         //-- If he's not found, create a User record
         if (!$user) {

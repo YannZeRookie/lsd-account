@@ -20,6 +20,8 @@ class AdminController
 
     static public function index($bot_folder)
     {
+        $cur_user = self::checkAccess();
+
         $debug = '';
 
         $log_web = shell_exec('git log -1');
@@ -36,6 +38,7 @@ class AdminController
 
         return [
             'debug' => print_r($debug, true),
+            'cur_user' => $cur_user,
             'log_web' => $log_web,
             'log_bot' => $log_bot,
             'db_files' => $db_files,
