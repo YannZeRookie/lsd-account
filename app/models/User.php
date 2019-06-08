@@ -14,6 +14,24 @@ class User extends LsdActiveRecord
     public $table = 'lsd_users';
 
     /**
+     * magic function to GET the values of current object.
+     * Address some fields when they are null
+     */
+    public function & __get($var)
+    {
+        $value = parent::__get($var);
+        if ($value === null) {
+            switch($var) {
+                case 'email':
+                case 'testimony':
+                    $value = '';
+            }
+        }
+        return $value;
+    }
+
+
+    /**
      * Check the data and return errors if any found.
      * Use before saving to database.
      * @return array List of: 'Human readable field name' => 'Human readable error message'
