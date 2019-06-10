@@ -16,4 +16,10 @@ fi
 if [ "$1" == "bot" ]; then
     cd ../../bot
     git pull --verbose
+    date > restart.ts
+fi
+
+if [ "$1" == "restart" ]; then
+    cd ../../bot
+    date > restart.ts
 fi
