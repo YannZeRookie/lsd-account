@@ -32,8 +32,8 @@ p {
 }
 
 
-.flash {
-    color: green;
+#flash {
+    margin: 1em;
 }
 
 /* From 0 to 629px */

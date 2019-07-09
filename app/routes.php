@@ -20,10 +20,29 @@ $app->get('/login/:key', function ($key) use ($app) {
     }
     $app->render('login.html', LoginController::login($key, $connect_force_user));
 });
+$app->get('/logout', function () use ($app) {
+    $app->render('', LoginController::logout());
+});
+
 
 require_once 'controllers/SignupController.php';
 $app->get('/signup', function () use ($app) {
     $app->render('signup.html', SignupController::signup());
+});
+$app->post('/signup', function () use ($app) {
+    $app->render('signup.html', SignupController::signup($app->request()->post()));
+});
+$app->get('/signup/pending', function () use ($app) {
+    $app->render('signup_pending.html', SignupController::pending());
+});
+$app->get('/signup/refused', function () use ($app) {
+    $app->render('signup_refused.html', SignupController::refused());
+});
+$app->get('/signup/vb', function () use ($app) {
+    $app->render('signup_vb.html', SignupController::signupVB());
+});
+$app->post('/signup/vb', function () use ($app) {
+    $app->render('signup_vb.html', SignupController::signupVBPost($app->request()->post()));
 });
 
 //-- Users CRUD

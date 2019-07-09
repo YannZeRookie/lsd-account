@@ -252,7 +252,7 @@ class UsersController
         }
 
         //-- Roles
-        if ($cur_user->_highest_level > $user->_highest_level) {  // You can change roles only for people under yourself
+        if ($cur_user->_highest_level > $user->_highest_level && isset($params['role'])) {  // You can change roles only for people under yourself
             if ($user->isConseiller() && $params['role'] == Role::kScorpion) { // Are we degrading a Conseiller?
                 $user->removeRole(Role::kConseiller);   // I feel sad that I could not find a cleaner way to do this
             }

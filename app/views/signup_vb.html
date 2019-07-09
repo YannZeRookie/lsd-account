@@ -1,0 +1,39 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Inscription{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block content %}
+<h1>Bienvenue {{cur_user.discord_username}} !</h1>
+
+<article>
+    <p>Pour récupérer tous tes privilèges et rôles, entre ton identifiant et mot de passe du forum :</p>
+    <form method="post" style="margin-left: 2em;">
+        {% if errors %}
+        <div class="errorExplanation">
+            <h2>Erreur</h2>
+            <ul>
+                {% for v in errors %}
+                    <li>{{v}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <div class="form-group">
+            <label for="vb_login">Pseudo ou E-mail :</label>
+            <input type="text" class="form-control col-sm-4 {% if errors.vb_login %}is-invalid{% endif %}" id="vb_login" name="vb_login" placeholder="Pseudo ou E-mail forum" value="{{vb_login|e}}">
+        </div>
+        <div class="form-group">
+            <label for="vb_password">Mot de passe</label>
+            <input type="password" class="form-control col-sm-4 {% if errors.vb_password %}is-invalid{% endif %}" id="vb_password" name="vb_password" aria-describedby="vb_password_help"
+                   placeholder="Mot de passe forum">
+            <small id="vb_password_help" class="form-text text-muted">Au secours, <a
+                    href="http://www.scorpions-du-desert.com/lostpw">j'ai oublié mon mot de passe forum</a></small>
+        </div>
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+    </form>
+
+</article>
+<pre>{{debug}}</pre>
+{% endblock %}

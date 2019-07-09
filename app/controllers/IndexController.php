@@ -20,9 +20,14 @@ class IndexController
         }
 
         //-- Depending on the type of users, we redirect to one page or another:
+        //   - Not a Scorpion -> inscription or pending page if already submited
         //   - Regular user -> their own page
         //   - Privileged user (officer and above...) -> users list
-        if (UsersController::canListUsers($cur_user->id)) {
+        if (!$cur_user->isScorpion()) {
+            // TODO if already submited, go to /signup/pending
+            \Slim\Slim::getInstance()->redirect('/signup');
+        }
+        elseif (UsersController::canListUsers($cur_user->id)) {
             \Slim\Slim::getInstance()->redirect('/users');
         }
         \Slim\Slim::getInstance()->redirect('/users/' . $cur_user->id);

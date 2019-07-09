@@ -1,0 +1,19 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Inscription{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<h1>Inscription de {{cur_user.discord_username}} en attente de validation</h1>
+
+<article>
+    <p>Ton inscription a bien été enregistrée et est en attente de validation d'un officier.</p>
+    <p>Un message a été envoyé aux officiers de la Guilde pour qu'ils valident ta candidature.</p>
+    <p>À bientôt !</p>
+    <p>- Les Scorpions du Désert</p>
+</article>
+{% endblock %}

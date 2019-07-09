@@ -4,23 +4,85 @@
 {% block title %}Inscription{% endblock %}
 {% block banner %}{% endblock %}
 
+{% block css %}
+<style>
+    #already_scorpion {
+        padding: 1em;
+        float: right;
+        border: 1px solid gray;
+        background-color: #EEEEEE;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<img src="{{user.avatar}}" >
-<h1>Bienvenue {{user.discord_username}} !</h1>
+<h1>Inscription de {{cur_user.discord_username}} !</h1>
 
 <article>
-    <p>Devenir Scorpion, ça se mérite (un peu) !</p>
-    <p>Il va te falloir remplir quelques infos :</p>
+    <p>Devenir Scorpion, ça se mérite (un peu) ! Il va te falloir remplir quelques infos...</p>
 
-    <p>Session:</p>
-    <pre>
-        {{session}}
-    </pre>
+    <div class="row">
+        <div class="col-sm">
+            <form method="post" style="">
+                {% if errors %}
+                <div class="errorExplanation">
+                    <h2>Erreur</h2>
+                    <ul>
+                        {% for v in errors %}
+                        <li>{{v}}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <label for="testimony">Parle-nous un peu de toi et pourquoi tu veux rejoindre les Scorpions du
+                        Désert. En particulier quelle Section (jeu) tu souhaites rejoindre :</label>
+                    <textarea class="form-control {% if errors.testimony %}is-invalid{% endif %}" id="testimony"
+                              name="testimony" rows="3" required>{{params.testimony|e}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="age">Ton age :</label>
+                    <input type="text" class="form-control {% if errors.age %}is-invalid{% endif %}" id="age" name="age"
+                           value="{{params.age|e}}" required pattern="\d+" min="0" max="100" size="4" maxlength="3"
+                           style="width:auto">
+                    <small class="form-text text-muted">
+                        Cette information est nécessaire pour des raisons légales, mais elle ne sera pas conservée.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Ton e-mail :</label>
+                    <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}" id="email"
+                           name="email" value="{{params.email|e}}">
+                    <small class="form-text text-muted">
+                        À remplir si tu veux recevoir notre newsletter (un ou deux envois par an seulement, par exemple pour l'AG de l'association). Ton adresse ne sera partagée avec personne.
+                    </small>
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="charte">Attention, c'est important ! Lis attentivement <a
+                            href="http://accueil.scorpions-du-desert.com/la-guilde/charte-de-la-guilde" target="_blank">la
+                        Charte des Scorpions du Désert</a> avant de valider ce formulaire (cela te prendra moins d'une
+                        minute), et confirme que tu l'as bien
+                        lu ci-dessous :</label>
+                    <input type="text" class="form-control {% if errors.charte %}is-invalid{% endif %}" id="charte"
+                           name="charte" value="{{params.charte|e}}" required>
+                    <small class="form-text text-muted">
+                        Recopie : <i>J'ai lu et j'accepte la charte</i>
+                    </small>
+                </div>
+                <button type="submit" class="btn btn-primary">C'est parti !</button>
+            </form>
+        </div>
+        <div id="already_scorpion" class="col-sm-5">
+            <p>Attention ! Si tu es déjà un(e) Scorpion et que tu as un compte sur le forum, connecte-toi avec ces
+                identifiants ! Ainsi tu récupéreras tous tes privilèges et rôles sans repasser par la procédure
+                d'inscription :</p>
+            <div style="text-align: center"><a href="/signup/vb">
+                <button class="btn btn-primary">Oui, je suis déjà un(e) Scorpion, sortez-moi de là ! &raquo;</button>
+            </a></div>
+        </div>
+    </div>
 
-    <p>User:</p>
-    <pre>
-        {{user_data}}
-    </pre>
 
 </article>
 {% endblock %}

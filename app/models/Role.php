@@ -103,6 +103,26 @@ class Role extends LsdActiveRecord
         return false;
     }
 
+    static public function importVBRoles(Array $vb_groups, $user_id)
+    {
+        foreach ($vb_groups as $vb_group) {
+            switch ($vb_group) {
+                case '17': // Scorpions
+                    self::setRole($user_id, Role::kScorpion);
+                case '19': // Conseiller
+                    self::setRole($user_id, Role::kConseiller);
+                case '30': // Gestionnaire de communauté
+                    self::setRole($user_id, Role::kCM);
+                default:
+                    // Look in Sections
+                    $s = Section::findByVBGroup($vb_group);
+                    if ($s) {
+                        self::setSectionMembership($user_id, $s['tag'], $s['membre'], $s['officier']);
+                    }
+            }
+        }
+    }
+
     /**
      * Is the user a Scorpion?
      * @param $user_id
@@ -223,7 +243,7 @@ class Role extends LsdActiveRecord
         $rr = new Role;
         $roles = $rr->equal('user_id', $user_id)->findAll();
         $roles_table = self::getRolesTable(true, true, true);
-        foreach($roles as $role) {
+        foreach ($roles as $role) {
             $r = ($role->role == self::kAdherent) ? (self::kAdherent . '_' . $role->extra) : $role->role;
             $res[$r] = $roles_table[$role->role]['name'] . (($role->role == self::kAdherent) ? ' ' . $role->extra : '');    // This will also de-duplicate the list
         }
@@ -430,6 +450,17 @@ class Role extends LsdActiveRecord
     {
         return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
     }
+
+    /**
+     * Can a user manage Sections?
+     * @param $user_id
+     * @return bool
+     */
+    static public function canManageSections($user_id)
+    {
+        return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kAdmin]);
+    }
+
 
     /**
      * Is user Adherent for a specific year?

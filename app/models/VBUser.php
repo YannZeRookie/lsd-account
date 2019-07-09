@@ -10,5 +10,6 @@ require_once __DIR__ . '/LsdActiveRecord.php';
 
 class VBUser extends LsdActiveRecord {
     public $table = 'vb_user';
+    public $primaryKey = 'userid';
 
 }

@@ -22,6 +22,7 @@ ActiveRecord::setDb(new PDO("mysql:host={$db_host};port={$db_port};dbname={$db_d
 require_once __DIR__ . '/libs/Discord.php';
 Discord::init($discord_api, $discord_bot_token, $discord_guild_id);
 
+# Slim: see http://www.slimframework.com/docs/v2/
 # Create app
 $app = new \Slim\Slim([
     'mode' => ($development ? 'development' : 'production'),

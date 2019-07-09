@@ -21,14 +21,41 @@ Faire des requêtes à l'API à la main
 
 ```
 http https://discordapp.com/api/users/233116506332856320 'Authorization: Bot <bot_token>'
-```
-
 {
     "avatar": "37d7f00b580a6f4fd09641f2d06f4027",
     "discriminator": "4664",
     "id": "233116506332856320",
     "username": "TotorO"
 }
+```
+
+    YannZeRookie: 381178649480658948
+    YannZeGrunt: 404722937183076354
+    YannZeScorpion: 407273313484931073
+
+```
+http https://discordapp.com/api/users/381178649480658948 'Authorization: Bot <bot_token>'
+{
+    "avatar": "15e8639f1fe7edf3199aafe955061452",
+    "discriminator": "9646",
+    "id": "381178649480658948",
+    "username": "[LSD] YannZeRookie"
+}
+
+http https://discordapp.com/api/users/404722937183076354 'Authorization: Bot <bot_token>'
+{
+    "avatar": null,
+    "discriminator": "5874",
+    "id": "404722937183076354",
+    "username": "YannZeGrunt"
+}
+
+-- Create a fake login key:
+INSERT INTO lsd_login SET login_key='test', created_on=unix_timestamp(), discord_id='404722937183076354', discord_username='YannZeGrunt', discord_discriminator='5874', discord_avatar=null;
+
+http://localhost:8080/login/test
+
+```
 
 To-do
 =====

@@ -1,0 +1,24 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Inscription{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+<h1>Inscription de {{cur_user.discord_username}} : refusée</h1>
+
+<article>
+    <p>Nous sommes désolés, mais après un examen attentif, ton inscription chez les Scorpions du Désert a été
+        refusée.</p>
+    <p>Généralement un tel refus vient d'un problème avec l'age (nous ne pouvons pas accepter les mineurs) ou d'une
+        incompatibilité de la candidature avec <a
+                href="http://accueil.scorpions-du-desert.com/la-guilde/charte-de-la-guilde" target="_blank">la
+            Charte des Scorpions du Désert</a>.</p>
+    <p>Nous en sommes désolés, sans doute trouveras-tu ailleurs une Guilde mieux adaptée à ton profil ?</p>
+    <p>Bonne continuation,</p>
+    <p>- Les Scorpions du Désert</p>
+</article>
+{% endblock %}

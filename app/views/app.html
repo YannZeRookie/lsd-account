@@ -24,21 +24,28 @@
     {% block header %}
     <!-- header begin -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a href="http://www.scorpions-du-desert.com/" title="Retourner sur le site des LSD"><img class="navbar-brand" src="/img/LSD_Logo_bleu-HD.png" /></a>
+        <a href="http://www.scorpions-du-desert.com/" title="Retourner sur le site des LSD"><img class="navbar-brand"
+                                                                                                 src="/img/LSD_Logo_bleu-HD.png"/></a>
         <div class="">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="/users">Utilisateurs</a>
                 </li>
+                {% if cur_user.canManageSections %}
                 <li class="nav-item">
                     <a class="nav-link" href="/sections">Sections</a>
                 </li>
+                {% endif %}
+                {% if cur_user.isScorpion %}
                 <li class="nav-item">
                     <a class="nav-link" href="/adherer">Adhérer</a>
                 </li>
+                {% endif %}
+                {% if cur_user.isAdmin %}
                 <li class="nav-item">
                     <a class="nav-link" href="/admin">Administration</a>
                 </li>
+                {% endif %}
             </ul>
         </div>
         <div id="cur_user">
@@ -52,10 +59,28 @@
     {% endblock %}
 </header>
 
-<section id="content">
-    {% if flash_notice %}
-    <aside class="flash">{{flash_notice}}</aside>
+<section id="flash">
+    {% if flash.primary %}
+    <div class="alert alert-primary" role="alert">{{flash.primary}}</div>
     {% endif %}
+    {% if flash.info %}
+    <div class="alert alert-info" role="alert">{{flash.info}}</div>
+    {% endif %}
+    {% if flash.success %}
+    <div class="alert alert-success" role="alert">{{flash.success}}</div>
+    {% endif %}
+    {% if flash.danger %}
+    <div class="alert alert-danger" role="alert">{{flash.danger}}</div>
+    {% endif %}
+    {% if flash.error %}
+    <div class="alert alert-danger" role="alert">{{flash.error}}</div>
+    {% endif %}
+    {% if flash.warning %}
+    <div class="alert alert-warning" role="alert">{{flash.warning}}</div>
+    {% endif %}
+</section>
+
+<section id="content">
     {% block content %}{% endblock %}
 </section>
 
@@ -85,7 +110,7 @@
     <script>
         $(function () {
             var pathname = window.location.pathname;
-            $('nav a.nav-link').each(function() {
+            $('nav a.nav-link').each(function () {
                 if (pathname.startsWith($(this).attr('href'))) {
                     $(this).parent().addClass('active');
                 }

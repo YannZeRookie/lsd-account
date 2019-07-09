@@ -66,7 +66,7 @@ class LoginController
         //-- Update the Discord info if needed
         $user->discord_username = $login_key->discord_username;
         $user->discord_discriminator = $login_key->discord_discriminator;
-        $user->discord_avatar = $login_key->discord_avatar;
+        $user->discord_avatar = $login_key->discord_avatar ?: '';
         $user->update();
 
         //-- Go to the main page if we have a Scorpion. Otherwise go to sign-up
@@ -85,21 +85,10 @@ class LoginController
         ];
     }
 
-    static protected function checkVBcredentials($vb_user, $vb_username, $vb_pwd)
+    static public function logout()
     {
-        //-- Check user
-        $vb_users = new VBUser;
-        $vb_user = $vb_users->equal('username', $vb_username)->find();
-        if (!$vb_user) {
-            return false;
-        }
-
-        //-- Check password
-        $salt = 'D5bMc5EY7CIiLIyK28PyaJ4mfZiOGq3J';
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $pwd = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $salt, $vb_pwd, MCRYPT_MODE_ECB, $iv));
-        $pwd_md5 = md5($pwd);
-        return password_verify($pwd_md5, $vb_user->token);
+        $_SESSION['user_id'] = null;
+        \Slim\Slim::getInstance()->redirect('/');
     }
+
 }

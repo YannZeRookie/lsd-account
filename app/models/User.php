@@ -101,10 +101,14 @@ class User extends LsdActiveRecord
      */
     public function avatar()
     {
-        if (preg_match('/$a_/', $this->discord_avatar)) {
-            return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.gif";
+        if ($this->discord_avatar) {
+            if (preg_match('/$a_/', $this->discord_avatar)) {
+                return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.gif";
+            } else {
+                return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.png";
+            }
         } else {
-            return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.png";
+            return '';
         }
     }
 
@@ -180,6 +184,15 @@ class User extends LsdActiveRecord
     public function getHighestRoleLevel()
     {
         return Role::getRoleLevel($this->getHighestRole());
+    }
+
+    /**
+     * Can the user manage Sections?
+     * @return mixed
+     */
+    public function canManageSections()
+    {
+        return Role::canManageSections($this->id);
     }
 
     /**
