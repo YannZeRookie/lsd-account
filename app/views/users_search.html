@@ -1,7 +1,7 @@
 {% for u in users %}
 <tr>
     <td nowrap class="account">
-        <img src="{{u.avatar}}">
+        {% if u.avatar %}<img src="{{u.avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
         <a href="/users/{{u.id}}?returnto=/users">{{u.discord_username|e}}</a>
     </td>
     <td>{{u.roles}}</td>

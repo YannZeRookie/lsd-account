@@ -21,7 +21,7 @@ class User extends LsdActiveRecord
     {
         $value = parent::__get($var);
         if ($value === null) {
-            switch($var) {
+            switch ($var) {
                 case 'email':
                 case 'testimony':
                     $value = '';
@@ -231,7 +231,7 @@ class User extends LsdActiveRecord
             $belongs = $this->belongsToSection($section->tag);
             if ($belongs == Role::kMembre) {
                 $res[] = $section->tag;
-            }  elseif ($belongs == Role::kOfficier) {
+            } elseif ($belongs == Role::kOfficier) {
                 $res[] = $section->tag . '*';
             }
         }
@@ -250,6 +250,16 @@ class User extends LsdActiveRecord
     {
         Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $oldRole);
     }
+
+    /**
+     * Can the user review candidates?
+     * @return bool
+     */
+    public function canReviewUsers()
+    {
+        return Role::canReviewUsers($this->id);
+    }
+
 
     /**
      * Get the VB login names - if there was an original VB account

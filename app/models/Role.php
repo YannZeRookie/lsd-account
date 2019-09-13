@@ -461,6 +461,15 @@ class Role extends LsdActiveRecord
         return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kAdmin]);
     }
 
+    /**
+     * Can a user review candidates?
+     * @param $user_id
+     * @return bool
+     */
+    static public function canReviewUsers($user_id)
+    {
+        return Role::hasAnyRole($user_id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]);
+    }
 
     /**
      * Is user Adherent for a specific year?

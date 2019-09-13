@@ -8,6 +8,7 @@
 
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Role.php';
+require_once __DIR__ . '/../models/Section.php';
 
 class SignupController
 {
@@ -33,9 +34,13 @@ class SignupController
         $errors = [];
 
         if (count($params)) {
+            //-- Check values
             $params = array_merge(['testimony' => '', 'age' => 0, 'charte' => '', 'email' => ''], $params);
             if (strlen($params['testimony']) < 16) {
                 $errors['testimony'] = 'Ta description est un peu courte, grand timide va !';
+            }
+            if (empty($params['section'])) {
+                $errors['section'] = 'Choisis une Section ou "Jeux du moment"';
             }
             if (intval($params['age']) < 6) {
                 $errors['age'] = 'Moins de 6 ans, vraiment ?';
@@ -43,13 +48,26 @@ class SignupController
             if (strpos($params['charte'], 'lu') === false || strpos($params['charte'], 'accepte') === false || strpos($params['charte'], 'charte') === false) {
                 $errors['charte'] = 'Tu as mal rédigé ton acceptation, essaye encore (c\'est un jeu) !';
             }
+            $params['pseudo'] = trim($params['pseudo']);
 
             if (count($errors) == 0) {
                 // Accepted form, update the database
                 $cur_user->testimony = $params['testimony'];
                 $cur_user->minor = (intval($params['age']) < 18) ? 1 : 0;
                 $cur_user->email = $params['email'];
+                $cur_user->submited_on = time();
                 $cur_user->save();
+                // If a Section was selected, attach it to the user
+                if ($params['section'] && $params['section'] != 'JDM') {
+                    $r = new Role;
+                    $r->user_id = $cur_user->id;
+                    $r->role = Role::kMembre;
+                    $r->extra = $params['section'];
+                    if ($params['pseudo']) {
+                        $r->extra2 = $params['pseudo'];
+                    }
+                    $r->insert();
+                }
                 // TODO: send a message to Discord in the "Conseil des Jeux" channel with a link
                 // Done, thank you and bye
                 \Slim\Slim::getInstance()->flash('success', 'Ta candidature a bien été enregistrée, merci !');
@@ -59,6 +77,7 @@ class SignupController
 
         return [
             'cur_user' => $cur_user,
+            'sections' => Section::getActiveSections(),
             'params' => $params,
             'errors' => $errors,
         ];

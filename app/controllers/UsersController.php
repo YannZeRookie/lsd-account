@@ -135,6 +135,18 @@ class UsersController
         $user->_adherent_cy = Role::isAdherent($user->id, $years['current']);
         $user->_adherent_ny = Role::isAdherent($user->id, $years['next']);
         $user->_cm = Role::isCM($user->id);
+        if ($user->reviewer_id) {
+            $uu = new User;
+            $user->_reviewer = $uu->find($user->reviewer_id);
+        } else {
+            $user->_reviewer = false;
+        }
+        if ($user->vb_id) {
+            $vb = new VBUser;
+            $user->_vb_user = $vb->find($user->vb_id);
+        } else {
+            $user->_vb_user = false;
+        }
         return $user;
     }
 
@@ -211,7 +223,10 @@ class UsersController
         //-- Get edited user
         $user = self::getTargetUser($id);
 
-        $debug = '';
+        $query = \Slim\Slim::getInstance()->request()->get();
+        $returnto = isset($query['returnto']) ? $query['returnto'] : false;
+
+            $debug = '';
         return [
             'user' => $user,
             'cur_user' => $cur_user,
@@ -221,6 +236,7 @@ class UsersController
             'sections' => self::buildSectionsTable($user),
             'year' => self::buildYears(),
             'errors' => null,
+            'returnto' => $returnto,
             'debug' => print_r($debug, true),
         ];
     }
@@ -284,10 +300,11 @@ class UsersController
         }
 
         //-- Check if we are supposed to return somewhere
+        $query = \Slim\Slim::getInstance()->request()->get();
+        $returnto = isset($query['returnto']) ? $query['returnto'] : false;
         if (count($errors) == 0) {
-            $query = \Slim\Slim::getInstance()->request()->get();
-            if (!empty($query['returnto'])) {
-                \Slim\Slim::getInstance()->redirect($query['returnto']);
+            if ($returnto) {
+                \Slim\Slim::getInstance()->redirect($returnto);
             }
         }
 
@@ -304,8 +321,69 @@ class UsersController
             'sections' => self::buildSectionsTable($user),
             'year' => $years,
             'errors' => $errors,
+            'returnto' => $returnto,
             'debug' => print_r($debug, true),
         ];
 
     }
+
+    static public function canReviewUsers()
+    {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user || !$cur_user->canReviewUsers()) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+        return $cur_user;
+    }
+
+
+    /**
+     * Review candidates
+     * @return array
+     */
+    static public function review()
+    {
+        $cur_user = self::canReviewUsers();
+        //--
+        $u = new User;
+        $users = $u->select('distinct(lsd_users.id) as uid, lsd_users.*')
+            ->notequal('submited_on', 0)
+            ->equal('reviewed_on', 0)
+            ->order('discord_username')
+            ->findAll();
+
+        $debug = '';
+        return [
+            'cur_user' => $cur_user,
+            'users' => $users,
+            'debug' => print_r($debug, true),
+        ];
+    }
+
+    /**
+     * Accept or refuse a candidate
+     * @param $id
+     * @param $params
+     */
+    static public function reviewUser($id, $params)
+    {
+        $cur_user = self::canReviewUsers();
+        $u = new User;
+        $target_user = $u->notequal('submited_on', 0)->equal('reviewed_on', 0)->find($id);
+        if ($target_user) {
+            $target_user->reviewed_on = time();
+            $target_user->review = $params['review'];
+            $target_user->reviewer_id = $cur_user->id;
+            $target_user->save();
+            if (isset($params['validate'])) {
+                $target_user->setRole(Role::kScorpion); // Note that this will automatically remove kInvite and kVisiteur :-)
+                // TODO: grant Scorpion role on Discord (and remove Invite)
+            }
+            // TODO send a message to the user by Discord
+        }
+        \Slim\Slim::getInstance()->redirect('/users/review');
+        return [];
+    }
+
+
 }

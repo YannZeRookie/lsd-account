@@ -4,10 +4,57 @@
 {% block title %}Info utilisateur{% endblock %}
 {% block banner %}{% endblock %}
 
+{% block css %}
+<style>
+    #avatar img {
+        float: left;
+        max-width: 48px;
+        margin-right: 1em;
+    }
+
+    #other_roles {
+        margin-top: 2em;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 {% if user %}
-<img src="{{user.avatar}}" style="float: left;">
-<h1>{{user.discord_username|e}}</h1>
+
+<div class="row">
+    <div class="col-sm">
+        <span id="avatar">{% if user.avatar %}<img src="{{user.avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}</span>
+        <h1>{{user.discord_username|e}}</h1>
+    </div>
+    <div class="col-sm-5">
+        <div class="row">
+            <div class="col-sm-3">Création&nbsp;:</div>
+            <div class="col">{{ user.created_on|date('d/m/Y') }}</div>
+            {% if user.submited_on %}
+            <div class="w-100"></div>
+            <div class="col-sm-3">Candidature&nbsp;:</div>
+            <div class="col">{{ user.submited_on|date('d/m/Y') }}</div>
+            {% endif %}
+            {% if user.reviewed_on %}
+            <div class="w-100"></div>
+            <div class="col-sm-3">{% if user.isScorpion %}Validation{% else %}Refus{% endif %}&nbsp;:</div>
+            <div class="col">{{ user.reviewed_on|date('d/m/Y') }} {% if user._reviewer %} par {{
+                user._reviewer.discord_username }}{% endif %}
+            </div>
+            {% endif %}
+            <div class="w-100"></div>
+            <div class="col-sm-3">Majeur&nbsp;:</div>
+            <div class="col">{% if user.minor %}&#10060;{% else %}&#9989;{% endif %}</div>
+            {% if user._vb_user %}
+            <div class="w-100"></div>
+            <div class="col-sm-3">Pseudo VB&nbsp;:</div>
+            <div class="col">{{ user._vb_user.username|e}}</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
 <form method="post" style="clear:both;">
     {% if errors %}
     <div class="errorExplanation">
@@ -20,62 +67,95 @@
     </div>
     {% endif %}
 
-    <h2>Message de candidature :</h2>
-    <p>{{user.testimony|e}}</p>
+    {% if user.testimony %}
+    <h4>Message de candidature :</h4>
+    <p class="col-sm-6" style="border:1px solid lightgray; padding:8px; font-style:italic;">
+        {{user.testimony|e|nl2br}}</p>
+    {% endif %}
 
     {# Example of restricted display: only Admins or myself can see the user's e-mail #}
     {% if can_change_email == 'full' %}
-    <p>E-mail: <input type="text" name="email" value="{{user.email|e}}"></p>
+    <p class="col-sm-6">E-mail: <input type="text" name="email" value="{{user.email|e}}"><br>
+        <span class="small">Entrez votre e-mail pour recevoir la Newsletter (un ou deux envois par an).<br>Nous ne communiquerons à personne votre adresse.</span>
+    </p>
     {% elseif can_change_email == 'checkbox' %}
-        {# Conseillers can only turn the newsletter option off. Which deletes the e-mail from the table #}
-        {% if user.email %}
-            <p><input type="checkbox" name="newsletter" value="1" checked> Newsletter</p>
-        {% else %}
-            <p>Non inscrit à la mailing list</p>
-        {% endif %}
+    {# Conseillers can only turn the newsletter option off. Which deletes the e-mail from the table #}
+    {% if user.email %}
+    <p><input type="checkbox" name="newsletter" value="1" checked> Newsletter</p>
+    {% else %}
+    <p>Non inscrit à la Newsletter</p>
+    {% endif %}
     {% endif %}
 
-    <div id="roles">
-        Rôle :<br>
-        {% for r in roles_table %}
-            <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{% endif %} {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
-        {% endfor %}
-    </div>
-    <div id="bureau">
-        Bureau :
-        <select name="bureau" {% if not(cur_user.isAdmin) %}disabled{% endif %}>
-            <option value="" {% if not(user.isBureau) %}selected{% endif %}>-</option>
-            {% for r in bureau_table %}
-            <option value="{{r.role}}" {% if r.selected %}selected{% endif %}>{{r.name}}</option>
-            {% endfor %}
-        </select>
+    <div class="row">
+        <div class="col">
+            <div id="roles">
+                <h4>Rôle</h4>
+                {% for r in roles_table %}
+                <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{%
+                              endif
+                              %}
+                              {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
+                {% endfor %}
+            </div>
+            <div id="bureau">
+                Bureau :
+                <select name="bureau" {% if not(cur_user.isAdmin) %}disabled{% endif %}>
+                    <option value="" {% if not(user.isBureau) %}selected{% endif %}>-</option>
+                    {% for r in bureau_table %}
+                    <option value="{{r.role}}" {% if r.selected %}selected{% endif %}>{{r.name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="other_roles">
+                Adhérent :
+                <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %}
+                              {% if
+                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
+                <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %}checked{% endif %}
+                              {% if
+                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
+                <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %}
+                              {% if
+                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
+                <br>
+                <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if
+                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de
+                    communauté</label><br>
+            </div>
+        </div>
+
+        <div id="sections" class="col">
+            <h4>Sections</h4>
+            <table>
+                <tr>
+                    <th title="Membre">M</th>
+                    <th title="Officier">O</th>
+                    <th></th>
+                </tr>
+                {% for s in sections %}
+                <tr>
+                    <td><input type="checkbox" name="{{s.tag}}_M" {% if s._belong=='membre' %}checked{% endif %} {% if
+                               not(cur_user._canNameMembres) %}disabled{% endif %} title="Membre {{s.name|e}}"></td>
+                    <td><input type="checkbox" name="{{s.tag}}_O" {% if s._belong=='officier' %}checked{% endif %} {% if
+                               not(cur_user._canNameOfficiers) %}disabled{% endif %} title="Officier {{s.name|e}}"></td>
+                    <td>{{s.name|e}} ({{s.tag}})</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
-    <div id="sections">
-        Sections :<br>
-        <table>
-            <tr><th>M</th><th>O</th><th>Section</th></tr>
-            {% for s in sections %}
-            <tr>
-                <td><input type="checkbox" name="{{s.tag}}_M" {% if s._belong=='membre' %}checked{% endif %} {% if not(cur_user._canNameMembres) %}disabled{% endif %}></td>
-                <td><input type="checkbox" name="{{s.tag}}_O" {% if s._belong=='officier' %}checked{% endif %} {% if not(cur_user._canNameOfficiers) %}disabled{% endif %}></td>
-                <td>{{s.name|e}} ({{s.tag}})</td>
-            </tr>
-            {% endfor %}
-        </table>
+    <div class="row justify-content-center">
+        <div clas="col">
+            {% if returnto %}
+            <a href="{{returnto}}">
+                <button class="btn btn-secondary" type="button" style="margin-right:4em;">Annuler</button>
+            </a>
+            {% endif %}
+            <button class="btn btn-primary" type="submit">Mettre à jour</button>
+        </div>
     </div>
-
-    <div id="other_roles">
-        Autres :<br>
-        Adhérent :
-            <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
-            <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
-            <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
-        <br>
-        <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
-    </div>
-
-    <button class="btn btn-primary" type="submit">Mettre à jour</button>
 </form>
 {% else %}
 <p class="errorExplanation">Erreur : cet utilisateur n'existe pas.</p>

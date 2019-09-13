@@ -55,10 +55,16 @@ $app->get('/users', function () use ($app) {
 $app->get('/users/search', function () use ($app) {
     $app->render('users_search.html', UsersController::search($app->request()->get()));
 });
+$app->get('/users/review', function () use ($app) {
+    $app->render('users_review.html', UsersController::review());
+});
+$app->post('/users/review/:id', function ($id) use ($app) {
+    $app->render('', UsersController::reviewUser($id, $app->request()->post()));
+})->conditions(array('id' => '\d+'));
 // User View (GET)
 $app->get('/users/:id', function ($id) use ($app) {
     $app->render('users_view.html', UsersController::view($id));
-});
+})->conditions(array('id' => '\d+'));
 // User Change (POST)
 $app->post('/users/:id', function ($id) use ($app) {
     $app->render('users_view.html', UsersController::post($id, $app->request()->post()));

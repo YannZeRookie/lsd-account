@@ -20,12 +20,18 @@ class IndexController
         }
 
         //-- Depending on the type of users, we redirect to one page or another:
-        //   - Not a Scorpion -> inscription or pending page if already submited
+        //   - Not a Scorpion -> inscription or pending or refused page if already submitted
         //   - Regular user -> their own page
         //   - Privileged user (officer and above...) -> users list
         if (!$cur_user->isScorpion()) {
-            // TODO if already submited, go to /signup/pending
-            \Slim\Slim::getInstance()->redirect('/signup');
+            if ($cur_user->submited_on == 0) {
+                \Slim\Slim::getInstance()->redirect('/signup'); // Enter the submission flow
+            } elseif ($cur_user->reviewed_on == 0) {
+                \Slim\Slim::getInstance()->redirect('/signup/pending'); // Submitted but not reviewed yet
+            } else {
+                // Submitted, reviewed and not a Scorpion? Then it means a refusal
+                \Slim\Slim::getInstance()->redirect('/signup/refused');
+            }
         }
         elseif (UsersController::canListUsers($cur_user->id)) {
             \Slim\Slim::getInstance()->redirect('/users');

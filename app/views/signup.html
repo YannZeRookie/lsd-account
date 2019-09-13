@@ -12,6 +12,9 @@
         border: 1px solid gray;
         background-color: #EEEEEE;
     }
+    p {
+        padding-left: 0;
+    }
 </style>
 {% endblock %}
 
@@ -36,9 +39,29 @@
                 {% endif %}
                 <div class="form-group">
                     <label for="testimony">Parle-nous un peu de toi et pourquoi tu veux rejoindre les Scorpions du
-                        Désert. En particulier quelle Section (jeu) tu souhaites rejoindre :</label>
+                        Désert :</label>
                     <textarea class="form-control {% if errors.testimony %}is-invalid{% endif %}" id="testimony"
                               name="testimony" rows="3" required>{{params.testimony|e}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="section">Section (jeu) que tu souhaites rejoindre :</label>
+                    <select id="section" name="section" class="custom-select {% if errors.section %}is-invalid{% endif %}">
+                        <option value="">Choisis une Section</option>
+                        {% for s in sections %}
+                        <option value="{{s.tag}}" {% if params.section==s.tag %}selected{% endif %}>{{s.name|e}}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-text text-muted">
+                        Si tu ne rejoins pas de Section particulière, choisis "Jeux du moment".
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="pseudo">Pseudo en jeu, si différent de ton pseudo habituel :</label>
+                    <input type="text" class="form-control" id="pseudo" name="pseudo"
+                           value="{{params.pseudo|e}}" >
+                    <small class="form-text text-muted">
+                        Cela permettra aux Officiers de ta Section de te retrouver.
+                    </small>
                 </div>
                 <div class="form-group">
                     <label for="age">Ton age :</label>
@@ -54,32 +77,37 @@
                     <input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}" id="email"
                            name="email" value="{{params.email|e}}">
                     <small class="form-text text-muted">
-                        À remplir si tu veux recevoir notre newsletter (un ou deux envois par an seulement, par exemple pour l'AG de l'association). Ton adresse ne sera partagée avec personne.
-                    </small>
+                        À remplir si tu veux recevoir notre newsletter (un ou deux envois par an seulement, par exemple
+                        pour l'AG de l'association). Ton adresse ne sera partagée avec personne.
                     </small>
                 </div>
                 <div class="form-group">
                     <label for="charte">Attention, c'est important ! Lis attentivement <a
                             href="http://accueil.scorpions-du-desert.com/la-guilde/charte-de-la-guilde" target="_blank">la
                         Charte des Scorpions du Désert</a> avant de valider ce formulaire (cela te prendra moins d'une
-                        minute), et confirme que tu l'as bien
-                        lu ci-dessous :</label>
+                        minute), et confirme que tu l'as bien lue ci-dessous :</label>
                     <input type="text" class="form-control {% if errors.charte %}is-invalid{% endif %}" id="charte"
                            name="charte" value="{{params.charte|e}}" required>
                     <small class="form-text text-muted">
                         Recopie : <i>J'ai lu et j'accepte la charte</i>
                     </small>
+                    <p style="padding-top: 1rem;">Devenir Scorpion implique d'accepter les <a href="http://accueil.scorpions-du-desert.com/conditions-utilisation" target="_blank">conditions d'utilisation du site</a>.</p>
+                    <p>Ceux qui sont intéressés par le fonctionnement de l'association peuvent aussi lire <a href="http://accueil.scorpions-du-desert.com/l-association/statuts" target="_blank">les statuts de l'association</a> et  <a href="http://accueil.scorpions-du-desert.com/l-association/reglement-interieur" target="_blank">son règlement intérieur</a>.</p>
                 </div>
                 <button type="submit" class="btn btn-primary">C'est parti !</button>
+                <hr>
             </form>
         </div>
-        <div id="already_scorpion" class="col-sm-5">
-            <p>Attention ! Si tu es déjà un(e) Scorpion et que tu as un compte sur le forum, connecte-toi avec ces
-                identifiants ! Ainsi tu récupéreras tous tes privilèges et rôles sans repasser par la procédure
-                d'inscription :</p>
-            <div style="text-align: center"><a href="/signup/vb">
-                <button class="btn btn-primary">Oui, je suis déjà un(e) Scorpion, sortez-moi de là ! &raquo;</button>
-            </a></div>
+        <div class="col-sm-5">
+            <div id="already_scorpion">
+                <p>Attention ! Si tu es déjà un(e) Scorpion et que tu as un compte sur le forum, connecte-toi avec ces
+                    identifiants&nbsp;! Ainsi tu récupéreras tous tes privilèges et rôles sans repasser par la procédure
+                    d'inscription&nbsp;:</p>
+                <div style="text-align: center"><a href="/signup/vb">
+                    <button class="btn btn-primary">Oui, je suis déjà un(e) Scorpion, sortez-moi de là
+                        ! &raquo;</button>
+                </a></div>
+            </div>
         </div>
     </div>
 

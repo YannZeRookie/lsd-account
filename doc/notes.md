@@ -16,6 +16,28 @@ https://cdn.discordapp.com/avatars/233116506332856320/37d7f00b580a6f4fd09641f2d0
 URL avatar = https://cdn.discordapp.com/avatars/<user_id>/<avatar_id>.png
 Voir https://discordapp.com/developers/docs/reference#image-formatting
 
+Database
+========
+
+Rappel pour utiliser la base MySQL de développement sur mon Mac :
+* Lancer la VM « LSD VB ». L’IP est 192.168.5.51 mappé sur vb.local
+* Pour se connecter : `mysql -h 192.168.5.51 -u lsd_www -p lsd_www`
+avec le mdp ‘toto'
+
+Pour simuler une première connection
+====================================
+Par exemple pour YannZeGrunt (discord_id=404722937183076354 #5874) :
+* Commenter la ligne de `$connect_force_user` dans `config.php`
+* Détruire le record de l'utilisateur s'il y en a déjà un :<br>
+```
+DELETE FROM lsd_users WHERE id=6;
+DELETE FROM lsd_roles WHERE user_id=6;
+```
+* Créer une clé de connection bidon:<br>
+`INSERT INTO lsd_login SET login_key='testkey', created_on=unix_timestamp(), discord_id='404722937183076354', discord_username='YannZeGrunt', discord_discriminator='5874'; `
+* Se déconnecter du site: http://localhost:8080/logout
+* Lancer le flow: http://localhost:8080/login/testkey
+
 Faire des requêtes à l'API à la main
 ====================================
 
@@ -60,7 +82,6 @@ http://localhost:8080/login/test
 To-do
 =====
 
-* Sign-up flow
 * Synch lsd-account -> Discord when you change a role
 * Officers should have a list of submissions to validate
 * Make site pretty. We could use the "dark" look-and feel of Bootstrap? Of use our own CSS classes?
@@ -93,4 +114,18 @@ PayPal links
 <img alt="" border="0" src="https://www.sandbox.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
 </form>
 ```
+
+Meeting du 2019-07-22
+=====================
+
+- X inscription : pouvoir préciser la Section qu'on veut rejoindre (ou aucune)
+- X Ajouter les liens (ou le texte expandable ?) vers la Charte et les RIs
+- X pouvoir entrer des aliases (multiples) pour chaque Section
+- pouvoir changer ses aliases (multiples) pour chaque Section (les officiers doivent pouvoir aussi)
+- ajouter une zome de commentaires destinée aux Officiers et Conseillers dans la fiche de chaque joueur
+- ajouter une page "ressources" pour les Officiers et + avec quelques liens utiles, comme par exemple vers les assets du Google Drive LSD
+- Autres notes persos:
+ - Cotisation à finir avec les vrais boutons de prod
+ - Mettre `visiteur` aux nouveaux
+ - Up synchro vers Discord quand on change un rôle (débrayable)
 

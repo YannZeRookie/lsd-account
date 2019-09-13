@@ -31,6 +31,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/users">Utilisateurs</a>
                 </li>
+                {% if cur_user.canReviewUsers %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/users/review">Candidatures</a>
+                </li>
+                {% endif %}
                 {% if cur_user.canManageSections %}
                 <li class="nav-item">
                     <a class="nav-link" href="/sections">Sections</a>
@@ -109,12 +114,22 @@
             crossorigin="anonymous"></script>
     <script>
         $(function () {
+            // Select the navigation item corresponding the best to the pathname (best=longest)
             var pathname = window.location.pathname;
+            var bestItem = null;
+            var bestLength = 0;
             $('nav a.nav-link').each(function () {
                 if (pathname.startsWith($(this).attr('href'))) {
-                    $(this).parent().addClass('active');
+                    var lg = $(this).attr('href').length;
+                    if (lg > bestLength) {
+                        bestLength = lg;
+                        bestItem = $(this).parent();
+                    }
                 }
             });
+            if (bestItem) {
+                bestItem.addClass('active');
+            }
         });
     </script>
     <!-- footer end -->

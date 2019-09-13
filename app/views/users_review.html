@@ -1,0 +1,66 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Liste des candidatures{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+    #users_table td.account {
+        vertical-align: middle;
+        padding-right: 1em;
+    }
+
+    #users_table td.account img {
+        display: inline;
+        max-height: 48px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Liste des candidatures</h1>
+
+<article>
+    <table id="users_table" class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>Compte Discord</th>
+            <th>Date</th>
+            <th style="text-align: center">Majeur?</th>
+            <th>Texte de candidature</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="users">
+        {% for u in users %}
+        <tr>
+            <td nowrap class="account">
+                {% if u.avatar %}<img src="{{u.avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
+                <a href="/users/{{u.id}}?returnto=/users">{{u.discord_username|e}}</a>
+            </td>
+            <td>{{u.submited_on|date("d/m/Y")}}</td>
+            <td align="center">{% if u.minor %}&#10060;{% else %}&#9989;{% endif %}</td>
+            <td>{{u.testimony|e|nl2br}}</td>
+            <td style="text-align: center">
+                <form method="post" action="/users/review/{{u.id}}">
+                    <textarea name="review" placeholder="Message de bienvenue ou de refus" rows="2" style="width: 100%"></textarea><br>
+                    <button name="refuse" type="submit" class="btn btn-danger">Refuser</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button name="validate" type="submit" class="btn btn-primary">Valider</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="99"><i>Aucune candidature à évaluer</i></td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
+
+{% block footer %}
+{{ parent() }}
+{% endblock %}
