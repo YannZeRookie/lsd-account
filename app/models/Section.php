@@ -100,13 +100,15 @@ class Section extends LsdActiveRecord
     static public function findByVBGroup($vb_group)
     {
         $s = new Section;
-        $result = $s->equal('member_group', $vb_group)->find();
-        if ($result) {
-            return ['tag' => $result->tag, 'membre' => true, 'officier' => false];
-        }
+
         $result = $s->equal('officer_group', $vb_group)->find();
         if ($result) {
             return ['tag' => $result->tag, 'membre' => false, 'officier' => true];
+        }
+
+        $result = $s->equal('member_group', $vb_group)->find();
+        if ($result) {
+            return ['tag' => $result->tag, 'membre' => true, 'officier' => false];
         }
         return false;
     }

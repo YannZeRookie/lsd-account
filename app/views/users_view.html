@@ -15,7 +15,29 @@
     #other_roles {
         margin-top: 2em;
     }
+
+    #sections table td {
+        height: 34px;
+    }
 </style>
+{% endblock %}
+
+{% block js %}
+<script>
+    function mo_changed(cb, otherClass) {
+        var tr = $(cb).closest('tr');
+        var otherCheck = tr.find('input.' + otherClass);
+        var pseudo = tr.find('input.section_pseudo');
+        if (cb.checked) {
+            otherCheck.prop('checked', false);
+            pseudo.show();
+        } else {
+            if (!otherCheck.is(':checked')) {
+                pseudo.hide();
+            }
+        }
+    }
+</script>
 {% endblock %}
 
 {% block content %}
@@ -92,10 +114,10 @@
             <div id="roles">
                 <h4>Rôle</h4>
                 {% for r in roles_table %}
-                <label><input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{%
-                              endif
-                              %}
-                              {% if r.disabled %}disabled{% endif %}> {{r.name}}</label><br>
+                <label>
+                    <input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{% endif %}
+                              {% if r.disabled %}disabled{% endif %}>
+                    {{r.name}}</label><br>
                 {% endfor %}
             </div>
             <div id="bureau">
@@ -110,18 +132,13 @@
             <div id="other_roles">
                 Adhérent :
                 <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %}
-                              {% if
-                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
+                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
                 <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %}checked{% endif %}
-                              {% if
-                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
+                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
                 <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %}
-                              {% if
-                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
+                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
                 <br>
-                <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if
-                              not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de
-                    communauté</label><br>
+                <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
             </div>
         </div>
 
@@ -135,11 +152,10 @@
                 </tr>
                 {% for s in sections %}
                 <tr>
-                    <td><input type="checkbox" name="{{s.tag}}_M" {% if s._belong=='membre' %}checked{% endif %} {% if
-                               not(cur_user._canNameMembres) %}disabled{% endif %} title="Membre {{s.name|e}}"></td>
-                    <td><input type="checkbox" name="{{s.tag}}_O" {% if s._belong=='officier' %}checked{% endif %} {% if
-                               not(cur_user._canNameOfficiers) %}disabled{% endif %} title="Officier {{s.name|e}}"></td>
+                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.role=='membre' %}checked{% endif %} {% if not(cur_user._canNameMembres) %}disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
+                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.role=='officier' %}checked{% endif %} {% if not(cur_user._canNameOfficiers) %}disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
                     <td>{{s.name|e}} ({{s.tag}})</td>
+                    <td><input class="section_pseudo" type="text" name="{{s.tag}}_pseudo" value="{{s._belong.extra2}}" placeholder="Pseudo dans le jeu" title="Seulement si différent" size="18" {% if not(s._belong) %}style="display: none"{% endif %}></td>
                 </tr>
                 {% endfor %}
             </table>

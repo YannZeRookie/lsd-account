@@ -282,11 +282,24 @@ class UsersController
 
         //-- Sections (Membre or Officier)
         if ($cur_user->_canNameMembres || $cur_user->_canNameOfficiers) {
+            if (isset($params['role']) && ($params['role'] == Role::kVisiteur || $params['role'] == Role::kInvite)) {
+                //-- Remove user from all Sections
+                $user->RemoveFromAllSections();
+            } else {
+                $sections = self::buildSectionsTable($user);
+                foreach ($sections as $section) {
+                    $user->setSectionMembership($section->tag, isset($params[$section->tag . '_M']),
+                        $cur_user->_canNameOfficiers ? isset($params[$section->tag . '_O']) : null,
+                        trim($params[$section->tag . '_pseudo']));
+                }
+            }
+        } elseif ($cur_user->id == $user->id && $user->isScorpion()) {
+            // A Scorpion can set his own Section Pseudos
+            error_log('A Scorpion can set his own Section Pseudos');
             $sections = self::buildSectionsTable($user);
             foreach ($sections as $section) {
-                $user->setSectionMembership($section->tag, isset($params[$section->tag . '_M']),
-                    $cur_user->_canNameOfficiers ? isset($params[$section->tag . '_O']) : null,
-                    $section->_belong);
+                error_log('Pseudo for ' . $section->tag . ' : ' . $params[$section->tag . '_pseudo']);
+                $user->setPseudo($section->tag, trim($params[$section->tag . '_pseudo']));
             }
         }
 

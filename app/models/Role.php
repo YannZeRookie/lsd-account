@@ -26,6 +26,23 @@ class Role extends LsdActiveRecord
     const kCM = 'cm';
     const kAdherent = 'adherent';
 
+    function __toString()
+    {
+        return print_r($this, true);    // For debug
+    }
+
+    public function & __get($var)
+    {
+        switch ($var) {
+            case 'extra':
+            case 'extra2':
+                $result = isset($this->data[$var]) ? $this->data[$var] : '';    // Otherwise Twig will screw up if fed with null
+                return $result;
+            default:
+                return parent::__get($var);
+        }
+    }
+
     /**
      * Return the Roles as a sorted list: key => name
      * @param bool $all TRUE if you want to get the non-leveled ranks: kMembre, kCM, kAdherent...
@@ -184,7 +201,7 @@ class Role extends LsdActiveRecord
     }
 
     /**
-     * Generic Role query method
+     * Generic Role test method
      * @param $user_id
      * @param $role
      * @param $extra
@@ -192,15 +209,23 @@ class Role extends LsdActiveRecord
      */
     static public function hasRole($user_id, $role, $extra = null)
     {
+        return self::findRole($user_id, $role, $extra) !== false;
+    }
+
+    /**
+     * Generic Role query method
+     * @param $user_id
+     * @param $role
+     * @param $extra
+     * @return Role|false
+     */
+    static public function findRole($user_id, $role, $extra = null)
+    {
         $roles = new Role;
         if ($extra) {
-            if ($role == self::kMembre && $extra == 'JDM') {
-                return self::isScorpion();  // Each Scorpion is automatically member of the JDM Section
-            } else {
-                return $roles->equal('user_id', $user_id)->equal('role', $role)->equal('extra', $extra)->find() !== false;
-            }
+            return $roles->equal('user_id', $user_id)->equal('role', $role)->equal('extra', $extra)->find();
         } else {
-            return $roles->equal('user_id', $user_id)->equal('role', $role)->find() !== false;
+            return $roles->equal('user_id', $user_id)->equal('role', $role)->find();
         }
     }
 
@@ -252,18 +277,25 @@ class Role extends LsdActiveRecord
 
     /**
      * Grant a new Role to this user
-     * @param $user_id
-     * @param $newRole
-     * @param $extra optional extra data
+     * @param $user_id integer
+     * @param $newRole string
+     * @param $extra string optional extra data (like the Section tag)
+     * @param $extra2 string optional other extra data (like the Section pseudo)
      */
-    static public function setRole($user_id, $newRole, $extra = null)
+    static public function setRole($user_id, $newRole, $extra = null, $extra2 = null)
     {
         if (empty($newRole)) {
             return;
         }
         $role = new Role;
         //-- Do we already have this role?
-        if (self::hasRole($user_id, $newRole, $extra)) {
+        $prev_role = self::findRole($user_id, $newRole, $extra);
+        if ($prev_role !== false) {
+            // Just update the extra2 field if it changed
+            if ($prev_role->extra2 != $extra2) {
+                $prev_role->extra2 = $extra2;
+                $prev_role->save();
+            }
             return;
         }
         //-- Officier, Membre and Adherent should have some data
@@ -275,11 +307,23 @@ class Role extends LsdActiveRecord
         if ($newRole == self::kVisiteur || $newRole == self::kInvite || $newRole == self::kScorpion) {
             $removal = [self::kVisiteur, self::kInvite, self::kScorpion]; // Because these are exclusive
             self::removeRoles($user_id, $removal);
+            //-- If we set the user to Scorpion, make him part of the JDM section automatically
+            if ($newRole == self::kScorpion) {
+                self::setRole($user_id, self::kMembre, 'JDM');
+            } else {
+                self::removeRole($user_id, self::kMembre, 'JDM');
+                self::removeRole($user_id, self::kOfficier, 'JDM');
+            }
         }
+        if ($newRole == self::kOfficier || $newRole == self::kMembre) {
+            self::removeRole($user_id, ($newRole == self::kOfficier ? self::kMembre : self::kOfficier), $extra);    // Because self::kOfficier and self::kMembre are exclusive
+        }
+
         //-- Add it
         $role->user_id = $user_id;
         $role->role = $newRole;
         $role->extra = $extra;
+        $role->extra2 = $extra2;
         $role->insert();
     }
 
@@ -287,7 +331,7 @@ class Role extends LsdActiveRecord
      * Remove some roles from this user
      * Note that this won't do if you need to specify some additional data. See Role::removeRole() for this.
      * @param $user_id
-     * @param array $roles
+     * @param array [string] $roles
      */
     static public function removeRoles($user_id, $roles = [])
     {
@@ -359,7 +403,7 @@ class Role extends LsdActiveRecord
 
     /**
      * Does the user belong to a Section?
-     * If yes, return Role::kMembre or Role::kOfficier
+     * If yes, return Role
      * If no, return false
      * @param $user_id integer user id
      * @param $tag string Section tag
@@ -369,10 +413,7 @@ class Role extends LsdActiveRecord
     {
         $r = new Role;
         $role = $r->equal('user_id', $user_id)->in('role', [self::kMembre, self::kOfficier])->equal('extra', $tag)->find();
-        if ($tag == 'JDM' && !$role && self::isScorpion($user_id)) {
-            return self::kMembre;   // All Scorpions are automatically Membre if they are not already Officier of JDM
-        }
-        return $role ? $role->role : false;
+        return $role ? $role : false;
     }
 
     /**
@@ -382,42 +423,20 @@ class Role extends LsdActiveRecord
      * @param $tag string Section tag
      * @param $isMembre bool
      * @param $isOfficier bool|null If null, it means 'don't do anything'
-     * @param $oldRole string previous role for this Section - if any
+     * @param $sectionPseudo string Specific Pseudo if any
      */
-    static public function setSectionMembership($user_id, $tag, $isMembre, $isOfficier, $oldRole = null)
+    static public function setSectionMembership($user_id, $tag, $isMembre, $isOfficier, $sectionPseudo='')
     {
-        if ($oldRole === null) {
-            $oldRole = self::belongsToSection($user_id, $tag);
+        if ($isOfficier === null && self::hasRole($user_id, self::kOfficier, $tag))
+        {
+            return; // Can't touch this person: not enough privileges
         }
-        if ($isMembre && $isOfficier) {
-            $isMembre = false;
-        }
-        if ($isMembre) {
-            if ($oldRole != self::kMembre && $tag != 'JDM') {   // No use to set it for JDM
-                $rm = new Role;
-                $rm->user_id = $user_id;
-                $rm->role = self::kMembre;
-                $rm->extra = $tag;
-                $rm->insert();
-            }
+        if ($isMembre || $isOfficier) {
+            self::setRole($user_id, ($isOfficier ? self::kOfficier : self::kMembre), $tag, empty($sectionPseudo) ? null : $sectionPseudo);
         } else {
-            if ($oldRole == self::kMembre) {
-                self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ? ", [$user_id, self::kMembre, $tag]);
-            }
-        }
-        if ($isOfficier !== null) {
-            if ($isOfficier) {
-                if ($oldRole != self::kOfficier) {
-                    $ro = new Role;
-                    $ro->user_id = $user_id;
-                    $ro->role = self::kOfficier;
-                    $ro->extra = $tag;
-                    $ro->insert();
-                }
-            } else {
-                if ($oldRole == self::kOfficier) {
-                    self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ? ", [$user_id, self::kOfficier, $tag]);
-                }
+            if (!($tag == 'JDM' && self::isScorpion($user_id))) {
+                self::removeRole($user_id, self::kMembre, $tag);
+                self::removeRole($user_id, self::kOfficier, $tag);
             }
         }
     }

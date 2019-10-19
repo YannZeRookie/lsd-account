@@ -24,6 +24,12 @@ Rappel pour utiliser la base MySQL de développement sur mon Mac :
 * Pour se connecter : `mysql -h 192.168.5.51 -u lsd_www -p lsd_www`
 avec le mdp ‘toto'
 
+Notes de Data Model
+===================
+
+* Role::kVisiteur, Role::kInvite, et Role::kScorpion sont exclusifs.
+* Role::kMembre et Role::kOfficier sont exclusifs.
+
 Pour simuler une première connection
 ====================================
 Par exemple pour YannZeGrunt (discord_id=404722937183076354 #5874) :
@@ -121,7 +127,7 @@ Meeting du 2019-07-22
 - X inscription : pouvoir préciser la Section qu'on veut rejoindre (ou aucune)
 - X Ajouter les liens (ou le texte expandable ?) vers la Charte et les RIs
 - X pouvoir entrer des aliases (multiples) pour chaque Section
-- pouvoir changer ses aliases (multiples) pour chaque Section (les officiers doivent pouvoir aussi)
+- X pouvoir changer ses aliases (multiples) pour chaque Section (les officiers doivent pouvoir aussi)
 - ajouter une zome de commentaires destinée aux Officiers et Conseillers dans la fiche de chaque joueur
 - ajouter une page "ressources" pour les Officiers et + avec quelques liens utiles, comme par exemple vers les assets du Google Drive LSD
 - Autres notes persos:

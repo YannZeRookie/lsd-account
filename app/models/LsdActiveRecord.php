@@ -71,6 +71,24 @@ class LsdActiveRecord extends ActiveRecord
     }
 
     /**
+     * Bug fix, so that it works with NULL fields
+     */
+    public function update() {
+        if (count($this->dirty) == 0) return true;
+        foreach($this->dirty as $field => $value) {
+            if ($value === null) {
+                $this->addCondition($field, '= NULL', null, ',' , 'set');
+            } else {
+                $this->addCondition($field, '=', $value, ',' , 'set');
+            }
+        }
+        if(self::execute($this->eq($this->primaryKey, $this->{$this->primaryKey})->_buildSql(array('update', 'set', 'where')), $this->params))
+            return $this->dirty()->reset();
+        return false;
+    }
+
+
+    /**
      * Twig tries to access fields using a function call, so we want to catch it
      * @param string $name
      * @param array $args

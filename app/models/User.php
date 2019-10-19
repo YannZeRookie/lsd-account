@@ -208,7 +208,7 @@ class User extends LsdActiveRecord
 
     /**
      * Does the user belong to a Section?
-     * If yes, return Role::kMembre or Role::kOfficier
+     * If yes, return Role
      * If no, return false
      * @param $tag string Section tag
      * @return mixed
@@ -229,10 +229,12 @@ class User extends LsdActiveRecord
         $sections = $s->equal('archived', 0)->order('`order`')->findAll();
         foreach ($sections as $section) {
             $belongs = $this->belongsToSection($section->tag);
-            if ($belongs == Role::kMembre) {
-                $res[] = $section->tag;
-            } elseif ($belongs == Role::kOfficier) {
-                $res[] = $section->tag . '*';
+            if ($belongs) {
+                if ($belongs->role == Role::kOfficier) {
+                    $res[] = $section->tag . '*';
+                } elseif ($belongs->role == Role::kMembre) {
+                    $res[] = $section->tag;
+                }
             }
         }
         return implode(', ', $res);
@@ -244,11 +246,37 @@ class User extends LsdActiveRecord
      * @param $tag string Section tag
      * @param $isMembre bool
      * @param $isOfficier bool|null If null, it means 'don't do anything'
-     * @param $oldRole string previous role for this Section - if any
+     * @param $sectionPseudo string Specific Pseudo if any
      */
-    public function setSectionMembership($tag, $isMembre, $isOfficier, $oldRole = null)
+    public function setSectionMembership($tag, $isMembre, $isOfficier, $sectionPseudo='')
     {
-        Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $oldRole);
+        Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $sectionPseudo);
+    }
+
+    /**
+     * Set the Pseudo for a Section
+     * @param $tag string Section tag
+     * @param $sectionPseudo string Specific Pseudo
+     */
+    public function setPseudo($tag, $sectionPseudo)
+    {
+        $role = Role::findRole($this->id, Role::kMembre, $tag);
+        if ($role) {
+            $role->extra2 = $sectionPseudo ?: null;
+            $role->save();
+            return;
+        }
+        $role = Role::findRole($this->id, Role::kOfficier, $tag);
+        if ($role) {
+            $role->extra2 = $sectionPseudo ?: null;
+            $role->save();
+            return;
+        }
+    }
+
+    public function RemoveFromAllSections()
+    {
+        Role::removeRoles($this->id, [Role::kMembre, Role::kOfficier]);
     }
 
     /**

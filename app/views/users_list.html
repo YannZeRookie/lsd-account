@@ -28,16 +28,16 @@
     <table id="users_table" class="table table-striped table-sm">
         <thead>
         <tr>
-            <th>Compte Discord</th>
-            <th>Rôles</th>
-            <th>Sections</th>
-            <th nowrap>Pseudo VB</th>
+            <th width="34%">Compte Discord</th>
+            <th width="34%">Rôles</th>
+            <th width="16%">Sections</th>
+            <th width="16%" nowrap>Pseudo VB</th>
         </tr>
-        <tr id="search_fields">
-            <th class="col-4">
+        <tr id="search_fields" valign="middle">
+            <th>
                 <input id="s_name">
             </th>
-            <th class="col-4">
+            <th>
                 <select id="s_role" class="custom-select" onchange="searchUsers()">
                     <option value="" selected>-</option>
                     <option value="visiteur">Visiteur</option>
@@ -56,7 +56,7 @@
                     <option value="adherent_{{years.next}}">Adhérent {{years.next}}</option>
                 </select>
             </th>
-            <th class="col-2">
+            <th>
                 <select id="s_section" class="custom-select" onchange="searchUsers()">
                     <option value="" selected>-</option>
                     {% for s in sections %}
@@ -64,7 +64,7 @@
                     {% endfor %}
                 </select>
             </th>
-            <th class="col-2">
+            <th>
                 <input id="s_vb">
             </th>
         </tr>
