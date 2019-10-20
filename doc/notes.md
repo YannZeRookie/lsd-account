@@ -128,7 +128,7 @@ Meeting du 2019-07-22
 - X Ajouter les liens (ou le texte expandable ?) vers la Charte et les RIs
 - X pouvoir entrer des aliases (multiples) pour chaque Section
 - X pouvoir changer ses aliases (multiples) pour chaque Section (les officiers doivent pouvoir aussi)
-- ajouter une zome de commentaires destinée aux Officiers et Conseillers dans la fiche de chaque joueur
+- X ajouter une zome de commentaires destinée aux Officiers et Conseillers dans la fiche de chaque joueur
 - ajouter une page "ressources" pour les Officiers et + avec quelques liens utiles, comme par exemple vers les assets du Google Drive LSD
 - Autres notes persos:
  - Cotisation à finir avec les vrais boutons de prod

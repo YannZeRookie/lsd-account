@@ -162,6 +162,12 @@
         </div>
     </div>
 
+    {% if can_comment %}
+    <h4>Notes des Officiers et Conseillers :</h4>
+    <textarea class="form-control" id="comments" name="comments" rows="10" style="margin-bottom:2em;">{{user.comments|e}}</textarea>
+    {% endif %}
+
+
     <div class="row justify-content-center">
         <div clas="col">
             {% if returnto %}

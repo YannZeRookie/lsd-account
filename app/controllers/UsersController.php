@@ -168,6 +168,18 @@ class UsersController
     }
 
     /**
+     * Can the connected user comment on the target user?
+     * @param $cur_user
+     * @param $user
+     * @return bool
+     */
+    static protected function canComment($cur_user, $user)
+    {
+        return $cur_user->isOfficier() || $cur_user->isConseiller() || $cur_user->isBureau() || $cur_user->isAdmin();
+    }
+
+
+    /**
      * Build the Roles table, with some additional permission info
      * @param $cur_user
      * @param $user
@@ -222,15 +234,17 @@ class UsersController
         $cur_user = self::canEditUser($id);
         //-- Get edited user
         $user = self::getTargetUser($id);
+        $user->comments = $user->comments ?: '';
 
         $query = \Slim\Slim::getInstance()->request()->get();
         $returnto = isset($query['returnto']) ? $query['returnto'] : false;
 
-            $debug = '';
+        $debug = '';
         return [
             'user' => $user,
             'cur_user' => $cur_user,
             'can_change_email' => self::canEditEmail($cur_user, $user),
+            'can_comment' => self::canComment($cur_user, $user),
             'roles_table' => self::buildRolesTable($cur_user, $user),
             'bureau_table' => self::buildBureauTable($user),
             'sections' => self::buildSectionsTable($user),
@@ -261,6 +275,13 @@ class UsersController
                 }
                 break;
         }
+
+        //-- Comments
+        $can_comment = self::canComment($cur_user, $user);
+        if ($can_comment) {
+            $user->comments = trim($params['comments']);
+        }
+
         //-- Done with modifications on the user, check and save
         $errors = $user->validate();
         if (count($errors) == 0) {
@@ -329,6 +350,7 @@ class UsersController
             'user' => $user,
             'cur_user' => $cur_user,
             'can_change_email' => self::canEditEmail($cur_user, $user),
+            'can_comment' => $can_comment,
             'roles_table' => self::buildRolesTable($cur_user, $user),
             'bureau_table' => self::buildBureauTable($user),
             'sections' => self::buildSectionsTable($user),
