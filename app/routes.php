@@ -117,6 +117,9 @@ $app->get('/admin/updatebot', function () use ($app) {
     $app->render('admin_updating.html', AdminController::update($update_pid, 'bot'));
 });
 
+$app->post('/admin/updatedb', function () use ($app) {
+    $app->render('admin_updatedb.html', AdminController::updatedb($app->request()->post()));
+});
 
 //-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';

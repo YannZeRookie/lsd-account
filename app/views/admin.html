@@ -16,15 +16,29 @@
         padding: 1em;
         border: 1px solid gray;
         background-color: #EEEEEE;
+        font-size: 80%;
+    }
+
+    #db td pre {
+        max-width: 1100px;
     }
 </style>
 {% endblock %}
 
+{% block js %}
+<script>
+    function toggle_patch(tag)
+    {
+        $('#' + tag).toggle();
+        return false;
+    }
+</script>
+{% endblock %}
 
 {% block content %}
 <h1>Le coin des Admins</h1>
 
-<article>
+<article id="web">
     <h3>Site Web</h3>
     Dernière mise à jour :
     <pre>
@@ -35,7 +49,7 @@
     </a>
 </article>
 
-<article>
+<article id="bot">
     <h3>Bot</h3>
     Dernière mise à jour :
     <pre>
@@ -46,13 +60,37 @@
     </a>
 </article>
 
-<article>
+<article id="db">
     <h3>Migration de base de données</h3>
-    <ul>
+    <table class="table">
+        <tr>
+            <th>Fichier</th>
+            <th>Date</th>
+            <th>Application</th>
+        </tr>
         {% for fi in db_files %}
-        <li>{{fi}}</li>
+        <tr>
+            <td><a href="#{{fi.tag}}" onclick="return toggle_patch('{{fi.tag}}')">{{fi.name}}</a></td>
+            <td>{{fi.mtime|date("Y-d-m")}}</td>
+            <td>
+                {% if fi.patch.id %}
+                {{fi.patch.applied_at|date("Y-d-m")}} par <a href="/users/{{fi.patch.applied_by}}?returnto=/admin">{{fi.patch.username}}</a>
+                {% else %}
+                <form action="/admin/updatedb" method="post">
+                    <input type="hidden" name="filename" value="{{fi.name}}">
+                    <button name="apply" value="1" class="btn btn-primary btn-sm">Appliquer</button>
+                    <button name="skip" value="1" class="btn btn-primary btn-sm">Ignorer</button>
+                </form>
+                {% endif %}
+             </td>
+        </tr>
+        <tr id="{{fi.tag}}" style="display: none">
+            <td colspan="99">
+                <pre style="width: 100%;">{{fi.content}}</pre>
+            </td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </article>
 
 <pre>

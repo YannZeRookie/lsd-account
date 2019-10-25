@@ -1,0 +1,53 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Admin{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+    article {
+        margin-top: 2em;
+    }
+
+    article pre {
+        margin-left: 0;
+        max-width: 800px;
+        padding: 1em;
+        border: 1px solid gray;
+        background-color: #EEEEEE;
+        font-size: 80%;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<h1>Le coin des Admins</h1>
+
+{% if ok %}
+<div class="alert alert-success" role="alert">
+    {{file_name}} : Script de migration {{action}} avec succès.
+</div>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    {{file_name}} : Un problème est survenu en exécutant le script :<br>
+    <code>{{error}}</code>
+</div>
+{% endif %}
+<article>
+    {% if sql %}
+<pre>
+{{sql|raw}}
+</pre>
+    {% endif %}
+
+    <a href="/admin">
+        <button class="btn btn-primary">OK</button>
+    </a>
+</article>
+
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
