@@ -16,5 +16,3 @@ INSERT INTO lsd_dbpatches SET filename='02_sample_user03.sql', applied_at=unix_t
 INSERT INTO lsd_dbpatches SET filename='03_roles_extra.sql', applied_at=unix_timestamp('2019-08-05'), applied_by=2;
 INSERT INTO lsd_dbpatches SET filename='04_adherent.sql', applied_at=unix_timestamp('2019-08-05'), applied_by=2;
 INSERT INTO lsd_dbpatches SET filename='05_adhesions.sql', applied_at=unix_timestamp('2019-08-05'), applied_by=2;
-INSERT INTO lsd_dbpatches SET filename='06_review.sql', applied_at=unix_timestamp('2019-11-07'), applied_by=2;
-INSERT INTO lsd_dbpatches SET filename='07_role_extra2.sql', applied_at=unix_timestamp('2019-13-09'), applied_by=2;
