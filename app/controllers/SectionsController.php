@@ -8,18 +8,67 @@
  *
  * CRUD of Sections
  */
+require_once __DIR__ . '/../libs/Parsedown.php';
+
 class SectionsController
 {
+    /**
+     * A privileged user is a Conseiller, a Bureau member or an Admin
+     * @param $user_id
+     * @return bool
+     */
+    static protected function hasPrivilegedAccess($user_id)
+    {
+        return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
+    }
+
     static protected function checkAccess()
     {
-        //-- Check rights: the connected user can see the list of users only if he is a Conseiller, a Bureau member or an Admin
+        //-- Check rights: the connected user can see the list of Sections only if he a privileged user
         $cur_user = User::getConnectedUser();
-        if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin])) {
+        if (!$cur_user || !self::hasPrivilegedAccess($cur_user->id)) {
             \Slim\Slim::getInstance()->redirect('/');
         }
         return $cur_user;
     }
 
+    static protected function checkAccessList(&$can_edit)
+    {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user || !$cur_user->isScorpion()) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+        $can_edit = self::hasPrivilegedAccess($cur_user->id);
+        return $cur_user;
+
+    }
+
+    static protected function checkAccessNotes($tag, &$can_read, &$can_edit)
+    {
+        //-- Check rights for Notes: the connected user can see the list of Sections only if he is a member of the Section
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user ||!$cur_user->isScorpion()) {
+            \Slim\Slim::getInstance()->redirect('/sections');
+        }
+        $can_read = self::canReadNotes($cur_user, $tag);
+        $can_edit = self::canEditNotes($cur_user, $tag);
+        return $cur_user;
+    }
+
+    static protected function canReadNotes($cur_user, $tag)
+    {
+        if (!$cur_user) return false;
+        if (self::hasPrivilegedAccess($cur_user->id)) return true;
+        return ($cur_user->getSectionMembership($tag) !== false);
+    }
+
+    static protected function canEditNotes($cur_user, $tag)
+    {
+        if (!$cur_user) return false;
+        if (self::hasPrivilegedAccess($cur_user->id)) return true;
+        $role = $cur_user->getSectionMembership($tag);
+        return $role ? ($role->role == Role::kOfficier) : false;
+    }
 
     /**
      * View all sections
@@ -27,22 +76,24 @@ class SectionsController
      */
     static public function all()
     {
-        $cur_user = self::checkAccess();
+        $cur_user = self::checkAccessList($can_edit);
 
         $sections = [
             'Sections actives' => Section::getActiveSections(true),
-            'Sections archivées' => Section::getArchivedSections(true)
         ];
+        if ($can_edit) {
+            $sections['Sections archivées'] = Section::getArchivedSections(true);
+        }
 
         //--
         $debug = '';
         return [
             'cur_user' => $cur_user,
             'sections' => $sections,
+            'can_edit' => $can_edit,
             'debug' => print_r($debug, true),
         ];
     }
-
 
     /**
      * View a specific Section
@@ -67,7 +118,7 @@ class SectionsController
     static public function post($tag, $params = [])
     {
         $cur_user = self::checkAccess();
-        $params = array_merge(['tag'=>'', 'name'=>'', 'archived'=>'0'], $params);
+        $params = array_merge(['tag' => '', 'name' => '', 'archived' => '0'], $params);
         $section = Section::getSection($tag) ?: new Section();
 
         if ($tag == 'new') {
@@ -85,9 +136,8 @@ class SectionsController
             } else {
                 $ok = $section->update();
             }
-            if ($ok !== false)
-            {
-               \Slim\Slim::getInstance()->redirect('/sections');   // Go back to list if success
+            if ($ok !== false) {
+                \Slim\Slim::getInstance()->redirect('/sections');   // Go back to list if success
             }
         }
 
@@ -99,6 +149,55 @@ class SectionsController
             'errors' => $errors,
             'debug' => print_r($debug, true),
         ];
+    }
 
+    /**
+     * Section notes page
+     * @param $tag
+     */
+    static public function notes($tag, $params = [])
+    {
+        $cur_user = self::checkAccessNotes($tag, $can_read, $can_edit);
+        $section = Section::getSection($tag);
+
+        if ($can_edit && isset($params['submit'])) {
+            $section->notes = $params['markdown'];
+            $section->save();
+        }
+
+        $md = $section->notes;
+        $content = self::mdConvert($md);
+
+        $debug = '';
+        return [
+            'cur_user' => $cur_user,
+            'section' => $section,
+            'can_read' => $can_read,
+            'can_edit' => $can_edit,
+            'md' => $md,
+            'content' => $content,
+            'debug' => print_r($debug, true),
+        ];
+    }
+
+    static protected function mdConvert($md)
+    {
+        $parsedown = new Parsedown();
+        $parsedown->setSafeMode(true);
+        $parsedown->setBreaksEnabled(true);
+        $html = $parsedown->text($md);
+        $html = preg_replace('/<table>/', '<table class="table table-striped">', $html);
+        return $html;
+    }
+
+    static public function markdown($tag, $md)
+    {
+        $html = '';
+        $cur_user = User::getConnectedUser();
+        if (self::canEditNotes($cur_user, $tag)) {
+            $html = self::mdConvert($md);
+        }
+        echo $html;
+        exit();
     }
 }

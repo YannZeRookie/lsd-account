@@ -13,6 +13,20 @@ class Section extends LsdActiveRecord
     public $table = 'lsd_section';
     public $primaryKey = 'tag';
 
+    public function & __get($var)
+    {
+        if ($var == 'notes') {
+            if (isset($this->data[$var])) {
+                return $this->data[$var];
+            } else {
+                $res = '';
+                return $res;
+            }
+        } else {
+            return parent::__get($var);
+        }
+    }
+
     public static function getActiveSections($include_officers = false)
     {
         $s = new Section;

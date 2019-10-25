@@ -190,9 +190,9 @@ class User extends LsdActiveRecord
      * Can the user manage Sections?
      * @return mixed
      */
-    public function canManageSections()
+    public function canSeeSections()
     {
-        return Role::canManageSections($this->id);
+        return Role::canSeeSections($this->id);
     }
 
     /**
@@ -251,6 +251,16 @@ class User extends LsdActiveRecord
     public function setSectionMembership($tag, $isMembre, $isOfficier, $sectionPseudo='')
     {
         Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $sectionPseudo);
+    }
+
+    /**
+     * Get the Section membership of a user. Return the found Role if any
+     * @param $tag
+     * @return false|Role
+     */
+    public function getSectionMembership($tag)
+    {
+        return Role::getSectionMembership($this->id, $tag);
     }
 
     /**

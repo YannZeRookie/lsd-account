@@ -129,9 +129,10 @@ Meeting du 2019-07-22
 - X pouvoir entrer des aliases (multiples) pour chaque Section
 - X pouvoir changer ses aliases (multiples) pour chaque Section (les officiers doivent pouvoir aussi)
 - X ajouter une zome de commentaires destinée aux Officiers et Conseillers dans la fiche de chaque joueur
-- ajouter une page "ressources" pour les Officiers et + avec quelques liens utiles, comme par exemple vers les assets du Google Drive LSD
+- X ajouter une page "ressources" pour les Officiers et + avec quelques liens utiles, comme par exemple vers les assets du Google Drive LSD
 - Autres notes persos:
- - Cotisation à finir avec les vrais boutons de prod
- - Mettre `visiteur` aux nouveaux
- - Up synchro vers Discord quand on change un rôle (débrayable)
+  - N'importe qui devrait pouvoir consulter la fiche d'un autre joueur
+  - Cotisation à finir avec les vrais boutons de prod
+  - Mettre `visiteur` aux nouveaux
+  - Up synchro vers Discord quand on change un rôle (débrayable)
 

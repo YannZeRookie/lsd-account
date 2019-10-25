@@ -442,6 +442,21 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Get the Section membership of a user. Return the found Role if any
+     * @param $user_id
+     * @param $tag
+     * @return false|Role
+     */
+    static public function getSectionMembership($user_id, $tag)
+    {
+        $role = self::findRole($user_id, self::kOfficier, $tag);
+        if (!$role) {
+            $role = self::findRole($user_id, self::kMembre, $tag);
+        }
+        return $role;
+    }
+
+    /**
      * Can a user assign members to Sections?
      * @param $user_id
      * @return bool
@@ -471,13 +486,13 @@ class Role extends LsdActiveRecord
     }
 
     /**
-     * Can a user manage Sections?
+     * Can a user see Sections?
      * @param $user_id
      * @return bool
      */
-    static public function canManageSections($user_id)
+    static public function canSeeSections($user_id)
     {
-        return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kAdmin]);
+        return Role::isScorpion($user_id);
     }
 
     /**

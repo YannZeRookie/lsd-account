@@ -13,22 +13,24 @@
 <h1 class="h1">Liste des Sections</h1>
 
 <article>
-    <a class="btn btn-primary" href="/sections/new" style="float: right;">Créer une nouvelle Section...</a>
+    {% if can_edit %}<a class="btn btn-primary" href="/sections/new" style="float: right;">Créer une nouvelle Section...</a>{% endif %}
     {% for n,l in sections %}
-    <h2>{{ n }}</h2>
+    {% if can_edit %}<h2>{{ n }}</h2>{% endif %}
     <table class="sections_table table table-striped table-sm">
         <thead>
         <tr>
             <th width="10%">Tag</th>
             <th width="20%">Nom</th>
-            <th width="70%">Officiers</th>
+            <th width="5%">Notes</th>
+            <th width="65%">Officiers</th>
         </tr>
         </thead>
         <tbody>
         {% for s in l %}
         <tr>
-            <td nowrap><a href="/sections/{{s.tag}}">{{ s.tag |e}}</a></td>
+            <td nowrap>{% if can_edit %}<a href="/sections/{{s.tag}}">{{ s.tag |e}}</a>{% else %}{{ s.tag |e}}{% endif %}</td>
             <td>{{ s.name |e}}</td>
+            <td align="center">{% if s.notes or can_edit %}<a href="/sections/{{s.tag}}/notes" title="Notes de la Section {{ s.name |e}}">&#x1F5D2;</a>{% endif %}</td>
             <td>
                 {% for u in s._officers %}
                 <a href="/users/{{u.id}}?returnto=/sections">{{u.discord_username | e}}</a>{% if not(loop.last) %}, {% endif %}

@@ -1,0 +1,110 @@
+{% extends "app.html" %}
+{% set category = 'section' %}
+
+{% block title %}Section{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+    #preview {
+        margin-top: 1em;
+    }
+
+    #preview blockquote {
+        padding-left: 1em;
+        border-left: lightgray 4px solid;
+    }
+
+    pre.help {
+        font-size: 80%;
+    }
+
+    #markdown {
+        font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+        font-size: 80%;
+    }
+</style>
+{% endblock %}
+
+{% block js %}
+<script>
+    function preview()
+    {
+        var md = $('#markdown').val();
+        $.post('/sections/{{section.tag}}/markdown', {markdown: md}, function(data) {
+            $('#preview').html(data);
+        });
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Notes de la Section <i>{{section.name | e}}</i></h1>
+
+{% if can_edit %}
+<form method="post">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="preview-tab" data-toggle="tab" href="#preview" role="tab" aria-controls="preview" aria-selected="true" onclick="preview()">Prévisualisation</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="false">Modification</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <article class="tab-pane fade show active" id="preview" role="tabpanel" aria-labelledby="preview-tab">
+            {{content|raw}}
+        </article>
+        <article class="tab-pane fade container" id="edit" role="tabpanel" aria-labelledby="edit-tab">
+            <div class="row">
+                <textarea class="form-control col-9" id="markdown" name="markdown" rows="20" style="width:100%;">{{md}}</textarea>
+                <div class="col-3">
+<pre class="help">
+**gras**
+_italique_
+
+* liste item 1
+* liste item 2
+
+Titre niveau 1
+==============
+
+Titre niveau 2
+--------------
+
+http://www.url.com
+[texte du lien](url_du_lien)
+
+![texte image](url_de_l'image)
+
+| Titre 1    |    Titre 2   |
+| :--------- | :----------: |
+| Colonne    |    Colonne   |
+| Alignée à  |  Alignée au  |
+| Gauche     |    Centre    |
+
+> Citation
+
+</pre>
+                </div>
+            </div>
+        </article>
+    </div>
+    <div style="margin-top: 1em"></div>
+    <a href="/sections" class="btn btn-secondary">Annuler</a>
+    <button type="submit" name="submit" value="1" class="btn btn-primary">Mettre à jour</button>
+</form>
+{% elseif can_read %}
+<article id="preview">{{content|raw}}</article>
+<a href="/sections">&laquo; Sections</a>
+{% else %}
+<div class="alert alert-danger" role="alert">
+    Il faut appartenir à cette Section pour pouvoir en lire les notes.
+</div>
+<a href="/sections">&laquo; Sections</a>
+{% endif %}
+
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

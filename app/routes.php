@@ -84,6 +84,17 @@ $app->get('/sections/:tag', function ($tag) use ($app) {
 $app->post('/sections/:tag', function ($tag) use ($app) {
     $app->render('sections_edit.html', SectionsController::post($tag, $app->request()->post()));
 });
+// Section Notes (GET)
+$app->get('/sections/:tag/notes', function ($tag) use ($app) {
+    $app->render('sections_notes.html', SectionsController::notes($tag));
+});
+$app->post('/sections/:tag/notes', function ($tag) use ($app) {
+    $app->render('sections_notes.html', SectionsController::notes($tag, $app->request()->post()));
+});
+$app->post('/sections/:tag/markdown', function ($tag) use ($app) {
+    $params = $app->request()->post();
+    SectionsController::markdown($tag, $params['markdown'] ?: '');
+});
 
 //-- Become a paying member (adherent)
 require_once 'controllers/AdhererController.php';
