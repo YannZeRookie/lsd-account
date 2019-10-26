@@ -16,25 +16,43 @@
     }
 
     pre.help {
-        font-size: 80%;
+        font-size: 60%;
     }
 
     #markdown {
         font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-        font-size: 80%;
+        font-size: 70%;
     }
 </style>
 {% endblock %}
 
 {% block js %}
 <script>
+    {% if can_edit %}
+    var old_md = null;
+
     function preview()
     {
         var md = $('#markdown').val();
-        $.post('/sections/{{section.tag}}/markdown', {markdown: md}, function(data) {
-            $('#preview').html(data);
-        });
+        if (old_md != null && md != old_md) {
+            $('#progress').show();
+            $.post('/sections/{{section.tag}}/markdown', {markdown: md}, function(data) {
+                $('#preview').html(data);
+                $('#progress').hide();
+            });
+        }
+        old_md = md;
     }
+
+    setInterval(preview, 1000);
+
+    $("#markdown").keydown(function () {
+        var md = $('#markdown').val();
+        if (old_md != null && md != old_md) {
+            $('#progress').show();
+        }
+    });
+    {% endif %}
 </script>
 {% endblock %}
 
@@ -43,23 +61,9 @@
 
 {% if can_edit %}
 <form method="post">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="preview-tab" data-toggle="tab" href="#preview" role="tab" aria-controls="preview" aria-selected="true" onclick="preview()">Prévisualisation</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="edit-tab" data-toggle="tab" href="#edit" role="tab" aria-controls="edit" aria-selected="false">Modification</a>
-        </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <article class="tab-pane fade show active" id="preview" role="tabpanel" aria-labelledby="preview-tab">
-            {{content|raw}}
-        </article>
-        <article class="tab-pane fade container" id="edit" role="tabpanel" aria-labelledby="edit-tab">
-            <div class="row">
-                <textarea class="form-control col-9" id="markdown" name="markdown" rows="20" style="width:100%;">{{md}}</textarea>
-                <div class="col-3">
-<pre class="help">
+            <article id="edit" class="row">
+                <textarea class="form-control col-9" id="markdown" name="markdown" rows="12" style="width:100%;">{{md}}</textarea>
+<pre class="col-3 help">
 **gras**
 _italique_
 
@@ -84,15 +88,15 @@ http://www.url.com
 | Gauche     |    Centre    |
 
 > Citation
-
 </pre>
-                </div>
-            </div>
-        </article>
-    </div>
+    </article>
+    <div style="height:12px;"><img id="progress" style="display:none;" src="/img/ajax-loader-line.gif"></div>
+
+    <article id="preview">{{content|raw}}</article>
+
     <div style="margin-top: 1em"></div>
     <a href="/sections" class="btn btn-secondary">Annuler</a>
-    <button type="submit" name="submit" value="1" class="btn btn-primary">Mettre à jour</button>
+    <button type="submit" name="submit" value="1" class="btn btn-primary">Enregistrer</button>
 </form>
 {% elseif can_read %}
 <article id="preview">{{content|raw}}</article>

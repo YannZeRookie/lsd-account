@@ -78,11 +78,13 @@ class SectionsController
     {
         $cur_user = self::checkAccessList($can_edit);
 
-        $sections = [
-            'Sections actives' => Section::getActiveSections(true),
-        ];
+        $sections = [];
+        $sections['Sections actives'] = Section::getActiveSections(true);
+        self::setNotesAccess($sections['Sections actives']);
+
         if ($can_edit) {
             $sections['Sections archivées'] = Section::getArchivedSections(true);
+            self::setNotesAccess($sections['Sections archivées']);
         }
 
         //--
@@ -93,6 +95,15 @@ class SectionsController
             'can_edit' => $can_edit,
             'debug' => print_r($debug, true),
         ];
+    }
+
+    static protected function setNotesAccess(&$sections)
+    {
+        foreach ($sections as &$section) {
+            self::checkAccessNotes($section->tag, $can_read, $can_edit);
+            $section->_notes_can_read = $can_read;
+            $section->_notes_can_edit = $can_edit;
+        }
     }
 
     /**
@@ -163,6 +174,7 @@ class SectionsController
         if ($can_edit && isset($params['submit'])) {
             $section->notes = $params['markdown'];
             $section->save();
+            \Slim\Slim::getInstance()->redirect('/sections');
         }
 
         $md = $section->notes;
