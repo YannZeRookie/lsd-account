@@ -126,10 +126,13 @@ class Role extends LsdActiveRecord
             switch ($vb_group) {
                 case '17': // Scorpions
                     self::setRole($user_id, Role::kScorpion);
+                    break;
                 case '19': // Conseiller
                     self::setRole($user_id, Role::kConseiller);
+                    break;
                 case '30': // Gestionnaire de communauté
                     self::setRole($user_id, Role::kCM);
+                    break;
                 default:
                     // Look in Sections
                     $s = Section::findByVBGroup($vb_group);

@@ -12,7 +12,7 @@ require_once __DIR__ . '/../models/Section.php';
 
 class SignupController
 {
-    static protected function checkAccess()
+    static protected function checkAccess($allow_scorpions = false)
     {
         //-- Check rights
         $cur_user = User::getConnectedUser();
@@ -21,7 +21,7 @@ class SignupController
         }
 
         //-- If the user is already a Scorpion, we have nothing to do here: go to the main page
-        if ($cur_user->isScorpion()) {
+        if (!$allow_scorpions && $cur_user->isScorpion()) {
             \Slim\Slim::getInstance()->redirect('/');
         }
 
@@ -103,7 +103,7 @@ class SignupController
 
     static public function signupVB()
     {
-        $cur_user = self::checkAccess();
+        $cur_user = self::checkAccess(true);
 
         return [
             'cur_user' => $cur_user,
@@ -113,7 +113,7 @@ class SignupController
 
     static public function signupVBPost($params)
     {
-        $cur_user = self::checkAccess();
+        $cur_user = self::checkAccess(true);
         $errors = [];
 
         $params['vb_login'] = trim($params['vb_login']);
@@ -188,6 +188,8 @@ class SignupController
      */
     static protected function convertUserFromVB($vbUser, $target_user)
     {
+        //-- VB ID
+        $target_user->vb_id = $vbUser->userid;
         //-- Account creation
         $target_user->created_on = min($target_user->created_on, $vbUser->joindate);
         //-- E-mail

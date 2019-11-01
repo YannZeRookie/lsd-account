@@ -17,6 +17,7 @@ class LoginController
 
     static public function login($key, $connect_force_user = null)
     {
+        $created_new_user = false;
         $login = new Login;
         //-- Clear old connection keys
         Login::execute('DELETE FROM lsd_login WHERE created_on < ?', [time() - self::LOGIN_TTL]);
@@ -52,6 +53,7 @@ class LoginController
             $user = $user->insert();
 
             if ($user) {
+                $created_new_user = true;
                 Role::importDiscordRole($user->id, $login_key->discord_id);    // Import user's role from Discord
             }
         }
@@ -72,7 +74,12 @@ class LoginController
         //-- Go to the main page if we have a Scorpion. Otherwise go to sign-up
         if ($user) {
             if ($user->isScorpion()) {
-                \Slim\Slim::getInstance()->redirect('/');
+                if ($created_new_user) {
+                    // Go through the VB sign-up/linking
+                    \Slim\Slim::getInstance()->redirect('/signup/vb');
+                } else {
+                    \Slim\Slim::getInstance()->redirect('/');
+                }
             } else {
                 \Slim\Slim::getInstance()->redirect('/signup');
             }
