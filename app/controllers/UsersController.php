@@ -316,10 +316,10 @@ class UsersController
             }
         } elseif ($cur_user->id == $user->id && $user->isScorpion()) {
             // A Scorpion can set his own Section Pseudos
-            error_log('A Scorpion can set his own Section Pseudos');
+//            error_log('A Scorpion can set his own Section Pseudos');
             $sections = self::buildSectionsTable($user);
             foreach ($sections as $section) {
-                error_log('Pseudo for ' . $section->tag . ' : ' . $params[$section->tag . '_pseudo']);
+//                error_log('Pseudo for ' . $section->tag . ' : ' . $params[$section->tag . '_pseudo']);
                 $user->setPseudo($section->tag, trim($params[$section->tag . '_pseudo']));
             }
         }
@@ -332,6 +332,9 @@ class UsersController
             $user->toggleRole(Role::kAdherent, $params['adherent_ny'], $years['next']);
 
         }
+
+        //-- Synch-up to Discord
+        self::synchToDiscord($cur_user, $user);
 
         //-- Check if we are supposed to return somewhere
         $query = \Slim\Slim::getInstance()->request()->get();
@@ -360,6 +363,92 @@ class UsersController
             'debug' => print_r($debug, true),
         ];
 
+    }
+
+    /**
+     * Synchronize to Discord
+     * @param User $cur_user    Connected user
+     * @param User $user    Target user
+     */
+    static public function synchToDiscord(User $cur_user, User $user)
+    {
+        global $discord_upsynch;
+
+        if (!$discord_upsynch) {
+            return; // Bail out, feature is disabled
+        }
+        if (!Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
+            return; // Bail out, no use to stay here
+        }
+        //-- Get the user's Discord roles
+        $discord_roles = Discord::discord_get_roles();
+//        error_log('synchToDiscord: $discord_roles=' . print_r($discord_roles, true));
+        $user_info = Discord::discord_get_user_roles($user->discord_id);
+        $d_roles = [];
+        $d_otherroles = [];
+        foreach ($user_info->roles as $r) {
+            $lsd_role = Role::discordToLsdRole($r->name);
+            if ($lsd_role) {
+                $d_roles[$lsd_role] = $r->name;
+            } else {
+                $d_otherroles[$r->name] = $r->name;
+            }
+        }
+//        error_log('synchToDiscord: $user_info=' . print_r($user_info, true));
+//        error_log('synchToDiscord: d_roles=' . print_r($d_roles, true));
+//        error_log('synchToDiscord: d_otherroles=' . print_r($d_otherroles, true));
+
+        //-- Visiteur/Invité/Scorpion exclusive roles
+        if (Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
+            $basic = Role::getBasicRole($user->id);
+            if ($basic && !isset($d_roles[$basic->role])) {
+                foreach ([Role::kVisiteur, Role::kInvite, Role::kScorpion] as $e) {
+                    if (isset($d_roles[$e])) {
+                        Discord::removeRole($user->discord_id, Role::lsdToDiscordRole($e), $discord_roles);
+                    }
+                }
+                Discord::addRole($user->discord_id, Role::lsdToDiscordRole($basic->role), $discord_roles);
+            }
+        }
+        //-- Section-specific roles
+        if (Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
+            $specific = ['DU' => 'Dual-Universe'];
+            foreach($specific as $s_role => $d_role) {
+                $sr = $user->getSectionMembership($s_role);
+                if ($sr && !isset($d_otherroles[$d_role])) {
+                    Discord::addRole($user->discord_id, $d_role, $discord_roles);
+                } elseif (!$sr && isset($d_otherroles[$d_role])) {
+                    Discord::removeRole($user->discord_id, $d_role, $discord_roles);
+                }
+            }
+        }
+        //-- Officier
+        if (Role::hasAnyRole($cur_user->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin])) {
+            $is_officier = $user->isOfficier();
+            if ($is_officier && !isset($d_roles[Role::kOfficier])) {
+                Discord::addRole($user->discord_id, Role::lsdToDiscordRole(Role::kOfficier), $discord_roles);
+            } elseif (!$is_officier && isset($d_roles[Role::kOfficier])) {
+                Discord::removeRole($user->discord_id, Role::lsdToDiscordRole(Role::kOfficier), $discord_roles);
+            }
+        }
+        //-- Conseiller
+        if (Role::hasAnyRole($cur_user->id, [Role::kAdmin])) {
+            $is_conseiller = $user->isConseiller();
+            if ($is_conseiller && !isset($d_roles[Role::kConseiller])) {
+                Discord::addRole($user->discord_id, Role::lsdToDiscordRole(Role::kConseiller), $discord_roles);
+            } elseif (!$is_conseiller && isset($d_roles[Role::kConseiller])) {
+                Discord::removeRole($user->discord_id, Role::lsdToDiscordRole(Role::kConseiller), $discord_roles);
+            }
+        }
+        //-- Bureau
+        if (Role::hasAnyRole($cur_user->id, [Role::kAdmin])) {
+            $is_bureau = $user->isBureau();
+            if ($is_bureau && !isset($d_otherroles['Bureau'])) {
+                Discord::addRole($user->discord_id, 'Bureau', $discord_roles);
+            } elseif (!$is_bureau && isset($d_otherroles['Bureau'])) {
+                Discord::removeRole($user->discord_id, 'Bureau', $discord_roles);
+            }
+        }
     }
 
     static public function canReviewUsers()

@@ -73,6 +73,30 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Return the basic role of a user, i.e. *either* self::kVisiteur, self::kInvite or self::kScorpion
+     * Note these are exclusive
+     * @param $user_id
+     * @return Role|bool
+     */
+    static public function getBasicRole($user_id)
+    {
+        $r = new Role;
+        return $r->equal('user_id', $user_id)->in('role', [self::kVisiteur, self::kInvite, self::kScorpion])->find();
+    }
+
+    /**
+     * Get the list of Officier roles (if any)
+     * @param $user_id
+     * @return Role|bool
+     */
+    static public function getOfficierRoles($user_id)
+    {
+        $r = new Role;
+        return $r->equal('user_id', $user_id)->equal('role', self::kOfficier)->findAll();
+
+    }
+
+    /**
      * Check the user's roles in Discord and create them in the database.
      * This is a convenience to set a user to his proper roles without
      * requiring him to apply again.
@@ -90,7 +114,7 @@ class Role extends LsdActiveRecord
                 $r = new Role;
                 $r->user_id = $user_id;
                 $r->role = self::discordToLsdRole($role->name);
-                if ($r->role) {
+                if ($r->role && $r->role != self::kMembre && $r->role != self::kOfficier) {  // we cannot import kMembre and kOfficier because we don't know the Section
                     $r->insert();
                 }
             }
@@ -100,18 +124,18 @@ class Role extends LsdActiveRecord
     /**
      * Convert a Discord role into a LSD role
      * We import only roles that make sense (for example, we don't import "Officier" (no section attached) or "Bureau"
-     * @param $discord_role string
-     * @return string
+     * @param string $discord_role
+     * @return bool|string
      */
     static public function discordToLsdRole($discord_role)
     {
         switch ($discord_role) {
-            case 'Visiteur':
-                return self::kVisiteur;
             case 'Invité':
                 return self::kInvite;
             case 'Scorpion':
                 return self::kScorpion;
+            case 'Officier':
+                return self::kOfficier;
             case 'Conseiller':
                 return self::kConseiller;
             case 'Admin':
@@ -120,6 +144,43 @@ class Role extends LsdActiveRecord
         return false;
     }
 
+    /**
+     * Convert a Role into a Discord role
+     * @return bool|string
+     */
+    static public function lsdToDiscordRole($role, $extra=null)
+    {
+        switch($role) {
+            case self::kInvite:
+                return 'Invité';
+            case self::kScorpion:
+                return 'Scorpion';
+            case self::kOfficier:
+                return 'Officier';
+            case self::kConseiller:
+                return 'Conseiller';
+            case self::kSecretaire:
+            case self::kTresorier:
+            case self::kPresident:
+                return 'Bureau';
+            case self::kAdmin:
+                return 'Admin';
+            case self::kMembre:
+            case self::kOfficier:
+                // Special roles for specific Sections
+                if ($extra && $extra == 'DU') {
+                    return 'Dual-Universe';
+                }
+                break;
+        }
+        return false;
+    }
+
+    /**
+     * Convert a list of VB roles for a user
+     * @param array $vb_groups
+     * @param $user_id
+     */
     static public function importVBRoles(Array $vb_groups, $user_id)
     {
         foreach ($vb_groups as $vb_group) {
@@ -218,7 +279,7 @@ class Role extends LsdActiveRecord
     /**
      * Generic Role query method
      * @param $user_id
-     * @param $role
+     * @param $role string
      * @param $extra
      * @return Role|false
      */

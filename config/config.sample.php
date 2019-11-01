@@ -27,6 +27,9 @@ $discord_api = 'https://discordapp.com/api';
 $discord_bot_token = 'BOT TOKEN GOES HERE';
 $discord_guild_id = 'YOUR GUILD ID';
 
+// Enable up-synchro of Roles to Discord when updating a user
+$discord_upsynch = false;
+
 // PayPal
 $paypal_url = 'https://www.paypal.com';
 $paypal_btn_standard = 'STANDARD BUY BUTTON';

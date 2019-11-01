@@ -3,6 +3,8 @@
 /**
  * Library to talk to the Discord API in a server-to-server manner
  * @doc https://discordapp.com/developers/docs/topics/oauth2
+ * @doc https://discordapp.com/developers/docs/resources/user
+ * @doc https://discordapp.com/developers/docs/resources/guild
  *
  * Created by PhpStorm.
  * User: yann
@@ -11,12 +13,12 @@
  */
 class Discord
 {
-    protected static $api = '';
-    protected static $bot_token = '';       // No need to use OAuth2: we'll pass directly the Bot token. Otherwise, we will be too limited
-    public static $status = '';             // Status of the last query
-    protected static $guild_id = '';        // Our Guild ID (=Discord server ID)
+    static protected $api = '';
+    static protected $bot_token = '';       // No need to use OAuth2: we'll pass directly the Bot token. Otherwise, we will be too limited
+    static public $status = '';             // Status of the last query
+    static protected $guild_id = '';        // Our Guild ID (=Discord server ID)
 
-    public static function init($api, $bot_token, $guild_id)
+    static public function init($api, $bot_token, $guild_id)
     {
         self::$api = $api;
         self::$bot_token = $bot_token;
@@ -33,7 +35,7 @@ class Discord
      * @param array $headers
      * @return mixed
      */
-    protected static function query($url, $method = 'GET', $params = [], $body = '', $content_type = 'multipart/form-data', $headers = [])
+    static protected function query($url, $method = 'GET', $params = [], $body = '', $content_type = 'multipart/form-data', $headers = [])
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -48,6 +50,15 @@ class Discord
                 }
                 break;
             case 'PUT':
+            case 'DELETE':
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+                curl_setopt($ch, CURLOPT_SAFE_UPLOAD, TRUE);
+                if ($content_type == 'application/json') {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+                } else {
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+                }
+                break;
             case 'POST':
                 curl_setopt($ch, CURLOPT_POST, TRUE);
                 curl_setopt($ch, CURLOPT_SAFE_UPLOAD, TRUE);
@@ -66,6 +77,9 @@ class Discord
         $output = curl_exec($ch);
         self::$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+//        error_log('curl: url=' . $url);
+//        error_log('curl: $headers=' . print_r($headers, true));
+//        error_log('curl: body=' . $body);
         return $output;
     }
 
@@ -76,7 +90,7 @@ class Discord
      * @param array $headers
      * @return mixed
      */
-    public static function get($url, $params = [], $headers = [])
+    static public function get($url, $params = [], $headers = [])
     {
         return self::query($url, $method = 'GET', $params, '', 'plain/text', $headers);
     }
@@ -88,7 +102,7 @@ class Discord
      * @param array $headers
      * @return mixed
      */
-    public static function post($url, $params, $headers = [])
+    static public function post($url, $params, $headers = [])
     {
         return self::query($url, $method = 'POST', $params, '', 'application/x-www-form-urlencoded', $headers);
     }
@@ -102,10 +116,10 @@ class Discord
      * @param $headers
      * @return bool|mixed       False if failed, or the object
      */
-    public static function query_json($url, $method = 'GET', $params = [], $headers = [])
+    static public function query_json($url, $method = 'GET', $params = [], $headers = [])
     {
         $headers[] = 'Accept: application/json';
-        $res = self::query($url, $method, [], json_encode($params, JSON_NUMERIC_CHECK), 'application/json', $headers);
+        $res = self::query($url, $method, [], (count($params) ? json_encode($params, JSON_NUMERIC_CHECK) : ''), 'application/json', $headers);
         if ($res) {
             return json_decode($res, FALSE, 512, JSON_NUMERIC_CHECK + JSON_BIGINT_AS_STRING);
         } else {
@@ -121,10 +135,26 @@ class Discord
      * @param array $params Query parameters, if any
      * @return bool|mixed   False if failed, or the object
      */
-    public static function api_get($end_point, $params = [])
+    static public function api_get($end_point, $params = [])
     {
         return self::query_json(self::$api . $end_point, 'GET', $params, ['Authorization: Bot ' . self::$bot_token]);
     }
+
+    static public function api_post($end_point, $params = [])
+    {
+        return self::query_json(self::$api . $end_point, 'POST', $params, ['Authorization: Bot ' . self::$bot_token]);
+    }
+
+    static public function api_put($end_point, $params = [])
+    {
+        return self::query_json(self::$api . $end_point, 'PUT', $params, ['Authorization: Bot ' . self::$bot_token]);
+    }
+
+    static public function api_delete($end_point, $params = [])
+    {
+        return self::query_json(self::$api . $end_point, 'DELETE', $params, ['Authorization: Bot ' . self::$bot_token]);
+    }
+
 
     //------------------------------------------------------------------------------------------------------------------
     // Discord API end-points wrappers
@@ -133,12 +163,12 @@ class Discord
     /**
      * Get our server info
      */
-    public static function discord_get_guild()
+    static public function discord_get_guild()
     {
         return self::api_get('/guilds/' . self::$guild_id);
     }
 
-    protected static function sort_roles($a, $b)
+    static protected function sort_roles($a, $b)
     {
         if ($a->position == $b->position) {
             return 0;
@@ -149,8 +179,30 @@ class Discord
     /**
      * Get the Roles of our server
      * Make a well-sorted list, using the Roles IDs as entries keys
+        [383968791454941193] => stdClass Object
+        (
+            [hoist] =>
+            [name] => @everyone
+            [mentionable] =>
+            [color] => 0
+            [position] => 0
+            [id] => 383968791454941193
+            [managed] =>
+            [permissions] => 512
+        )
+        [404693131573985280] => stdClass Object
+        (
+            [hoist] => 1
+            [name] => Invité
+            [mentionable] =>
+            [color] => 1752220
+            [position] => 1
+            [id] => 404693131573985280
+            [managed] =>
+            [permissions] => 103894528
+        )
      */
-    public static function discord_get_roles()
+    static public function discord_get_roles()
     {
         $roles = self::api_get('/guilds/' . self::$guild_id . '/roles');
         uasort($roles, ['self', 'sort_roles']);
@@ -164,7 +216,7 @@ class Discord
     /**
      * Get the Roles of a user
      */
-    public static function discord_get_user_roles($discord_id, $roles = null)
+    static public function discord_get_user_roles($discord_id, $roles = null)
     {
         if (!$roles) {
             $roles = self::discord_get_roles();
@@ -178,5 +230,51 @@ class Discord
             $user_info->roles = $user_roles;
         }
         return $user_info;
+    }
+
+    /**
+     * Add a role to a Discord user
+     * @param $discord_id
+     * @param $result
+     */
+    static public function addRole($discord_id, $role, $roles = null)
+    {
+//        error_log('synchToDiscord: adding ' . $role);
+        if (!$roles) {
+            $roles = self::discord_get_roles();
+        }
+        //-- Find and add role
+        foreach ($roles as $r) {
+            if ($r->name == $role) {
+//                error_log('synchToDiscord: adding $r= ' . print_r($r,true));
+                $result = self::api_put('/guilds/' . self::$guild_id . '/members/' . $discord_id . '/roles/' . $r->id);
+//                error_log('synchToDiscord: adding $result= ' . print_r($result,true));
+                return $result;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Remove a role from a Discord user
+     * @param $discord_id
+     * @param $role
+     */
+    static public function removeRole($discord_id, $role, $roles = null)
+    {
+//        error_log('synchToDiscord: removing ' . $role);
+        if (!$roles) {
+            $roles = self::discord_get_roles();
+        }
+        //-- Find and add role
+        foreach ($roles as $r) {
+            if ($r->name == $role) {
+//                error_log('synchToDiscord: deleting $r= ' . print_r($r,true));
+                $result = self::api_delete('/guilds/' . self::$guild_id . '/members/' . $discord_id . '/roles/' . $r->id);
+//                error_log('synchToDiscord: deleting $result= ' . print_r($result,true));
+                return $result;
+            }
+        }
+        return false;
     }
 }
