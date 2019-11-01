@@ -50,26 +50,26 @@
     </div>
     <div class="col-sm-5">
         <div class="row">
-            <div class="col-sm-3">Création&nbsp;:</div>
+            <div class="col-sm-4">Création&nbsp;:</div>
             <div class="col">{{ user.created_on|date('d/m/Y') }}</div>
             {% if user.submited_on %}
             <div class="w-100"></div>
-            <div class="col-sm-3">Candidature&nbsp;:</div>
+            <div class="col-sm-4">Candidature&nbsp;:</div>
             <div class="col">{{ user.submited_on|date('d/m/Y') }}</div>
             {% endif %}
             {% if user.reviewed_on %}
             <div class="w-100"></div>
-            <div class="col-sm-3">{% if user.isScorpion %}Validation{% else %}Refus{% endif %}&nbsp;:</div>
+            <div class="col-sm-4">{% if user.isScorpion %}Validation{% else %}Refus{% endif %}&nbsp;:</div>
             <div class="col">{{ user.reviewed_on|date('d/m/Y') }} {% if user._reviewer %} par {{
                 user._reviewer.discord_username }}{% endif %}
             </div>
             {% endif %}
             <div class="w-100"></div>
-            <div class="col-sm-3">Majeur&nbsp;:</div>
+            <div class="col-sm-4">Majeur&nbsp;:</div>
             <div class="col">{% if user.minor %}&#10060;{% else %}&#9989;{% endif %}</div>
             {% if user._vb_user %}
             <div class="w-100"></div>
-            <div class="col-sm-3">Pseudo VB&nbsp;:</div>
+            <div class="col-sm-4">Pseudo VB&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/member/{{user._vb_user.userid}}" title="Voir le profil VB">{{ user._vb_user.username|e}}</a></div>
             {% else %}
             <div class="w-100"></div>
@@ -77,7 +77,7 @@
             {% endif %}
             {% if user._vb_user and cur_user.isAdmin %}
             <div class="w-100"></div>
-            <div class="col-sm-3">ID VB&nbsp;:</div>
+            <div class="col-sm-4">ID VB&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/admincp/user.php?do=edit&u={{user._vb_user.userid}}" title="Visualiser dans l'AdminCP de VB">{{ user._vb_user.userid|e}}</a></div>
             {% endif %}
         </div>
