@@ -30,6 +30,8 @@ class SignupController
 
     static public function signup($params = [])
     {
+        global $discord_channel_review; // Notification channel
+
         $cur_user = self::checkAccess();
         $errors = [];
 
@@ -68,7 +70,8 @@ class SignupController
                     }
                     $r->insert();
                 }
-                // TODO: send a message to Discord in the "Conseil des Jeux" channel with a link
+                // Send a message to Discord in the "Conseil des Jeux" channel with a link
+                Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature, merci d'aller l'examiner rapidement !");
                 // Done, thank you and bye
                 \Slim\Slim::getInstance()->flash('success', 'Ta candidature a bien été enregistrée, merci !');
                 \Slim\Slim::getInstance()->redirect('/signup/pending');

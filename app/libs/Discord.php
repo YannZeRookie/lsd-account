@@ -277,4 +277,36 @@ class Discord
         }
         return false;
     }
+
+    /**
+     * Send a message to a Discord channel
+     * @doc https://discordjs.guide/miscellaneous/parsing-mention-arguments.html#how-discord-mentions-work about the mention syntax
+     * @param string $channel Channel ID
+     * @param string $message
+     * @return bool|mixed
+     */
+    static public function sendChannelMessage($channel, $message)
+    {
+        $params = [
+            'content' => $message,
+        ];
+        return self::api_post('/channels/' . $channel . '/messages', $params);
+
+    }
+
+    /**
+     * Send a private message (aka DM)
+     * @param string $discord_id
+     * @param string $message
+     * @return bool|mixed
+     */
+    static public function sendPrivateMessage($discord_id, $message)
+    {
+        $channel = self::api_post('/users/@me/channels', ['recipient_id' => $discord_id]);
+        if ($channel && $channel->id)   {
+            return self::sendChannelMessage($channel->id, $message);
+        } else {
+            return $channel;
+        }
+    }
 }

@@ -491,6 +491,8 @@ class UsersController
      */
     static public function reviewUser($id, $params)
     {
+        global $discord_channel_review;
+
         $cur_user = self::canReviewUsers();
         $u = new User;
         $target_user = $u->notequal('submited_on', 0)->equal('reviewed_on', 0)->find($id);
@@ -501,9 +503,13 @@ class UsersController
             $target_user->save();
             if (isset($params['validate'])) {
                 $target_user->setRole(Role::kScorpion); // Note that this will automatically remove kInvite and kVisiteur :-)
-                // TODO: grant Scorpion role on Discord (and remove Invite)
+                self::synchToDiscord($cur_user, $target_user); // Grant Scorpion role on Discord
+                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été validée, bienvenue chez nous !");
+            } else {
+                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été examinée mais n'a malheureusement pas été acceptée. Merci pour ton intérêt pour notre guilde et bonne continuation.");
             }
-            // TODO send a message to the user by Discord
+            Discord::sendChannelMessage($discord_channel_review, "La candidature de `" . $target_user->discord_username . "` a été traitée par `" . $cur_user->discord_username . "`. Merci.");
+
         }
         \Slim\Slim::getInstance()->redirect('/users/review');
         return [];

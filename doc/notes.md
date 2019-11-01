@@ -133,9 +133,10 @@ Meeting du 2019-07-22
 - X Permettre aux Scorpions de se relier à leur compte VB, que ce soit lors de la création du compte venant de Discord qu'après coup
 - X Polishing "dark"
 - X Up synchro vers Discord quand on change un rôle (débrayable)
+- X Poster une notification dans Discord quand il y a une candidature
 - Autres notes persos:
+  - Bug: quand on passe un utilisateur en Visiteur, ça ne mets pas à jour Discord comme il faut. Ça ne semble marcher qu'avec le role Invité
   - N'importe qui devrait pouvoir consulter la fiche d'un autre joueur
-  - Poster une notification dans Discord quand il y a une candidature
   - Poster une notification privée dans Discord quand sa candidature est acceptée
   - Cotisation à finir avec les vrais boutons de prod + CRUD des cotisations
   - Paginer la liste des utilisateurs

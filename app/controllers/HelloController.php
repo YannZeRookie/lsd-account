@@ -17,7 +17,12 @@ class HelloController
     }
 
     static public function hello() {
+        global $discord_channel_review;
+
         $cur_user = self::checkAccess();
+
+        // Discord::sendChannelMessage($discord_channel_review, 'Salut à <@381178649480658948>');
+
         $debug = '';
         return [
             'cur_user' => $cur_user,
