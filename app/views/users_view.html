@@ -71,6 +71,9 @@
             <div class="w-100"></div>
             <div class="col-sm-3">Pseudo VB&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/member/{{user._vb_user.userid}}" title="Voir le profil VB">{{ user._vb_user.username|e}}</a></div>
+            {% else %}
+            <div class="w-100"></div>
+            <div class="col"><a href="/signup/vb">Se relier au Forum &raquo;</a></div>
             {% endif %}
             {% if user._vb_user and cur_user.isAdmin %}
             <div class="w-100"></div>
@@ -103,7 +106,7 @@
     {# Example of restricted display: only Admins or myself can see the user's e-mail #}
     {% if can_change_email == 'full' %}
     <p class="col-sm-6">E-mail: <input type="text" name="email" value="{{user.email|e}}"><br>
-        <span class="small">Entrez votre e-mail pour recevoir la Newsletter (un ou deux envois par an).<br>Nous ne communiquerons à personne votre adresse.</span>
+        <span class="small">Entre ton e-mail pour recevoir la Newsletter (un ou deux envois par an).<br>Nous ne communiquerons à personne ton adresse.</span>
     </p>
     {% elseif can_change_email == 'checkbox' %}
     {# Conseillers can only turn the newsletter option off. Which deletes the e-mail from the table #}
