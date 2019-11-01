@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="bg-dark">
 <head>
     {% block head %}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -19,7 +19,7 @@
     {% endblock %}
 </head>
 
-<body class="container">
+<body class="container bg-dark">
 
 <header>
     {% block header %}
@@ -65,30 +65,32 @@
     {% endblock %}
 </header>
 
-<section id="flash">
-    {% if flash.primary %}
-    <div class="alert alert-primary" role="alert">{{flash.primary}}</div>
-    {% endif %}
-    {% if flash.info %}
-    <div class="alert alert-info" role="alert">{{flash.info}}</div>
-    {% endif %}
-    {% if flash.success %}
-    <div class="alert alert-success" role="alert">{{flash.success}}</div>
-    {% endif %}
-    {% if flash.danger %}
-    <div class="alert alert-danger" role="alert">{{flash.danger}}</div>
-    {% endif %}
-    {% if flash.error %}
-    <div class="alert alert-danger" role="alert">{{flash.error}}</div>
-    {% endif %}
-    {% if flash.warning %}
-    <div class="alert alert-warning" role="alert">{{flash.warning}}</div>
-    {% endif %}
-</section>
+<div id="main">
+    <section id="flash">
+        {% if flash.primary %}
+        <div class="alert alert-primary" role="alert">{{flash.primary}}</div>
+        {% endif %}
+        {% if flash.info %}
+        <div class="alert alert-info" role="alert">{{flash.info}}</div>
+        {% endif %}
+        {% if flash.success %}
+        <div class="alert alert-success" role="alert">{{flash.success}}</div>
+        {% endif %}
+        {% if flash.danger %}
+        <div class="alert alert-danger" role="alert">{{flash.danger}}</div>
+        {% endif %}
+        {% if flash.error %}
+        <div class="alert alert-danger" role="alert">{{flash.error}}</div>
+        {% endif %}
+        {% if flash.warning %}
+        <div class="alert alert-warning" role="alert">{{flash.warning}}</div>
+        {% endif %}
+    </section>
 
-<section id="content">
-    {% block content %}{% endblock %}
-</section>
+    <section id="content">
+        {% block content %}{% endblock %}
+    </section>
+</div>
 
 <nav>
     <ul>
@@ -101,6 +103,15 @@
 </nav>
 
 <footer id="footer">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item navbar-text">Copyright ©2018-{{"now"|date("Y")}} Les Scorpions du Désert</li>
+            <li class="nav-item navbar-text">&bullet;</li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="http://accueil.scorpions-du-desert.com/conditions-utilisation">Conditions
+                d'utilisation</a></li>
+        </ul>
+    </nav>
     {% block footer %}
     <!-- footer begin -->
     <script
