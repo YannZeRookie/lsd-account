@@ -70,7 +70,12 @@
             {% if user._vb_user %}
             <div class="w-100"></div>
             <div class="col-sm-3">Pseudo VB&nbsp;:</div>
-            <div class="col">{{ user._vb_user.username|e}}</div>
+            <div class="col"><a href="http://www.scorpions-du-desert.com/member/{{user._vb_user.userid}}" title="Voir le profil VB">{{ user._vb_user.username|e}}</a></div>
+            {% endif %}
+            {% if user._vb_user and cur_user.isAdmin %}
+            <div class="w-100"></div>
+            <div class="col-sm-3">ID VB&nbsp;:</div>
+            <div class="col"><a href="http://www.scorpions-du-desert.com/admincp/user.php?do=edit&u={{user._vb_user.userid}}" title="Visualiser dans l'AdminCP de VB">{{ user._vb_user.userid|e}}</a></div>
             {% endif %}
         </div>
     </div>
