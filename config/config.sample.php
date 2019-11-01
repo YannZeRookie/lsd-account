@@ -30,6 +30,10 @@ $discord_guild_id = 'YOUR GUILD ID';
 // Enable up-synchro of Roles to Discord when updating a user
 $discord_upsynch = false;
 
+// Channel to notify when a candidate has to be reviewed
+$discord_channel_review = 'CHANNEL ID';
+
+
 // PayPal
 $paypal_url = 'https://www.paypal.com';
 $paypal_btn_standard = 'STANDARD BUY BUTTON';
