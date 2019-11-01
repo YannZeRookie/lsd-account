@@ -17,7 +17,7 @@ class AdhererController
     {
         //-- Check rights: the connected user can pay only if he/she is a Scorpion
         $cur_user = User::getConnectedUser();
-        if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kScorpion])) {
+        if (!$cur_user || !$cur_user->isScorpion()) {
             \Slim\Slim::getInstance()->redirect('/');
         }
         return $cur_user;
@@ -34,7 +34,7 @@ class AdhererController
         $adhesion = new Adhesion;
 
         //--
-        $debug = $_SERVER;
+        $debug = $cur_user->isAdmin() ? $_SERVER : '';
         return [
             'cur_user' => $cur_user,
             'adhesion' => $adhesion,
@@ -88,7 +88,7 @@ class AdhererController
         }
 
         //--
-        $debug = $adhesion;
+        $debug = $cur_user->isAdmin() ? $adhesion : '';
         return [
             'cur_user' => $cur_user,
             'adhesion' => $adhesion,
@@ -100,9 +100,10 @@ class AdhererController
     static public function merci($params)
     {
         $cur_user = self::checkAccess();
+        $debug = $cur_user->isAdmin() ? $params : '';
         return [
             'cur_user' => $cur_user,
-            'debug' => print_r($params, true),
+            'debug' => print_r($debug, true),
         ];
 
     }
