@@ -100,7 +100,7 @@ class AdhererController
     static public function merci($params)
     {
         $cur_user = self::checkAccess();
-        $debug = $cur_user->isAdmin() ? $params : '';
+        $debug = '';
         return [
             'cur_user' => $cur_user,
             'debug' => print_r($debug, true),
@@ -152,6 +152,15 @@ class AdhererController
         if ($output == 'VERIFIED' || $output == 'INVALID') {
             $t->ipn_status = $output;
             $t->save();
+            //-- Update the adhesion with the actual amount
+            if ($t->adhesion_id) {
+                $a = new Adhesion();
+                $adhesion = $a->find($t->adhesion_id);
+                if ($adhesion) {
+                    $adhesion->amount = $t->mc_gross;
+                    $adhesion->save();
+                }
+            }
         }
 
         exit('');
