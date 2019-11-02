@@ -80,10 +80,10 @@ class AdhererController
                 $pp_url .= '&on1=UserID';
                 $pp_url .= '&os1=' . $cur_user->id;
                 $pp_url .= '&custom=' . $adhesion->id;  // We send the adhesion id in the hope of getting it back when we receive the payment confirmation
-                $pp_url .= '&return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci?aid=' . $adhesion->id);
-                $pp_url .= '&cancel_return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler?aid=' . $adhesion->id);
+                $pp_url .= '&return=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci?aid=' . $adhesion->id);
+                $pp_url .= '&cancel_return=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler?aid=' . $adhesion->id);
                 $pp_url .= '&rm=2'; // Super important: go back to the return URLs with a POST and all the payment variables
-                $pp_url .= '&image_url=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
+                $pp_url .= '&image_url=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
                 \Slim\Slim::getInstance()->redirect($pp_url);
             } else {
                 $errors['Base de données'] = 'Désolé, un problème est survenu lors de la mise à jour de la base de données. Recommencez pour voir ?';
@@ -122,7 +122,7 @@ class AdhererController
 
     static public function ipn($params)
     {
-        error_log('ipn: ' . print_r($params, true));
-        exit('OK');
+        file_put_contents('/tmp/ipn.log', print_r($params, true) . "\n", FILE_APPEND);
+        exit('');
     }
 }
