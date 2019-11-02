@@ -45,7 +45,7 @@
     <h2>OK c'est parti !</h2>
 
     <p>Merci de remplir soigneusement ton formulaire d'adhésion. Tous les champs sont obligatoires pour de simples
-        raisons légales :</p>
+        raisons légales&nbsp;:</p>
     {% if errors %}
     <div class="errorExplanation">
         <h2>Erreur</h2>
@@ -117,10 +117,10 @@
                 </div>
             </div>
         </fieldset>
-        <div class="form-group row">
+        <div class="form-check row">
             <div class="custom-control custom-checkbox col-sm-6">
-                <input type="checkbox" class="custom-control-input" id="accept" name="accept" required>
-                <label class="custom-control-label" for="accept">Je déclare avoir reçu un exemplaire des <a
+                <input type="checkbox" class="form-check-input" id="accept" name="accept" required>
+                <label class="form-check-label" for="accept">Je déclare avoir reçu un exemplaire des <a
                         href="http://accueil.scorpions-du-desert.com/l-association/statuts">statuts et du règlement
                     intérieur de l'association</a>, en avoir pris connaissance et les accepter sans réserve. Je
                     déclare également avoir été informé des dispositions de <a
@@ -129,8 +129,8 @@
                     membres de l'association des données personnelles me concernant.</label>
             </div>
         </div>
-        <div class="form-group row">
-            <div class="col-sm-6">
+        <div class="form-group row" style="margin-top: 1em;">
+            <div class="col-sm-6" style="text-align: center">
                 <input type="hidden" name="submit" value="1"/>
                 <input type="image" src="http://www.paypalobjects.com/fr_FR/FR/i/btn/btn_paynow_LG.gif" border="0"
                        name="submit" alt="PayPal" title="Payer par PayPal"/>

@@ -35,7 +35,7 @@ class AdhererController
         $adhesion = new Adhesion;
 
         //--
-        $debug = $cur_user->isAdmin() ? $_SERVER : '';
+        $debug = '';
         return [
             'cur_user' => $cur_user,
             'adhesion' => $adhesion,
@@ -88,7 +88,7 @@ class AdhererController
         }
 
         //--
-        $debug = $cur_user->isAdmin() ? $adhesion : '';
+        $debug = '';
         return [
             'cur_user' => $cur_user,
             'adhesion' => $adhesion,
@@ -110,7 +110,7 @@ class AdhererController
     static public function annuler($params)
     {
         $cur_user = self::checkAccess();
-        $debug = $cur_user->isAdmin() ? $params : '';
+        $debug = '';
         return [
             'cur_user' => $cur_user,
             'debug' => print_r($debug, true),
@@ -129,7 +129,7 @@ class AdhererController
             'first_name', 'last_name', 'payer_email', 'receiver_email', 'verify_sign', 'item_name', 'residence_country',
             'ipn_track_id'];
         foreach ($ipn_fields as $field) {
-            $t->{$field} = $params[$field] ?? '';
+            $t->{$field} = iconv(strtoupper($t->charset), 'UTF-8', $params[$field] ?? '');
         }
         $t->insert();
 

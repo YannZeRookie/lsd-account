@@ -163,12 +163,14 @@ Array
 )
 ```
 
-J'ai ajouté une notify_url dans le code du bouton. C'est appelé en POST.
+J'ai ajouté une notify_url dans le code du bouton. C'est appelé en POST. -> abandonné, c'est mieux de le faire dans les paramètres IPN
 
 ENFIN la doc qu'il me manquait ! https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/formbasics/?mark=notify_url%20post#instant-payment-notification--notify_url
 
 Doc sur le protocole IPN (la call-back de validation de transaction) : https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNIntro/
 
+Gestion de l'IPN : https://www.sandbox.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
+Historique des transactions IPN : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
 
 Meeting du 2019-07-22
 =====================
