@@ -117,10 +117,10 @@ $app->post('/adherer/annuler', function () use ($app) {
     $app->render('adherer_annuler.html', AdhererController::annuler($app->request()->post()));
 });
 $app->get('/adherer/ipn', function () use ($app) {
-    AdhererController::ipn($app->request()->get());
+    AdhererController::ipn($app->request()->get(), $app->request());
 });
 $app->post('/adherer/ipn', function () use ($app) {
-    AdhererController::ipn($app->request()->post());
+    AdhererController::ipn($app->request()->post(), $app->request());
 });
 
 //-- Admin corner

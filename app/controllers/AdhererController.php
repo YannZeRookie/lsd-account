@@ -9,6 +9,7 @@
  * Become a paying member (adherent)
  */
 require_once __DIR__ . '/../models/Adhesion.php';
+require_once __DIR__ . '/../models/Transaction.php';
 
 
 class AdhererController
@@ -75,14 +76,10 @@ class AdhererController
             if ($ok) {
                 $pp_url = $paypal_url . '/cgi-bin/webscr?cmd=_s-xclick';
                 $pp_url .= '&hosted_button_id=' . (($adhesion->cotisation != Adhesion::kCotisationStandard) ? $paypal_btn_custom : $paypal_btn_standard);
-                $pp_url .= '&on0=Pseudo';
-                $pp_url .= '&os0=' . rawurlencode($cur_user->discord_username);
-                $pp_url .= '&on1=UserID';
-                $pp_url .= '&os1=' . $cur_user->id;
                 $pp_url .= '&custom=' . $adhesion->id;  // We send the adhesion id in the hope of getting it back when we receive the payment confirmation
                 $pp_url .= '&return=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci?aid=' . $adhesion->id);
                 $pp_url .= '&cancel_return=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler?aid=' . $adhesion->id);
-                $pp_url .= '&rm=2'; // Super important: go back to the return URLs with a POST and all the payment variables
+                $pp_url .= '&rm=1'; // Super important: go back to the return URLs with a POST and all the payment variables
                 $pp_url .= '&image_url=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
                 \Slim\Slim::getInstance()->redirect($pp_url);
             } else {
@@ -120,9 +117,20 @@ class AdhererController
         ];
     }
 
-    static public function ipn($params)
+    static public function ipn($params, $request)
     {
-        file_put_contents('/tmp/ipn.log', print_r($params, true) . "\n", FILE_APPEND);
+        file_put_contents('/tmp/ipn.log', $request->getBody() . "\n", print_r($params, true) . "\n", FILE_APPEND);
+        $t = new Transaction;
+        $t->adhesion_id = int($params['custom']);
+
+        $ipn_fields = ['txn_id', 'mc_gross', 'mc_currency', 'payer_id', 'payment_date', 'payment_status',
+            'first_name', 'last_name', 'payer_email', 'receiver_email', 'verify_sign', 'item_name', 'residence_country',
+            'ipn_track_id'];
+        foreach ($ipn_fields as $field) {
+            $t->{$field} = $params[$field] ?? '';
+        }
+        $t->insert();
+
         exit('');
     }
 }

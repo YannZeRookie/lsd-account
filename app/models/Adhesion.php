@@ -7,7 +7,6 @@
  */
 
 require_once __DIR__ . '/LsdActiveRecord.php';
-require_once __DIR__ . '/LsdActiveRecord.php';
 
 class Adhesion extends LsdActiveRecord
 {
