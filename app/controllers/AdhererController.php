@@ -119,7 +119,7 @@ class AdhererController
 
     static public function ipn($params, $request)
     {
-        file_put_contents('/tmp/ipn.log', $request->getBody() . "\n", print_r($params, true) . "\n", FILE_APPEND);
+        file_put_contents('/tmp/ipn.log', $request->getBody() . "\n" . print_r($params, true) . "\n", FILE_APPEND);
         $t = new Transaction;
         $t->adhesion_id = int($params['custom']);
 
