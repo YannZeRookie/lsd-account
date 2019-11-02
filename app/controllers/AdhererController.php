@@ -159,6 +159,10 @@ class AdhererController
                 if ($adhesion) {
                     $adhesion->amount = $t->mc_gross;
                     $adhesion->save();
+                    //-- If transaction succeeded, set the Adherent role to the user
+                    if ($output == 'VERIFIED') {
+                        Role::setRole($adhesion->user_id, Role::kAdherent, date("Y"));
+                    }
                 }
             }
         }

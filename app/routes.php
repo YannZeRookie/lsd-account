@@ -123,6 +123,15 @@ $app->post('/adherer/ipn', function () use ($app) {
     AdhererController::ipn($app->request()->post(), $app->request());
 });
 
+//-- Payments management
+require_once 'controllers/AdhesionController.php';
+$app->get('/adhesions', function () use ($app) {
+    $app->render('adhesions.html', AdhesionController::all('', $app->request()->get()));
+});
+$app->get('/adhesions/:year', function ($year) use ($app) {
+    $app->render('adhesions.html', AdhesionController::all($year, $app->request()->get()));
+});
+
 //-- Admin corner
 require_once 'controllers/AdminController.php';
 $app->get('/admin', function () use ($app) {

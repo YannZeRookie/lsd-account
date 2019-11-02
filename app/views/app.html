@@ -47,6 +47,11 @@
                     <a class="nav-link" href="/adherer">Adhérer</a>
                 </li>
                 {% endif %}
+                {% if cur_user.canSeeAdhesions %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/adhesions">Adhésions</a>
+                </li>
+                {% endif %}
                 {% if cur_user.isAdmin %}
                 <li class="nav-item">
                     <a class="nav-link" href="/admin">Administration</a>

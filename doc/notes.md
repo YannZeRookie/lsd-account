@@ -115,6 +115,8 @@ Il faut se connecter avec le compte développeur Sandbox pour régler les bouton
 Pour payer, prendre le compte Sandbox "Paypal Sandbox Utilisateur" dans Passpack
 
 Liste des boutons du compte : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_button-management
+https://www.paypal.com/fr/cgi-bin/webscr?cmd=_button-management
+
 
 Utilisation de la variable `rm` pour le mode de retour : https://www.paypal.com/mt/smarthelp/article/how-do-i-use-the-rm-variable-for-website-payments-ts1011
 
@@ -169,8 +171,12 @@ ENFIN la doc qu'il me manquait ! https://developer.paypal.com/docs/classic/paypa
 
 Doc sur le protocole IPN (la call-back de validation de transaction) : https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNIntro/
 
-Gestion de l'IPN : https://www.sandbox.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
-Historique des transactions IPN : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
+Gestion de l'IPN :
+- https://www.sandbox.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
+- https://www.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
+
+Historique des transactions IPN :
+- https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
 
 Meeting du 2019-07-22
 =====================
@@ -185,10 +191,12 @@ Meeting du 2019-07-22
 - X Polishing "dark"
 - X Up synchro vers Discord quand on change un rôle (débrayable)
 - X Poster une notification dans Discord quand il y a une candidature
+- X Poster une notification privée dans Discord quand sa candidature est acceptée
 - Autres notes persos:
   - Bug: quand on passe un utilisateur en Visiteur, ça ne mets pas à jour Discord comme il faut. Ça ne semble marcher qu'avec le role Invité
   - N'importe qui devrait pouvoir consulter la fiche d'un autre joueur
-  - Poster une notification privée dans Discord quand sa candidature est acceptée
   - Cotisation à finir avec les vrais boutons de prod + CRUD des cotisations
+  - Faire le total des trasactions VERIFIED
+  - Tester une vraie transaction
   - Paginer la liste des utilisateurs
 

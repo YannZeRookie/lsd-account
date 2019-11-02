@@ -1,0 +1,110 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Adhésions{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+    #users_table td.account {
+        vertical-align: middle;
+        padding-right: 1em;
+    }
+
+    #users_table td.account img {
+        display: inline;
+        max-height: 48px;
+    }
+
+    #users_table .tr_stripped {
+        background-color: rgba(0,0,0,.05);
+    }
+
+    #users_table .tx_details {
+        border-top: none;
+        font-size: 80%;
+    }
+</style>
+{% endblock %}
+
+{%block js %}
+<script>
+    function refresh() {
+        var year = $('#sel_year').val();
+        var showall = $('#showall').is(':checked') ? '?showall=1' : '';
+        gotoURL('/adhesions/' + year + showall);
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Adhésions</h1>
+Année : <select id="sel_year" onchange="refresh()">
+    {% for y in first_year .. cur_year %}
+    <option value="{{y}}"{% if y==year %} selected{% endif %}>{{y}}</option>
+    {% endfor %}
+</select>
+<label><input type="checkbox" id="showall" value="1" {% if showall %}checked{% endif %} onchange="refresh()">&nbsp;Montrer les abandons</label>
+<article>
+    {% if limited %}
+    <table id="users_table" class="table table-sm">
+        <thead>
+        <tr>
+            <th>Compte</th>
+            <th>Date</th>
+            <th>Transaction PayPal</th>
+            <th>État</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for a in adhesions %}
+        <tr{% if loop.index0 is even %} class="tr_stripped"{% endif %}>
+        <td class="account" nowrap>
+            {% if a._avatar %}<img src="{{a._avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
+            <a href="/users/{{a.user_id}}?returnto=/adhesions">{{a.discord_username|e}}</a>
+        </td>
+        <td>{{a.created_on|date("d/m/Y")}}</td>
+        <td>{{a.txn_id}}</td>
+        <td>{{a.ipn_status}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <table id="users_table" class="table table-sm">
+        <thead>
+        <tr>
+            <th>Compte</th>
+            <th>Date</th>
+            <th>Montant</th>
+            <th>Transaction PayPal</th>
+            <th>État</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for a in adhesions %}
+        <tr{% if loop.index0 is even %} class="tr_stripped"{% endif %}>
+            <td class="account" rowspan="2" nowrap>
+                {% if a._avatar %}<img src="{{a._avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
+                <a href="/users/{{a.user_id}}?returnto=/adhesions">{{a.discord_username|e}}</a>
+            </td>
+            <td>{{a.created_on|date("d/m/Y")}}</td>
+            <td>{{a._amount_fr}} &euro;</td>
+            <td>{{a.txn_id}}</td>
+            <td>{{a.ipn_status}}</td>
+        </tr>
+        <tr{% if loop.index0 is even %} class="tr_stripped"{% endif %}>
+            <td colspan="4" class="tx_details">
+                {{a.firstname|e}} {{a.name|e}} - né(e) le {{a.dob}}<br>
+                {{a.address|e}} {{a.residence_country}} - Tel : {{a.telephone|e}} {% if a.payer_email %}- PP e-mail : {{a.payer_email|e}}{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}

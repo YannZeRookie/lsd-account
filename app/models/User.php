@@ -196,6 +196,15 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Can the user manage transactions ?
+     * @return mixed
+     */
+    public function canSeeAdhesions()
+    {
+        return Role::hasAnyRole($this->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
+    }
+
+    /**
      * Get this list of roles as a comma-separated string
      * @return string
      */
