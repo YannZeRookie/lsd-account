@@ -116,7 +116,9 @@ Pour payer, prendre le compte Sandbox "Paypal Sandbox Utilisateur" dans Passpack
 
 Liste des boutons du compte : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_button-management
 
+Utilisation de la variable `rm` pour le mode de retour : https://www.paypal.com/mt/smarthelp/article/how-do-i-use-the-rm-variable-for-website-payments-ts1011
 
+Idée : on peut coder les variables de retour dans la return_url
 
 
 ```
@@ -127,6 +129,42 @@ Liste des boutons du compte : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?c
 <img alt="" border="0" src="https://www.sandbox.paypal.com/fr_FR/i/scr/pixel.gif" width="1" height="1">
 </form>
 ```
+
+Variables de paiement en retour avec `rm=2`
+```
+Array
+(
+    [payer_email] => yann.corno@free.fr
+    [payer_id] => RXKVRQWU74WBC
+    [payer_status] => UNVERIFIED
+    [first_name] => Yann
+    [last_name] => Corno
+    [txn_id] => 8T242711RT7603255
+    [mc_currency] => EUR
+    [mc_gross] => 12.00
+    [protection_eligibility] => INELIGIBLE
+    [payment_gross] => 12.00
+    [payment_status] => Pending
+    [pending_reason] => unilateral
+    [payment_type] => instant
+    [handling_amount] => 0.00
+    [shipping] => 0.00
+    [item_name] => Adhésion standard
+    [quantity] => 1
+    [txn_type] => web_accept
+    [option_name1] => Pseudo
+    [option_selection1] => [LSD] YannZeRookie
+    [option_name2] => UserID
+    [option_selection2] => 1
+    [payment_date] => 2019-11-02T13:04:56Z
+    [notify_version] => UNVERSIONED
+    [custom] => 3
+    [verify_sign] => AZFQco7hPjTirJflnB.6NTHS3P4EAo.M2I3DW978KBQLvKU4SWENrOKg
+)
+```
+
+
+
 
 Meeting du 2019-07-22
 =====================
