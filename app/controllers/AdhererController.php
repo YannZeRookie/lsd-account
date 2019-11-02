@@ -119,9 +119,11 @@ class AdhererController
 
     static public function ipn($params, $request)
     {
+        global $paypal_ipnpb;
+
         file_put_contents('/tmp/ipn.log', $request->getBody() . "\n" . print_r($params, true) . "\n", FILE_APPEND);
         $t = new Transaction;
-        $t->adhesion_id = int($params['custom']);
+        $t->adhesion_id = intval($params['custom']);
 
         $ipn_fields = ['txn_id', 'mc_gross', 'mc_currency', 'payer_id', 'payment_date', 'payment_status',
             'first_name', 'last_name', 'payer_email', 'receiver_email', 'verify_sign', 'item_name', 'residence_country',
@@ -130,6 +132,27 @@ class AdhererController
             $t->{$field} = $params[$field] ?? '';
         }
         $t->insert();
+
+        //-- Now verify with PayPal that the transaction is legit
+        $response = 'cmd=_notify-validate&' . $request->getBody();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_SAFE_UPLOAD, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $response);
+        curl_setopt($ch, CURLOPT_URL, $paypal_ipnpb);
+        $headers [] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $output = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        file_put_contents('/tmp/ipn.log', "output=$output" . "\n" . "status=$status" . "\n", FILE_APPEND);
+
+        if ($output == 'VERIFIED' || $output == 'INVALID') {
+            $t->ipn_status = $output;
+            $t->save();
+        }
 
         exit('');
     }

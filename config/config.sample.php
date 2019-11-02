@@ -36,6 +36,7 @@ $discord_channel_review = 'CHANNEL ID';
 
 // PayPal
 $paypal_url = 'https://www.paypal.com';
+$paypal_ipnpb = 'https://ipnpb.paypal.com/cgi-bin/webscr';
 $paypal_btn_standard = 'STANDARD BUY BUTTON';
 $paypal_btn_custom = 'CUSTOM BUY BUTTON';
 
