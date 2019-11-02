@@ -109,7 +109,14 @@ PayPal links
 * LES VARIABLES, enfin ! https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/#technical-variables
 * Sandbox : https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/
 * Developer SandBox accounts: https://developer.paypal.com/developer/accounts/
-* 
+
+Il faut se connecter avec le compte développeur Sandbox pour régler les boutons. Voir dans Passpack "PayPal Sandbox Développeur".
+
+Pour payer, prendre le compte Sandbox "Paypal Sandbox Utilisateur" dans Passpack
+
+Liste des boutons du compte : https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_button-management
+
+
 
 
 ```

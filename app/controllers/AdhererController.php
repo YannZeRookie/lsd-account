@@ -79,7 +79,7 @@ class AdhererController
                 $pp_url .= '&os1=' . $cur_user->id;
                 $pp_url .= '&custom=' . $adhesion->id;  // We send the adhesion id in the hope of getting it back when we receive the payment confirmation
                 $pp_url .= '&return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci');
-                $pp_url .= '&cancel_return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci');
+                $pp_url .= '&cancel_return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler');
                 $pp_url .= '&image_url=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
                 \Slim\Slim::getInstance()->redirect($pp_url);
             } else {
@@ -105,6 +105,15 @@ class AdhererController
             'cur_user' => $cur_user,
             'debug' => print_r($debug, true),
         ];
+    }
 
+    static public function annuler($params)
+    {
+        $cur_user = self::checkAccess();
+        $debug = $cur_user->isAdmin() ? $params : '';
+        return [
+            'cur_user' => $cur_user,
+            'debug' => print_r($debug, true),
+        ];
     }
 }
