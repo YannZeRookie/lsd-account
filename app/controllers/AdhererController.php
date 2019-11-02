@@ -45,6 +45,8 @@ class AdhererController
 
     /**
      * Form processing
+     * 
+     * @doc PayPal HTML variables: https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/Appx-websitestandard-htmlvariables/#technical-variables
      * @return array
      */
     static public function post($params)
@@ -80,6 +82,7 @@ class AdhererController
                 $pp_url .= '&custom=' . $adhesion->id;  // We send the adhesion id in the hope of getting it back when we receive the payment confirmation
                 $pp_url .= '&return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/merci');
                 $pp_url .= '&cancel_return=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler');
+                $pp_url .= '&rm=2'; // Super important: go back to the return URLs with a POST and all the payment variables
                 $pp_url .= '&image_url=' . rawurlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
                 \Slim\Slim::getInstance()->redirect($pp_url);
             } else {
