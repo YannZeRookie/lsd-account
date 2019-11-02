@@ -130,7 +130,7 @@ Idée : on peut coder les variables de retour dans la return_url
 </form>
 ```
 
-Variables de paiement en retour avec `rm=2`
+Variables de paiement en retour avec `rm=2`:
 ```
 Array
 (

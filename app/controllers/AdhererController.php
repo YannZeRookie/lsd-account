@@ -119,4 +119,10 @@ class AdhererController
             'debug' => print_r($debug, true),
         ];
     }
+
+    static public function ipn($params)
+    {
+        error_log('ipn: ' . print_r($params, true));
+        exit('OK');
+    }
 }

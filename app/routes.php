@@ -116,8 +116,11 @@ $app->get('/adherer/annuler', function () use ($app) {
 $app->post('/adherer/annuler', function () use ($app) {
     $app->render('adherer_annuler.html', AdhererController::annuler($app->request()->post()));
 });
+$app->get('/adherer/ipn', function () use ($app) {
+    AdhererController::ipn($app->request()->get());
+});
 $app->post('/adherer/ipn', function () use ($app) {
-    $app->render('adherer_ipn.html', AdhererController::ipn($app->request()->post()));
+    AdhererController::ipn($app->request()->post());
 });
 
 //-- Admin corner
