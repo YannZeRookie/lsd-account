@@ -106,7 +106,7 @@ PayPal links
 * Pour un parametre custom: send: mettre dans le champ `custom` et on le récupère dans `cm`
     * Voir dans https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/#transaction-and-notification-related-variables
     * et https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNandPDTVariables/#pdt-specific-variables
-* LES VARIABLES, enfin ! https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/#technical-variables
+* LES VARIABLES HTML enfin ! https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/Appx_websitestandard_htmlvariables/#technical-variables
 * Sandbox : https://developer.paypal.com/docs/classic/lifecycle/ug_sandbox/
 * Developer SandBox accounts: https://developer.paypal.com/developer/accounts/
 
@@ -169,7 +169,9 @@ J'ai ajouté une notify_url dans le code du bouton. C'est appelé en POST. -> ab
 
 ENFIN la doc qu'il me manquait ! https://developer.paypal.com/docs/classic/paypal-payments-standard/integration-guide/formbasics/?mark=notify_url%20post#instant-payment-notification--notify_url
 
-Doc sur le protocole IPN (la call-back de validation de transaction) : https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNIntro/
+Doc sur le protocole IPN (la call-back de validation de transaction) :
+- https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNIntro/
+- IPN Listener : https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNImplementation/
 
 Gestion de l'IPN :
 - https://www.sandbox.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
@@ -177,6 +179,8 @@ Gestion de l'IPN :
 
 Historique des transactions IPN :
 - https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
+- https://www.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
+
 
 Meeting du 2019-07-22
 =====================
@@ -192,11 +196,10 @@ Meeting du 2019-07-22
 - X Up synchro vers Discord quand on change un rôle (débrayable)
 - X Poster une notification dans Discord quand il y a une candidature
 - X Poster une notification privée dans Discord quand sa candidature est acceptée
+- X Liste des cotisations PayPal
 - Autres notes persos:
-  - Bug: quand on passe un utilisateur en Visiteur, ça ne mets pas à jour Discord comme il faut. Ça ne semble marcher qu'avec le role Invité
+  - Cotisation à finir avec les vrais boutons de prod
+  - Bug: quand on passe un utilisateur en Visiteur, ça ne met pas à jour Discord comme il faut. Ça ne semble marcher qu'avec le role Invité
   - N'importe qui devrait pouvoir consulter la fiche d'un autre joueur
-  - Cotisation à finir avec les vrais boutons de prod + CRUD des cotisations
-  - Faire le total des trasactions VERIFIED
-  - Tester une vraie transaction
   - Paginer la liste des utilisateurs
 

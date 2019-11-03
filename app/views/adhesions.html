@@ -39,12 +39,19 @@
 
 {% block content %}
 <h1 class="h1">Adhésions</h1>
-Année : <select id="sel_year" onchange="refresh()">
-    {% for y in first_year .. cur_year %}
-    <option value="{{y}}"{% if y==year %} selected{% endif %}>{{y}}</option>
-    {% endfor %}
-</select>
-<label><input type="checkbox" id="showall" value="1" {% if showall %}checked{% endif %} onchange="refresh()">&nbsp;Montrer les abandons</label>
+<div class="row">
+    <div class="col">
+        Année : <select id="sel_year" onchange="refresh()">
+        {% for y in first_year .. cur_year %}
+        <option value="{{y}}"{% if y==year %} selected{% endif %}>{{y}}</option>
+        {% endfor %}
+    </select>
+        <label><input type="checkbox" id="showall" value="1" {% if showall %}checked{% endif %} onchange="refresh()">&nbsp;Montrer les abandons</label>
+    </div>
+    <div class="col text-right" style="margin-right: 1em;">
+        Total : {{total_fr}} &euro;
+    </div>
+</div>
 <article>
     {% if limited %}
     <table id="users_table" class="table table-sm">

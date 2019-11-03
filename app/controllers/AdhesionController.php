@@ -54,6 +54,7 @@ class AdhesionController
             ->orderby('lsd_adhesions.id');
         $adhesions = $a->findAll();
         $u = new User;
+        $total = 0;
         foreach ($adhesions as &$ad)
         {
             $u->discord_id = $ad->discord_id;
@@ -66,7 +67,11 @@ class AdhesionController
             $ad->ipn_status = $ad->ipn_status ?? '';
             $ad->payer_email = $ad->payer_email ?? '';
             $ad->residence_country = $ad->residence_country ?? '';
+            if ($ad->ipn_status == 'VERIFIED') {
+                $total += $ad->amount;
+            }
         }
+        $total_fr = number_format($total, 2, ',', ' ');
 
         $debug = '';
         return [
@@ -78,6 +83,7 @@ class AdhesionController
             'cur_year' => $cur_year,
             'year' => $year,
             'showall' => $params['showall'] ?? false,
+            'total_fr' => $total_fr,
         ];
     }
 
