@@ -121,7 +121,7 @@ class AdhererController
     {
         global $paypal_ipnpb;
 
-        file_put_contents('/tmp/ipn.log', $request->getBody() . "\n" . print_r($params, true) . "\n", FILE_APPEND);
+        //file_put_contents('/tmp/ipn.log', $request->getBody() . "\n" . print_r($params, true) . "\n", FILE_APPEND);
         $t = new Transaction;
         $t->adhesion_id = intval($params['custom']);
 
@@ -147,7 +147,7 @@ class AdhererController
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        file_put_contents('/tmp/ipn.log', "output=$output" . "\n" . "status=$status" . "\n", FILE_APPEND);
+        //file_put_contents('/tmp/ipn.log', "output=$output" . "\n" . "status=$status" . "\n", FILE_APPEND);
 
         if ($output == 'VERIFIED' || $output == 'INVALID') {
             $t->ipn_status = $output;
@@ -160,7 +160,7 @@ class AdhererController
                     $adhesion->amount = $t->mc_gross;
                     $adhesion->save();
                     //-- If transaction succeeded, set the Adherent role to the user
-                    if ($output == 'VERIFIED') {
+                    if ($output == 'VERIFIED' && ($adhesion->amount > 0) && $adhesion->user_id) {
                         Role::setRole($adhesion->user_id, Role::kAdherent, date("Y"));
                     }
                 }
