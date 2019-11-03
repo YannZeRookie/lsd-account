@@ -135,5 +135,16 @@ class LsdActiveRecord extends ActiveRecord
         return $res ? $stmt->fetchColumn() : false;
     }
 
+    /**
+     * Return the number of potentially found rows of the previous SQL statement, provided that SQL_CALC_FOUND_ROWS
+     * was used.
+     * @return int
+     */
+    public static function rowCount()
+    {
+        $rs1 = self::$db->query("SELECT FOUND_ROWS()");
+        return intval($rs1->fetchColumn());
+    }
+
 }
 

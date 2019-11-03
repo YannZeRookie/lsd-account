@@ -197,9 +197,8 @@ Meeting du 2019-07-22
 - X Poster une notification dans Discord quand il y a une candidature
 - X Poster une notification privée dans Discord quand sa candidature est acceptée
 - X Liste des cotisations PayPal
+- X Cotisation à finir avec les vrais boutons de prod
+- X N'importe quel Scorpion devrait pouvoir consulter la fiche d'un autre joueur (en mode readonly)
+- X Paginer la liste des utilisateurs
 - Autres notes persos:
-  - Cotisation à finir avec les vrais boutons de prod
-  - Bug: quand on passe un utilisateur en Visiteur, ça ne met pas à jour Discord comme il faut. Ça ne semble marcher qu'avec le role Invité
-  - N'importe qui devrait pouvoir consulter la fiche d'un autre joueur
-  - Paginer la liste des utilisateurs
-
+  - Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un...

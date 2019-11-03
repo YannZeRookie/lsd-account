@@ -49,6 +49,7 @@
         <h1>{{user.discord_username|e}}</h1>
     </div>
     <div class="col-sm-5">
+        {% if not(cur_user._read_only) %}
         <div class="row">
             <div class="col-sm-4">Création&nbsp;:</div>
             <div class="col">{{ user.created_on|date('d/m/Y') }}</div>
@@ -72,8 +73,10 @@
             <div class="col-sm-4">Pseudo VB&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/member/{{user._vb_user.userid}}" title="Voir le profil VB">{{ user._vb_user.username|e}}</a></div>
             {% else %}
-            <div class="w-100"></div>
-            <div class="col"><a href="/signup/vb">Se relier au Forum &raquo;</a></div>
+                {% if user.id==cur_user.id %}
+                <div class="w-100"></div>
+                <div class="col"><a href="/signup/vb">Se relier au Forum &raquo;</a></div>
+                {% endif %}
             {% endif %}
             {% if user._vb_user and cur_user.isAdmin %}
             <div class="w-100"></div>
@@ -81,6 +84,7 @@
             <div class="col"><a href="http://www.scorpions-du-desert.com/admincp/user.php?do=edit&u={{user._vb_user.userid}}" title="Visualiser dans l'AdminCP de VB">{{ user._vb_user.userid|e}}</a></div>
             {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 
@@ -163,7 +167,15 @@
                     <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.role=='membre' %}checked{% endif %} {% if not(cur_user._canNameMembres) %}disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
                     <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.role=='officier' %}checked{% endif %} {% if not(cur_user._canNameOfficiers) %}disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
                     <td>{{s.name|e}} ({{s.tag}})</td>
-                    <td><input class="section_pseudo" type="text" name="{{s.tag}}_pseudo" value="{{s._belong.extra2}}" placeholder="Pseudo dans le jeu" title="Seulement si différent" size="18" {% if not(s._belong) %}style="display: none"{% endif %}></td>
+                    <td>
+                        {% if cur_user._read_only %}
+                            {% if s._belong and s._belong.extra2 %}
+                            Pseudo en jeu : {{s._belong.extra2|e}}
+                            {% endif %}
+                        {% else %}
+                        <input class="section_pseudo" type="text" name="{{s.tag}}_pseudo" value="{{s._belong.extra2|e}}" placeholder="Pseudo dans le jeu" title="Seulement si différent" size="18" {% if not(s._belong) %}style="display: none"{% endif %}>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </table>
@@ -183,7 +195,9 @@
                 <button class="btn btn-secondary" type="button" style="margin-right:4em;">Annuler</button>
             </a>
             {% endif %}
+            {% if not(cur_user._read_only) %}
             <button class="btn btn-primary" type="submit">Mettre à jour</button>
+            {% endif %}
         </div>
     </div>
 </form>

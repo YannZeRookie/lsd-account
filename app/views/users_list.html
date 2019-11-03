@@ -38,7 +38,7 @@
                 <input id="s_name">
             </th>
             <th>
-                <select id="s_role" class="custom-select" onchange="searchUsers()">
+                <select id="s_role" class="custom-select" onchange="searchUsers(1)">
                     <option value="" selected>-</option>
                     <option value="visiteur">Visiteur</option>
                     <option value="invite">Invité</option>
@@ -57,7 +57,7 @@
                 </select>
             </th>
             <th>
-                <select id="s_section" class="custom-select" onchange="searchUsers()">
+                <select id="s_section" class="custom-select" onchange="searchUsers(1)">
                     <option value="" selected>-</option>
                     {% for s in sections %}
                     <option value="{{s.tag}}">{{s.tag}}: {{s.name}}</option>
@@ -103,22 +103,24 @@
         return query;
     }
 
-    function searchUsers() {
+    function searchUsers(page) {
         $('#users').html('<tr><td colspan="99" align="center"><img src="/img/ajax-loader.gif"></td></tr>');
         var query = '';
         query = addFilter('s_name', query);
         query = addFilter('s_role', query);
         query = addFilter('s_section', query);
         query = addFilter('s_vb', query);
+        query += (query?'&':'') + 's_page=' + page;
         $('#users').load('/users/search', query);
+        return false;
     }
 
     $(function () {
-        searchUsers();
+        searchUsers(1);
 
         $('#search_fields input').keyup(delay(function (e) {
             // Build a search string and launch an AJAX call
-            searchUsers();
+            searchUsers(1);
         }, 500))
     });
 

@@ -37,7 +37,7 @@ class UsersController
         $cur_user = self::checkAccess();
         //-- Analyse the search parameters and build the SQL query
         $u = new User;
-        $u->select('distinct(lsd_users.id) as uid, lsd_users.*');
+        $u->select('SQL_CALC_FOUND_ROWS distinct(lsd_users.id) as uid, lsd_users.*');
         //--- User name
         if (isset($params['s_name']) && $params['s_name'] !== '') {
             $u->like('discord_username', '%' . $params['s_name'] . '%');
@@ -62,12 +62,20 @@ class UsersController
             $u->join('vb_user as vb', "vb.userid=lsd_users.vb_id", 'INNER');
             $u->addCondition('vb.username', 'like', '%' . $params['s_vb'] . '%', 'AND', 'join');
         }
+        //--- Paging
+        $pagination = 20;    // Number of items per page
+        $page = intval($params['s_page'] ?? 1);
+        $start = ($page-1)*$pagination;
 
         //-- Search
-        $users = $u->order('discord_username')->findAll();
+        $users = $u->order('discord_username')->limit($start, $pagination)->findAll();
+        $total = LsdActiveRecord::rowCount();
+        $pages = intdiv($total, $pagination) + ($total % $pagination ? 1 : 0);
         return [
             'cur_user' => $cur_user,
             'users' => $users,
+            'page' => $page,
+            'pages' => $pages,
         ];
     }
 
@@ -98,13 +106,20 @@ class UsersController
     /**
      * Check if we can edit the user $id. If not, redirect to /
      * Also fills in a number of information about roles and rights.
-     * @param $id                   Target user to edit
-     * @return ActiveRecord|bool    Current connected user
+     * @param $id                       Target user to edit
+     * @param bool $accept_read_only    Accept read only mode
+     * @return ActiveRecord|bool        Current connected user
      */
-    static public function canEditUser($id)
+    static public function canEditUser($id, $accept_read_only=false)
     {
         $cur_user = User::getConnectedUser();
-        if (!$cur_user || !(Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]) || $cur_user->id == $id)) {
+        $role_ok = Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]);
+        $scorpion = $cur_user->isScorpion();
+        if (!$cur_user || !($role_ok || $scorpion || $cur_user->id == $id)) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+        $cur_user->_read_only = !$role_ok && $scorpion && ($cur_user->id != $id);
+        if (!$accept_read_only && $cur_user->_read_only) {
             \Slim\Slim::getInstance()->redirect('/');
         }
         $cur_user->_highest_role = Role::getHighestRole($cur_user->id);
@@ -231,7 +246,7 @@ class UsersController
     {
         //-- Check rights: the connected user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin,
         //   or if he is looking at its own record
-        $cur_user = self::canEditUser($id);
+        $cur_user = self::canEditUser($id, true);
         //-- Get edited user
         $user = self::getTargetUser($id);
         $user->comments = $user->comments ?: '';
