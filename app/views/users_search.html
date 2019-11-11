@@ -6,7 +6,11 @@
     </td>
     <td>{{u.roles}}</td>
     <td>{{u.sections}}</td>
-    <td>{{u.vb}}</td>
+    <td>
+        {% if u.vb_username %}
+        <a href="http://www.scorpions-du-desert.com/member/{{u.vb_id}}" title="Voir le profil VB">{{u.vb_username|e}}</a>
+        {% endif %}
+    </td>
 </tr>
 {% else %}
 <tr>

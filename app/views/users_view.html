@@ -24,7 +24,8 @@
 
 {% block js %}
 <script>
-    function mo_changed(cb, otherClass) {
+    function mo_changed(cb, otherClass)
+    {
         var tr = $(cb).closest('tr');
         var otherCheck = tr.find('input.' + otherClass);
         var pseudo = tr.find('input.section_pseudo');
@@ -34,6 +35,30 @@
         } else {
             if (!otherCheck.is(':checked')) {
                 pseudo.hide();
+            }
+        }
+        check_officier()
+    }
+
+    /**
+     * Toogle on or off the Officier role in Roles panel
+     */
+    function check_officier()
+    {
+        $('#roles input[value=officier]').prop('checked', $('.section_o:checked').length != 0);
+    }
+
+    /**
+     * React to a change in one of the Roles input check boxes
+     * @param el The element that changed
+     */
+    function i_changed(el) {
+        if ($(el).hasClass('basic_role')) {
+            $('#roles .basic_role').not(el).prop('checked', false);
+            if ($(el).val() != 'scorpion') {
+                $('.section_m').prop('checked', false);
+                $('.section_o').prop('checked', false);
+                $('.higher_role').prop('checked', false);
             }
         }
     }
@@ -70,7 +95,7 @@
             <div class="col">{% if user.minor %}&#10060;{% else %}&#9989;{% endif %}</div>
             {% if user._vb_user %}
             <div class="w-100"></div>
-            <div class="col-sm-4">Pseudo VB&nbsp;:</div>
+            <div class="col-sm-4">Pseudo Forum&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/member/{{user._vb_user.userid}}" title="Voir le profil VB">{{ user._vb_user.username|e}}</a></div>
             {% else %}
                 {% if user.id==cur_user.id %}
@@ -80,7 +105,7 @@
             {% endif %}
             {% if user._vb_user and cur_user.isAdmin %}
             <div class="w-100"></div>
-            <div class="col-sm-4">ID VB&nbsp;:</div>
+            <div class="col-sm-4">ID Forum&nbsp;:</div>
             <div class="col"><a href="http://www.scorpions-du-desert.com/admincp/user.php?do=edit&u={{user._vb_user.userid}}" title="Visualiser dans l'AdminCP de VB">{{ user._vb_user.userid|e}}</a></div>
             {% endif %}
         </div>
@@ -124,11 +149,11 @@
     <div class="row">
         <div class="col">
             <div id="roles">
-                <h4>Rôle</h4>
+                <h4>Rôles</h4>
                 {% for r in roles_table %}
                 <label>
-                    <input type="radio" name="role" value="{{r.role}}" {% if r.role==user._highest_role %}checked{% endif %}
-                              {% if r.disabled %}disabled{% endif %}>
+                    <input class="{{r.class}}" type="checkbox" name="{{r.iname}}" value="{{r.role}}" {% if r.checked %}checked{% endif %}
+                              {% if r.disabled %}disabled{% endif %} onchange="i_changed(this)">
                     {{r.name}}</label><br>
                 {% endfor %}
             </div>
@@ -142,6 +167,7 @@
                 </select>
             </div>
             <div id="other_roles">
+                <h4>Divers</h4>
                 Adhérent :
                 <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %}
                               {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>

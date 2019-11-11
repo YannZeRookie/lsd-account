@@ -37,7 +37,7 @@ class UsersController
         $cur_user = self::checkAccess();
         //-- Analyse the search parameters and build the SQL query
         $u = new User;
-        $u->select('SQL_CALC_FOUND_ROWS distinct(lsd_users.id) as uid, lsd_users.*');
+        $u->select('SQL_CALC_FOUND_ROWS distinct(lsd_users.id) as uid, lsd_users.*, vb.username as vb_username');
         //--- User name
         if (isset($params['s_name']) && $params['s_name'] !== '') {
             $u->like('discord_username', '%' . $params['s_name'] . '%');
@@ -61,6 +61,8 @@ class UsersController
         if (isset($params['s_vb']) && $params['s_vb'] !== '') {
             $u->join('vb_user as vb', "vb.userid=lsd_users.vb_id", 'INNER');
             $u->addCondition('vb.username', 'like', '%' . $params['s_vb'] . '%', 'AND', 'join');
+        } else {
+            $u->join('vb_user as vb', "vb.userid=lsd_users.vb_id", 'LEFT');
         }
         //--- Paging
         $pagination = 20;    // Number of items per page
@@ -196,16 +198,23 @@ class UsersController
 
     /**
      * Build the Roles table, with some additional permission info
-     * @param $cur_user
-     * @param $user
+     * @param User $cur_user
+     * @param User $user
      * @return array
      */
     static protected function buildRolesTable($cur_user, $user)
     {
         $canChangeRoles = ($cur_user->_highest_level > $user->_highest_level);  // You can change roles only for people under yourself
         $roles_table = Role::getRolesTable(true, false, false);
-        foreach ($roles_table as $role => $role_data) {
-            $roles_table[$role]['disabled'] = !$canChangeRoles || ($role_data['level'] >= $cur_user->_highest_level) || $role == Role::kOfficier;   // Officiers are set through the Section table
+        foreach ($roles_table as $role => &$role_data) {
+            if ($role == Role::kOfficier) {
+                $role_data['checked'] = $user->isOfficier();
+            } else {
+                $role_data['checked'] = $user->hasRole($role);
+            }
+            $role_data['class'] = Role::isBasicRole($role) ? 'basic_role' : 'higher_role';
+            $role_data['iname'] = Role::isBasicRole($role) ? 'irole' : 'i' . $role;
+            $role_data['disabled'] = !$canChangeRoles || ($role_data['level'] >= $cur_user->_highest_level) || $role == Role::kOfficier;   // Officiers are set through the Section table
         }
         return $roles_table;
     }
@@ -272,7 +281,7 @@ class UsersController
 
     static public function post($id, $params = [])
     {
-        $defaults = ['adherent_ly' => false, 'adherent_cy' => false, 'adherent_ny' => false, 'cm' => false];
+        $defaults = ['iconseiller' => false, 'adherent_ly' => false, 'adherent_cy' => false, 'adherent_ny' => false, 'cm' => false];
         $params = array_merge($defaults, $params); // Set defaults, as these might be missing from the $params
         $years = self::buildYears();
 
@@ -304,21 +313,19 @@ class UsersController
         }
 
         //-- Roles
-        if ($cur_user->_highest_level > $user->_highest_level && isset($params['role'])) {  // You can change roles only for people under yourself
-            if ($user->isConseiller() && $params['role'] == Role::kScorpion) { // Are we degrading a Conseiller?
-                $user->removeRole(Role::kConseiller);   // I feel sad that I could not find a cleaner way to do this
-            }
-            $user->setRole($params['role'], null);
+        if ($cur_user->_highest_level > $user->_highest_level && isset($params['irole'])) {  // You can change roles only for people under yourself
+            $user->setRole($params['irole'], null);
         }
 
-        //-- Bureau
+        //-- Conseiller & Bureau
         if ($cur_user->isAdmin()) {
+            $user->toggleRole(Role::kConseiller, $params['iconseiller']);
             $user->setBureauRole($params['bureau']);
         }
 
         //-- Sections (Membre or Officier)
         if ($cur_user->_canNameMembres || $cur_user->_canNameOfficiers) {
-            if (isset($params['role']) && ($params['role'] == Role::kVisiteur || $params['role'] == Role::kInvite)) {
+            if (isset($params['irole']) && ($params['irole'] == Role::kVisiteur || $params['irole'] == Role::kInvite)) {
                 //-- Remove user from all Sections
                 $user->RemoveFromAllSections();
             } else {

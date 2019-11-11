@@ -24,7 +24,12 @@ class User extends LsdActiveRecord
             switch ($var) {
                 case 'email':
                 case 'testimony':
+                case 'vb_username':
                     $value = '';
+                    break;
+                case 'vb_id':
+                    $value = 0;
+                    break;
             }
         }
         return $value;

@@ -200,5 +200,13 @@ Meeting du 2019-07-22
 - X Cotisation à finir avec les vrais boutons de prod
 - X N'importe quel Scorpion devrait pouvoir consulter la fiche d'un autre joueur (en mode readonly)
 - X Paginer la liste des utilisateurs
+- X Dans la liste, afficher les Pseudos VB et vérifier la recherche par pseudo VB
+- X Bug: les Conseillers ne doivent pas voir le total des transactions
+- X Page profil joueur : les roles devraient être des check boxes, pas des radio buttons !
+- X Améliorer de la mise en page de la page profil: adhérant and CM à part
 - Autres notes persos:
-  - Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un...
+  - Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un.
+  - Le robot ne doit plus envoyer de message dans le canal courant
+  - Mettre à jour le pseudo Discord à chaque connexion, et bien prendre le pseudo Discord lié au serveur et pas celui du compte
+  - Message d'accuel du robot à la première connexion
+  - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi

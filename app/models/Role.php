@@ -85,6 +85,16 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * If this a basic role?
+     * @param string $role
+     * @return bool
+     */
+    static public function isBasicRole($role)
+    {
+        return $role == self::kVisiteur || $role == self::kInvite || $role == self::kScorpion;
+    }
+
+    /**
      * Get the list of Officier roles (if any)
      * @param $user_id
      * @return Role|bool

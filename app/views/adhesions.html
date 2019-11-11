@@ -48,9 +48,11 @@
     </select>
         <label><input type="checkbox" id="showall" value="1" {% if showall %}checked{% endif %} onchange="refresh()">&nbsp;Montrer les abandons</label>
     </div>
+    {% if not(limited) %}
     <div class="col text-right" style="margin-right: 1em;">
         Total : {{total_fr}} &euro;
     </div>
+    {% endif %}
 </div>
 <article>
     {% if limited %}
