@@ -66,7 +66,7 @@ class LoginController
         $_SESSION['user_id'] = $user->id;
 
         //-- Update the Discord info if needed
-        $user->discord_username = $login_key->discord_username;
+        $user->discord_username = Discord::discord_get_user_nickname($login_key->discord_id) ?: $login_key->discord_username;
         $user->discord_discriminator = $login_key->discord_discriminator;
         $user->discord_avatar = $login_key->discord_avatar ?: '';
         $user->update();

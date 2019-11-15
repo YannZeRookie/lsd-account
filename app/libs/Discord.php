@@ -233,6 +233,22 @@ class Discord
     }
 
     /**
+     * Get the "Nickname" (ie the server-specific username) of the user
+     * @param $discord_id
+     * @return string|bool The Nickname or false if there is none
+     */
+    static public function discord_get_user_nickname($discord_id)
+    {
+        $user_info = self::api_get('/guilds/' . self::$guild_id . '/members/' . $discord_id);
+        if ($user_info) {
+            if (!empty($user_info->nick)) {
+                return $user_info->nick;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Add a role to a Discord user
      * @param $discord_id
      * @param $result
