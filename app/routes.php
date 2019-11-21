@@ -153,6 +153,12 @@ $app->post('/admin/updatedb', function () use ($app) {
     $app->render('admin_updatedb.html', AdminController::updatedb($app->request()->post()));
 });
 
+//-- Logs
+require_once 'controllers/LogController.php';
+$app->get('/logs', function () use ($app) {
+    $app->render('logs.html', LogController::all());
+});
+
 //-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';
 $app->get('/hello', function () use ($app) {

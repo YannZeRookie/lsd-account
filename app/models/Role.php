@@ -367,8 +367,10 @@ class Role extends LsdActiveRecord
         if ($prev_role !== false) {
             // Just update the extra2 field if it changed
             if ($prev_role->extra2 != $extra2) {
+                $old_role = clone $prev_role;
                 $prev_role->extra2 = $extra2;
                 $prev_role->save();
+                Log::logChange($user_id, $old_role, $prev_role);
             }
             return;
         }
@@ -399,6 +401,7 @@ class Role extends LsdActiveRecord
         $role->extra = $extra;
         $role->extra2 = $extra2;
         $role->insert();
+        Log::logAddition($user_id, $role);
     }
 
     /**
@@ -410,6 +413,11 @@ class Role extends LsdActiveRecord
     static public function removeRoles($user_id, $roles = [])
     {
         if (count($roles)) {
+            $r = new Role;
+            $r_list = $r->equal('user_id', $user_id)->in('role', $roles)->findAll();
+            foreach ($r_list as $old_role) {
+                Log::logDeletion($user_id, $old_role);
+            }
             $roles_sql = "'" . implode("', '", $roles) . "'";
             self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role in ({$roles_sql})", [$user_id]);
         }
@@ -423,6 +431,8 @@ class Role extends LsdActiveRecord
      */
     static public function removeRole($user_id, $role, $extra = null)
     {
+        $old_role = self::findRole($user_id, $role, $extra);
+        Log::logDeletion($user_id, $old_role);
         if ($extra) {
             self::execute("DELETE FROM lsd_roles WHERE user_id = ? AND role = ? AND extra = ?", [$user_id, $role, $extra]);
         } else {
@@ -588,5 +598,21 @@ class Role extends LsdActiveRecord
     static public function isAdherent($user_id, $year)
     {
         return self::hasRole($user_id, self::kAdherent, $year);
+    }
+
+    /**
+     * Convert the Role into a JSON string
+     * @return string
+     */
+    public function toJSON()
+    {
+        $data = ['role' => $this->role];
+        if (!empty($this->data['extra'])) {
+            $data['extra'] = $this->data['extra'];
+        }
+        if (!empty($this->data['extra2'])) {
+            $data['extra2'] = $this->data['extra2'];
+        }
+        return json_encode($data, JSON_NUMERIC_CHECK);
     }
 }

@@ -69,7 +69,7 @@
         {% for a in adhesions %}
         <tr{% if loop.index0 is even %} class="tr_stripped"{% endif %}>
         <td class="account" nowrap>
-            {% if a._avatar %}<img src="{{a._avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
+            <img src="{{a._avatar}}">
             <a href="/users/{{a.user_id}}?returnto=/adhesions">{{a.discord_username|e}}</a>
         </td>
         <td>{{a.created_on|date("d/m/Y")}}</td>
@@ -94,7 +94,7 @@
         {% for a in adhesions %}
         <tr{% if loop.index0 is even %} class="tr_stripped"{% endif %}>
             <td class="account" rowspan="2" nowrap>
-                {% if a._avatar %}<img src="{{a._avatar}}">{% else %}<img src="/img/blank_avatar.png">{% endif %}
+                <img src="{{a._avatar}}">
                 <a href="/users/{{a.user_id}}?returnto=/adhesions">{{a.discord_username|e}}</a>
             </td>
             <td>{{a.created_on|date("d/m/Y")}}</td>

@@ -9,6 +9,7 @@
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Role.php';
 require_once __DIR__ . '/../models/Section.php';
+require_once __DIR__ . '/../models/Log.php';
 
 class SignupController
 {
@@ -193,6 +194,8 @@ class SignupController
     {
         //-- VB ID
         $target_user->vb_id = $vbUser->userid;
+        //-- Log it
+        Log::logVBImport($target_user);
         //-- Account creation
         $target_user->created_on = min($target_user->created_on, $vbUser->joindate);
         //-- E-mail

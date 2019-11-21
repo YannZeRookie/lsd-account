@@ -106,14 +106,25 @@ class User extends LsdActiveRecord
      */
     public function avatar()
     {
-        if ($this->discord_avatar) {
-            if (preg_match('/$a_/', $this->discord_avatar)) {
-                return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.gif";
+        return self::buildAvatar($this->discord_id, $this->discord_avatar);
+    }
+
+    /**
+     * Build the url of the user's Discord avatar - lower level
+     * @param $discord_id
+     * @param $discord_avatar
+     * @return string
+     */
+    static public function buildAvatar($discord_id, $discord_avatar)
+    {
+        if ($discord_avatar) {
+            if (preg_match('/$a_/', $discord_avatar)) {
+                return "https://cdn.discordapp.com/avatars/{$discord_id}/{$discord_avatar}.gif";
             } else {
-                return "https://cdn.discordapp.com/avatars/{$this->discord_id}/{$this->discord_avatar}.png";
+                return "https://cdn.discordapp.com/avatars/{$discord_id}/{$discord_avatar}.png";
             }
         } else {
-            return '';
+            return '/img/blank_avatar.png';
         }
     }
 
@@ -205,6 +216,11 @@ class User extends LsdActiveRecord
      * @return mixed
      */
     public function canSeeAdhesions()
+    {
+        return Role::hasAnyRole($this->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
+    }
+
+    public function canSeeLogs()
     {
         return Role::hasAnyRole($this->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
     }
@@ -339,4 +355,14 @@ class User extends LsdActiveRecord
             return false;
         }
     }
+
+    public function toJSON()
+    {
+        $data =  [
+            'id' => $this->id,
+            'discord_username' => $this->discord_username,
+            ];
+        return json_encode($data, JSON_NUMERIC_CHECK);
+    }
+
 }

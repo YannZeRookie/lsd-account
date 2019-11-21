@@ -57,6 +57,11 @@
                     <a class="nav-link" href="/admin">Administration</a>
                 </li>
                 {% endif %}
+                {% if cur_user.canSeeLogs %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/logs">Logs</a>
+                </li>
+                {% endif %}
             </ul>
         </div>
         <div id="cur_user">

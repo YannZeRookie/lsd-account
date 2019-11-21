@@ -10,6 +10,7 @@ require_once __DIR__ . '/../models/Login.php';
 require_once __DIR__ . '/../models/VBUser.php';
 require_once __DIR__ . '/../models/User.php';
 require_once __DIR__ . '/../models/Role.php';
+require_once __DIR__ . '/../models/Log.php';
 
 class LoginController
 {
@@ -53,6 +54,7 @@ class LoginController
             $user = $user->insert();
 
             if ($user) {
+                Log::logNewUser($user);
                 $created_new_user = true;
                 Role::importDiscordRole($user->id, $login_key->discord_id);    // Import user's role from Discord
             }
