@@ -32,8 +32,8 @@ class LogController
 
         $l = new Log;
         $l->select('lsd_logs.*', 
-            'u.discord_id as u_discord_id', 'u.discord_username as u_discord_username', 'u.discord_avatar as u_discord_avatar', 
-            't.discord_id as t_discord_id', 't.discord_username as t_discord_username', 't.discord_avatar as t_discord_avatar');
+            'ifnull(u.discord_id,0) as u_discord_id', 'u.discord_username as u_discord_username', 'u.discord_avatar as u_discord_avatar',
+            'ifnull(t.discord_id,0) as t_discord_id', 't.discord_username as t_discord_username', 't.discord_avatar as t_discord_avatar');
         $l->join('lsd_users as u', 'u.id=lsd_logs.user_id');
         $l->join('lsd_users as t', 't.id=lsd_logs.target_id');
         $logs = $l->orderby('id')->findAll();

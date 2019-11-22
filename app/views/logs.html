@@ -67,12 +67,16 @@
         <tr>
             <td>{{l.created_on|date("d/m/Y H:i:s")}}</td>
             <td class="account">
+                {% if l.u_discord_id %}
                 <img src="{{l._u_avatar}}">
                 <a href="/users/{{l.user_id}}?returnto=/logs">{{l.u_discord_username|e}}</a>
+                {% endif %}
             </td>
             <td class="account">
+                {% if l.t_discord_id %}
                 <img src="{{l._t_avatar}}">
                 <a href="/users/{{l.target_id}}?returnto=/logs">{{l.t_discord_username|e}}</a>
+                {% endif %}
             </td>
             <td>{{l.action}}</td>
             <td class="values">{{l.old_values}}</td>

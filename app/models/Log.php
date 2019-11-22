@@ -87,8 +87,9 @@ class Log extends LsdActiveRecord
     static public function logAddition($target_id, Role $new_role)
     {
         $u = User::getConnectedUser();
+        $user_id = $u ? $u->id : 0;
         $l = new Log();
-        $l->set($u->id, $target_id, self::kAddition, null, $new_role);
+        $l->set($user_id, $target_id, self::kAddition, null, $new_role);
         $l->insert();
     }
 
@@ -101,8 +102,9 @@ class Log extends LsdActiveRecord
     {
         if (!$old_role) return;
         $u = User::getConnectedUser();
+        $user_id = $u ? $u->id : 0;
         $l = new Log();
-        $l->set($u->id, $target_id, self::kDeletion, $old_role, null);
+        $l->set($user_id, $target_id, self::kDeletion, $old_role, null);
         $l->insert();
     }
 
@@ -115,8 +117,9 @@ class Log extends LsdActiveRecord
     static public function logChange($target_id, Role $old_role, Role $new_role)
     {
         $u = User::getConnectedUser();
+        $user_id = $u ? $u->id : 0;
         $l = new Log();
-        $l->set($u->id, $target_id, self::kChange, $old_role, $new_role);
+        $l->set($user_id, $target_id, self::kChange, $old_role, $new_role);
         $l->insert();
     }
 }
