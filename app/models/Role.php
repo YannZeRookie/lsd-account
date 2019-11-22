@@ -28,7 +28,7 @@ class Role extends LsdActiveRecord
 
     function __toString()
     {
-        return print_r($this, true);    // For debug
+        return '' . print_r($this, true);    // For debug
     }
 
     public function & __get($var)
@@ -121,11 +121,9 @@ class Role extends LsdActiveRecord
             self::execute("DELETE FROM lsd_roles WHERE user_id = ?", [$user_id]);
             // Now import the roles that make sense
             foreach ($user_info->roles as $role) {
-                $r = new Role;
-                $r->user_id = $user_id;
-                $r->role = self::discordToLsdRole($role->name);
-                if ($r->role && $r->role != self::kMembre && $r->role != self::kOfficier) {  // we cannot import kMembre and kOfficier because we don't know the Section
-                    $r->insert();
+                $new_role = self::discordToLsdRole($role->name);
+                if ($new_role && $new_role != self::kMembre && $new_role != self::kOfficier) {  // we cannot import kMembre and kOfficier because we don't know the Section
+                    self::setRole($user_id, $new_role);
                 }
             }
         }
