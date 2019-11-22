@@ -209,7 +209,8 @@
     </div>
 
     {% if can_comment %}
-    <h4>Notes des Officiers et Conseillers :</h4>
+    <h4 style="margin-top: 1em;">Notes des Officiers et Conseillers :</h4>
+    <div class="small" style="color:gray">Seuls les Officiers, les Gestionnaires de communauté, les Conseillers, le Bureau et les Admins voient ces notes.</div>
     <textarea class="form-control" id="comments" name="comments" rows="10" style="margin-bottom:2em;">{{user.comments|e}}</textarea>
     {% endif %}
 

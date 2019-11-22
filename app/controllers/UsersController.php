@@ -151,7 +151,7 @@ class UsersController
         $user->_adherent_ly = Role::isAdherent($user->id, $years['last']);
         $user->_adherent_cy = Role::isAdherent($user->id, $years['current']);
         $user->_adherent_ny = Role::isAdherent($user->id, $years['next']);
-        $user->_cm = Role::isCM($user->id);
+        $user->_cm = $user->isCM();
         if ($user->reviewer_id) {
             $uu = new User;
             $user->_reviewer = $uu->find($user->reviewer_id);
@@ -192,7 +192,7 @@ class UsersController
      */
     static protected function canComment($cur_user, $user)
     {
-        return $cur_user->isOfficier() || $cur_user->isConseiller() || $cur_user->isBureau() || $cur_user->isAdmin();
+        return $cur_user->isOfficier() || $cur_user->isConseiller() || $cur_user->isBureau() || $cur_user->isCM() || $cur_user->isAdmin();
     }
 
 

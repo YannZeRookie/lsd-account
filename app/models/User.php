@@ -174,6 +174,15 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Is the user a CM?
+     * @return bool
+     */
+    public function isCM()
+    {
+        return Role::isCM($this->id);
+    }
+
+    /**
      * Has the user this role?
      * @param $role
      * @return bool
