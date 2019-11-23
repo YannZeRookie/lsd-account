@@ -336,12 +336,12 @@ class UsersController
                         trim($params[$section->tag . '_pseudo']));
                 }
             }
-        } elseif ($cur_user->id == $user->id && $user->isScorpion()) {
-            // A Scorpion can set his own Section Pseudos
-//            error_log('A Scorpion can set his own Section Pseudos');
+        }
+
+        //-- A Scorpion can set his own Section Pseudos
+        if ($cur_user->id == $user->id && $user->isScorpion()) {
             $sections = self::buildSectionsTable($user);
             foreach ($sections as $section) {
-//                error_log('Pseudo for ' . $section->tag . ' : ' . $params[$section->tag . '_pseudo']);
                 $user->setPseudo($section->tag, trim($params[$section->tag . '_pseudo']));
             }
         }

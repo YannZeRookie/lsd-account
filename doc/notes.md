@@ -208,5 +208,6 @@ Meeting du 2019-07-22
 - X Mettre à jour le pseudo Discord à chaque connexion, et bien prendre le pseudo Discord lié au serveur (aka le Nickname) et pas celui du compte. Voir https://discordapp.com/developers/docs/resources/guild#guild-member-object et https://discordapp.com/developers/docs/resources/guild#get-guild-member
 - Autres notes persos:
   - Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un.
+  - Respecter la même logique de contraintes concernant les Notes d'un utilisateur
   - Message d'accueil du robot à la première connexion
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi

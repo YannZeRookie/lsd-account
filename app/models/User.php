@@ -310,15 +310,19 @@ class User extends LsdActiveRecord
     public function setPseudo($tag, $sectionPseudo)
     {
         $role = Role::findRole($this->id, Role::kMembre, $tag);
-        if ($role) {
+        if ($role && $role->extra2 != $sectionPseudo) {
+            $old_role = clone $role;
             $role->extra2 = $sectionPseudo ?: null;
             $role->save();
+            Log::logChange($this->id, $old_role, $role);
             return;
         }
         $role = Role::findRole($this->id, Role::kOfficier, $tag);
-        if ($role) {
+        if ($role && $role->extra2 != $sectionPseudo) {
+            $old_role = clone $role;
             $role->extra2 = $sectionPseudo ?: null;
             $role->save();
+            Log::logChange($this->id, $old_role, $role);
             return;
         }
     }
