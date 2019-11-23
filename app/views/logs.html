@@ -6,25 +6,25 @@
 
 {% block css %}
 <style>
-    #users_table td {
+    #logs_table td, .search_fields {
         font-size: 80%;
     }
 
-    #users_table td.account {
+    #logs_table td.account {
         vertical-align: middle;
     }
 
-    #users_table td.account img {
+    #logs_table td.account img {
         display: inline-block;
         max-height: 32px;
     }
 
-    #users_table td.account a {
+    #logs_table td.account a {
         /*display: inline-block;*/
         /*white-space: nowrap !important;*/
     }
 
-    #users_table .tr_stripped {
+    #logs_table .tr_stripped {
         background-color: rgba(0,0,0,.05);
     }
 
@@ -34,16 +34,6 @@
 </style>
 {% endblock %}
 
-{%block js %}
-<script>
-    function refresh() {
-        var year = $('#sel_year').val();
-        var showall = $('#showall').is(':checked') ? '?showall=1' : '';
-        gotoURL('/adhesions/' + year + showall);
-    }
-</script>
-{% endblock %}
-
 {% block content %}
 <h1 class="h1">Logs</h1>
 <div class="row">
@@ -51,7 +41,7 @@
     </div>
 </div>
 <article>
-    <table id="users_table" class="table table-striped table-sm">
+    <table id="logs_table" class="table table-striped table-sm">
         <thead>
         <tr>
             <th>Date</th>
@@ -61,34 +51,148 @@
             <th>Anciennes valeurs</th>
             <th>Nouvelles valeurs</th>
         </tr>
-        </thead>
-        <tbody>
-        {% for l in logs %}
-        <tr>
-            <td>{{l.created_on|date("d/m/Y H:i:s")}}</td>
-            <td class="account">
-                {% if l.u_discord_id %}
-                <img src="{{l._u_avatar}}">
-                <a href="/users/{{l.user_id}}?returnto=/logs">{{l.u_discord_username|e}}</a>
-                {% endif %}
-            </td>
-            <td class="account">
-                {% if l.t_discord_id %}
-                <img src="{{l._t_avatar}}">
-                <a href="/users/{{l.target_id}}?returnto=/logs">{{l.t_discord_username|e}}</a>
-                {% endif %}
-            </td>
-            <td>{{l.action}}</td>
-            <td class="values">{{l.old_values}}</td>
-            <td class="values">{{l.new_values}}</td>
+        <tr id="search_fields" class="search_fields" valign="middle">
+            <th>
+                <select id="date_preset" class="form-control form-control-sm" onchange="changeDate(this.value)">
+                    <option value="today" selected>Aujourd'hui</option>
+                    <option value="yesterday">Hier</option>
+                    <option value="past7d">7 jours passés</option>
+                    <option value="past30d">30 jours passés</option>
+                    <option value="past6m">6 mois passés</option>
+                    <option value="past12m">12 mois passés</option>
+                    <option value="custom">De ... à ...</option>
+                </select>
+            </th>
+            <th>
+                <input id="s_subject" size="12">
+            </th>
+            <th>
+                <input id="s_target" size="12">
+            </th>
+            <th>
+                <select id="s_action" class="form-control form-control-sm" onchange="searchLogs(1)">
+                    <option value="" selected>-</option>
+                    <option value="addition">Ajout</option>
+                    <option value="deletion">Suppression</option>
+                    <option value="change">Changement</option>
+                    <option value="creation">Création de compte</option>
+                    <option value="importvb">Import Forum</option>
+                </select>
+            </th>
+            <th>
+                <input id="s_old_values">
+            </th>
+            <th>
+                <input id="s_new_values">
+            </th>
         </tr>
-        {% else %}
-        <tr><td colspan="99"><i>Aucune action trouvée</i></td></tr>
-        {% endfor %}
+        <tr id="search_fields2" class="search_fields" valign="middle" style="display:none;">
+            <th>
+                <div><input id="s_from_date" value="{{dates.today}}" placeholder="jj/mm/aaaa" size="8"></div>
+                <div><input id="s_to_date" value="{{dates.today}}" placeholder="jj/mm/aaaa" size="8"></div>
+            </th>
+        </tr>
+        </thead>
+        <tbody id="logs">
         </tbody>
     </table>
 </article>
 <pre>
 {{debug}}
 </pre>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    function delay(callback, ms)
+    {
+        var timer = 0;
+        return function () {
+            var context = this, args = arguments;
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                callback.apply(context, args);
+            }, ms || 0);
+        };
+    }
+
+    function addFilter(id, query)
+    {
+        var value = $('#' + id).val();
+        if (value) {
+            if (query) {
+                query += '&';
+            }
+            query += id + '=' + escape(value);
+        }
+        return query;
+    }
+
+    function searchLogs(page)
+    {
+        $('#logs').html('<tr><td colspan="99" align="center"><img src="/img/ajax-loader.gif"></td></tr>');
+        var query = '';
+        query = addFilter('s_from_date', query);
+        query = addFilter('s_to_date', query);
+        query = addFilter('s_subject', query);
+        query = addFilter('s_target', query);
+        query = addFilter('s_action', query);
+        query = addFilter('s_old_values', query);
+        query = addFilter('s_new_values', query);
+        query += (query?'&':'') + 's_page=' + page;
+        $('#logs').load('/logs/search', query);
+        return false;
+    }
+
+    function changeDate(dateSelection)
+    {
+        switch(dateSelection)
+        {
+            case 'today':
+                $('#s_from_date').val('{{dates.today}}');
+                $('#s_to_date').val('{{dates.today}}');
+                break;
+            case 'yesterday':
+                $('#s_from_date').val('{{dates.yesterday}}');
+                $('#s_to_date').val('{{dates.yesterday}}');
+                break;
+            case 'past7d':
+                $('#s_from_date').val('{{dates.past7d}}');
+                $('#s_to_date').val('{{dates.today}}');
+                break;
+            case 'past30d':
+                $('#s_from_date').val('{{dates.past30d}}');
+                $('#s_to_date').val('{{dates.today}}');
+                break;
+            case 'past6m':
+                $('#s_from_date').val('{{dates.past6m}}');
+                $('#s_to_date').val('{{dates.today}}');
+                break;
+            case 'past12m':
+                $('#s_from_date').val('{{dates.past12m}}');
+                $('#s_to_date').val('{{dates.today}}');
+                break;
+            case 'custom':
+                break;
+        }
+        if (dateSelection != 'custom') {
+            $('#search_fields2').hide();
+            searchLogs(1);
+        } else {
+            $('#search_fields2').show();
+        }
+        return false;
+    }
+
+    $(function () {
+        searchLogs(1);
+
+        $('.search_fields input').keyup(delay(function (e) {
+            // Build a search string and launch an AJAX call
+            searchLogs(1);
+        }, 500))
+    });
+
+</script>
 {% endblock %}
