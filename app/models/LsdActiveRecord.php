@@ -34,7 +34,8 @@ class LsdActiveRecord extends ActiveRecord
             if (isset($this->private[$var])) {
                 return $this->private[$var];
             } else {
-                return null;
+                $result = null;
+                return $result;
             }
         } else {
             return parent::__get($var);

@@ -192,7 +192,10 @@ class UsersController
      */
     static protected function canComment($cur_user, $user)
     {
-        return $cur_user->isOfficier() || $cur_user->isConseiller() || $cur_user->isBureau() || $cur_user->isCM() || $cur_user->isAdmin();
+        return
+            ($cur_user->_highest_level >= 4 /*Officer*/ && $cur_user->_highest_level > $user->_highest_level) ||
+            ($cur_user->isCM() && $user->_highest_level <= 3 /*Scorpion*/ && $cur_user->id != $user->id) ||
+            $cur_user->isAdmin();
     }
 
 

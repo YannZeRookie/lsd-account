@@ -206,8 +206,9 @@ Meeting du 2019-07-22
 - X Améliorer de la mise en page de la page profil: adhérant and CM à part
 - X Le robot ne doit plus envoyer de message dans le canal courant
 - X Mettre à jour le pseudo Discord à chaque connexion, et bien prendre le pseudo Discord lié au serveur (aka le Nickname) et pas celui du compte. Voir https://discordapp.com/developers/docs/resources/guild#guild-member-object et https://discordapp.com/developers/docs/resources/guild#get-guild-member
+- X Respecter la même logique de contraintes concernant les Notes d'un utilisateur
+- X Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un.
 - Autres notes persos:
-  - Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un.
-  - Respecter la même logique de contraintes concernant les Notes d'un utilisateur
   - Message d'accueil du robot à la première connexion
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi
+  - Sur un mobile, l'affichage des tableaux ne marche pas du tout.

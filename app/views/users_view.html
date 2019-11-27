@@ -210,7 +210,12 @@
 
     {% if can_comment %}
     <h4 style="margin-top: 1em;">Notes des Officiers et Conseillers :</h4>
-    <div class="small" style="color:gray">Seuls les Officiers, les Gestionnaires de communauté, les Conseillers, le Bureau et les Admins voient ces notes.</div>
+    <div class="small" style="color:gray">Seuls les Officiers, les Gestionnaires de communauté, les Conseillers, le Bureau et
+        les Admins ont accès à ces notes, et uniquement quand ils sont d'un niveau supérieur à la personne considérée.</div>
+    <div class="small" style="color:gray">Rappel : ne mettre ici que des éléments qui concernent la gestion du joueur au
+        sein de ses Sections ou de la guilde. Sont <b>interdits</b> les qualificatifs, les jugements, les opinions,
+        les infos personnelles, etc. Au-délà du simple savoir-vivre, n'oubliez pas que le joueur a légalement un droit de consultation et de rectification.</div>
+
     <textarea class="form-control" id="comments" name="comments" rows="10" style="margin-bottom:2em;">{{user.comments|e}}</textarea>
     {% endif %}
 
