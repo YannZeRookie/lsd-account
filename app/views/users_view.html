@@ -175,6 +175,9 @@
                               {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
                 <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %}
                               {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
+                {% if user._lastAdhesion %}
+                <div>Date de dernière cotisation : {{user._lastAdhesion.created_on|date('d/m/Y')}}</div>
+                {% endif %}
                 <br>
                 <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
             </div>

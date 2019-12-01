@@ -18,6 +18,8 @@ class Log extends LsdActiveRecord
     const kAddition = 'addition';
     const kDeletion = 'deletion';
     const kChange = 'change';
+    const kAdhesion = 'adhesion';
+    const kCommented = 'commented';
 
     public function __construct()
     {
@@ -120,6 +122,43 @@ class Log extends LsdActiveRecord
         $user_id = $u ? $u->id : 0;
         $l = new Log();
         $l->set($user_id, $target_id, self::kChange, $old_role, $new_role);
+        $l->insert();
+    }
+
+    /**
+     * Log an Adhesion
+     * @param integer $target_id The user who paid
+     * @param $year
+     * @param $amount
+     */
+    static public function logAdhesion($target_id, $year, $amount)
+    {
+        $l = new Log();
+        $l->created_on = time();
+        $l->user_id = $target_id;
+        $l->target_id = $target_id;
+        $l->action = self::kAdhesion;
+        $l->old_values = '';
+        $l->new_values = '{"year":' . intval($year) . ',"amount":' . $amount .  '}';
+        $l->insert();
+    }
+
+    /**
+     * Log a comment change
+     * @param $user_id
+     * @param integer $target_id The user whose comment wad changed
+     * @param $old_length
+     * @param $new_length
+     */
+    static public function logCommented($user_id, $target_id, $old_length, $new_length)
+    {
+        $l = new Log();
+        $l->created_on = time();
+        $l->user_id = $user_id;
+        $l->target_id = $target_id;
+        $l->action = self::kCommented;
+        $l->old_values = '{"length":' . intval($old_length) . '}';
+        $l->new_values = '{"length":' . intval($new_length) . '}';
         $l->insert();
     }
 }

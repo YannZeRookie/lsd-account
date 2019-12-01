@@ -151,6 +151,7 @@ class UsersController
         $user->_adherent_ly = Role::isAdherent($user->id, $years['last']);
         $user->_adherent_cy = Role::isAdherent($user->id, $years['current']);
         $user->_adherent_ny = Role::isAdherent($user->id, $years['next']);
+        $user->_lastAdhesion = $user->getLastAdhesion();   // To avoid querying the DB twice
         $user->_cm = $user->isCM();
         if ($user->reviewer_id) {
             $uu = new User;
@@ -306,7 +307,11 @@ class UsersController
         //-- Comments
         $can_comment = self::canComment($cur_user, $user);
         if ($can_comment) {
+            $old_comments = $user->comments;
             $user->comments = trim($params['comments']);
+            if ($user->comments != $old_comments) {
+                Log::logCommented($cur_user->id, $user->id, strlen($old_comments), strlen($user->comments));
+            }
         }
 
         //-- Done with modifications on the user, check and save

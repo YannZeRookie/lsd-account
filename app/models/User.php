@@ -378,4 +378,10 @@ class User extends LsdActiveRecord
         return json_encode($data, JSON_NUMERIC_CHECK);
     }
 
+    public function getLastAdhesion()
+    {
+        $a = new Adhesion();
+        return $a->equal('user_id', $this->id)->orderby('id desc')->limit(0,1)->find();
+    }
+
 }

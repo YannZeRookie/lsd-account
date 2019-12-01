@@ -10,6 +10,7 @@
  */
 require_once __DIR__ . '/../models/Adhesion.php';
 require_once __DIR__ . '/../models/Transaction.php';
+require_once __DIR__ . '/../models/Log.php';
 
 
 class AdhererController
@@ -162,6 +163,7 @@ class AdhererController
                     //-- If transaction succeeded, set the Adherent role to the user
                     if ($output == 'VERIFIED' && ($adhesion->amount > 0) && $adhesion->user_id) {
                         Role::setRole($adhesion->user_id, Role::kAdherent, date("Y"));
+                        Log::logAdhesion($adhesion->user_id, date("Y"), $adhesion->amount);
                     }
                 }
             }
