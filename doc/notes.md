@@ -209,6 +209,10 @@ Meeting du 2019-07-22
 - X Respecter la même logique de contraintes concernant les Notes d'un utilisateur
 - X Comme c'est le robot qui va mettre à jour les rôles, on va perdre le logging. Du coup il va falloir en refaire un.
 - X Message d'accueil du robot à la première connexion
+- Changer la page de cotisation sur accueil et forum pour rediriger vers le mini-site
+- X Changer le message d'accueil dans le forum pour le processus d'inscription
+- X Indiquer le total d'utilisateurs trouvés dans la liste des utilisateurs
+- Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Autres notes persos:
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi
   - Sur un mobile, l'affichage des tableaux ne marche pas du tout.

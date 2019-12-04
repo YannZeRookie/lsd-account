@@ -22,6 +22,7 @@
 {% endblock %}
 
 {% block content %}
+<div style="float:right; margin-top:1.2em; text-align:right;">Total : <span id="count">...</span></div>
 <h1 class="h1">Liste des utilisateurs</h1>
 
 <article>
@@ -111,7 +112,9 @@
         query = addFilter('s_section', query);
         query = addFilter('s_vb', query);
         query += (query?'&':'') + 's_page=' + page;
-        $('#users').load('/users/search', query);
+        $('#users').load('/users/search', query, function() {
+            $('#count').html($('#total').val());
+        });
         return false;
     }
 

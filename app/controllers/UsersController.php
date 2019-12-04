@@ -78,6 +78,7 @@ class UsersController
             'users' => $users,
             'page' => $page,
             'pages' => $pages,
+            'total' => $total,
         ];
     }
 
