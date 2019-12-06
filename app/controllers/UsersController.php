@@ -54,7 +54,13 @@ class UsersController
         }
         //--- Section
         if (isset($params['s_section']) && $params['s_section'] !== '') {
-            $u->join('lsd_roles as r2', "r2.user_id=lsd_users.id AND r2.role in ('membre', 'officier')", 'INNER');
+            // If we ALSO specified membre or officer, then we must focus on this
+            if (isset($params['s_role']) && ($params['s_role'] == 'membre' || $params['s_role'] == 'officier')) {
+                $role_sql = "r2.role='{$params['s_role']}'";
+            } else {
+                $role_sql = "r2.role in ('membre', 'officier')";
+            }
+            $u->join('lsd_roles as r2', "r2.user_id=lsd_users.id AND $role_sql", 'INNER');
             $u->addCondition('r2.extra', '=', $params['s_section'], 'AND', 'join');
         }
         //--- VB Pseudo
