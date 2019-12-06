@@ -263,6 +263,16 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Is the user the President?
+     * @param $user_id
+     * @return bool
+     */
+    static public function isPresident($user_id)
+    {
+        return self::hasAnyRole($user_id, [self::kPresident]);
+    }
+
+    /**
      * Is the user a Gestionnaire de communaute?
      * @param $user_id
      * @return bool

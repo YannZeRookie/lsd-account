@@ -176,6 +176,8 @@ Doc sur le protocole IPN (la call-back de validation de transaction) :
 Gestion de l'IPN :
 - https://www.sandbox.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
 - https://www.paypal.com/cgi-bin/customerprofileweb?cmd=_profile-ipn-notify
+- Notre url de notification: http://account.scorpions-du-desert.com/adherer/ipn
+
 
 Historique des transactions IPN :
 - https://www.sandbox.paypal.com/fr/cgi-bin/webscr?cmd=_display-ipns-history
@@ -212,6 +214,9 @@ Meeting du 2019-07-22
 - Changer la page de cotisation sur accueil et forum pour rediriger vers le mini-site
 - X Changer le message d'accueil dans le forum pour le processus d'inscription
 - X Indiquer le total d'utilisateurs trouvés dans la liste des utilisateurs
+- X basculer PayPal : activer l'IPN
+- basculer PayPal : retirer les pages VB, mettre à jour les liens pages d'accueil
+- Faire la page pour le site d'accueil
 - Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Autres notes persos:
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi

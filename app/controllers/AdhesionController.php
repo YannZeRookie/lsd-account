@@ -78,7 +78,7 @@ class AdhesionController
             'cur_user' => $cur_user,
             'debug' => print_r($debug, true),
             'adhesions' => $adhesions,
-            'limited' => $cur_user->isConseiller(),
+            'limited' => !$cur_user->canSeeAdhesionsDetails(),
             'first_year' => $first_year,
             'cur_year' => $cur_year,
             'year' => $year,

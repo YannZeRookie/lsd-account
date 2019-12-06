@@ -174,6 +174,15 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Is the user the President?
+     * @return bool
+     */
+    public function isPresident()
+    {
+        return Role::isPresident($this->id);
+    }
+
+    /**
      * Is the user a CM?
      * @return bool
      */
@@ -221,7 +230,7 @@ class User extends LsdActiveRecord
     }
 
     /**
-     * Can the user manage transactions ?
+     * Can the user see adhesions ?
      * @return mixed
      */
     public function canSeeAdhesions()
@@ -229,6 +238,19 @@ class User extends LsdActiveRecord
         return Role::hasAnyRole($this->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
     }
 
+    /**
+     * Can the user see adhesions details?
+     * @return mixed
+     */
+    public function canSeeAdhesionsDetails()
+    {
+        return Role::hasAnyRole($this->id, [Role::kTresorier, Role::kPresident, Role::kAdmin]);
+    }
+
+    /**
+     * Can the user see Logs ?
+     * @return mixed
+     */
     public function canSeeLogs()
     {
         return Role::hasAnyRole($this->id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
