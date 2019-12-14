@@ -108,7 +108,7 @@ class Section extends LsdActiveRecord
 
     /**
      * Find a Section by a VB group id
-     * Note: we skip archived Sections
+     * Note: Officers of archived Sections are imported as regular Members
      * @param integer $vb_group VB Group ID
      * @return false|array     Return false if not found, or an array with the Section, and flags for membre and officier
      */
@@ -116,12 +116,17 @@ class Section extends LsdActiveRecord
     {
         $s = new Section;
 
-        $result = $s->equal('officer_group', $vb_group)->equal('archived', 0)->find();
+        $result = $s->equal('officer_group', $vb_group)->find();
         if ($result) {
-            return ['tag' => $result->tag, 'membre' => false, 'officier' => true];
+            if ($result->archived) {
+                // Officers of archived Sections are imported as regular Members
+                return ['tag' => $result->tag, 'membre' => true, 'officier' => false];
+            } else {
+                return ['tag' => $result->tag, 'membre' => false, 'officier' => true];
+            }
         }
 
-        $result = $s->equal('member_group', $vb_group)->equal('archived', 0)->find();
+        $result = $s->equal('member_group', $vb_group)->find();
         if ($result) {
             return ['tag' => $result->tag, 'membre' => true, 'officier' => false];
         }
