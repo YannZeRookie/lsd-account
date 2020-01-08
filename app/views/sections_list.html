@@ -21,8 +21,9 @@
         <tr>
             <th width="10%">Tag</th>
             <th width="20%">Nom</th>
-            <th width="5%">Notes</th>
-            <th width="65%">Officiers</th>
+            <th width="5%" style="text-align:center;">Notes</th>
+            <th width="5%" style="text-align:center;">Pop</th>
+            <th width="60%">Officiers</th>
         </tr>
         </thead>
         <tbody>
@@ -31,6 +32,7 @@
             <td nowrap>{% if can_edit %}<a href="/sections/{{s.tag}}">{{s.tag|e}}</a>{% else %}{{s.tag|e}}{% endif %}</td>
             <td>{{ s.name |e}}</td>
             <td align="center">{% if (s.notes and s._notes_can_read) or s._notes_can_edit %}<a href="/sections/{{s.tag}}/notes" title="Notes de la Section {{ s.name |e}}">&#x1F5D2;</a>{% endif %}</td>
+            <td align="center">{{s.count}}</td>
             <td>
                 {% for u in s._officers %}
                 <a href="/users/{{u.id}}?returnto=/sections">{{u.discord_username | e}}</a>{% if not(loop.last) %}, {% endif %}

@@ -534,6 +534,16 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Degrade all the officiers of a Section
+     * @param $tag
+     */
+    static public function degradeOfficiers($tag)
+    {
+        self::execute("UPDATE lsd_roles SET role = ? WHERE extra = ? AND role = ? ", [self::kMembre, $tag, self::kOfficier]);
+        Log::logDegradeOfficiers($tag);
+    }
+
+    /**
      * Get the Section membership of a user. Return the found Role if any
      * @param $user_id
      * @param $tag

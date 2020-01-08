@@ -39,6 +39,11 @@ class Section extends LsdActiveRecord
         return $result;
     }
 
+    public function count()
+    {
+        return intval(self::q_singleval("SELECT count(*) FROM lsd_roles WHERE role in ('membre', 'officier') AND extra = ? ", [$this->tag]));
+    }
+
     public static function getArchivedSections($include_officers = false)
     {
         $s = new Section;

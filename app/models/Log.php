@@ -20,6 +20,7 @@ class Log extends LsdActiveRecord
     const kChange = 'change';
     const kAdhesion = 'adhesion';
     const kCommented = 'commented';
+    const kDegrade = 'degrade';
 
     public function __construct()
     {
@@ -159,6 +160,23 @@ class Log extends LsdActiveRecord
         $l->action = self::kCommented;
         $l->old_values = '{"length":' . intval($old_length) . '}';
         $l->new_values = '{"length":' . intval($new_length) . '}';
+        $l->insert();
+    }
+
+    /**
+     * Log the degradation of officiers when archiving a Section
+     * @param $tag
+     */
+    static public function logDegradeOfficiers($tag)
+    {
+        $l = new Log();
+        $l->created_on = time();
+        $u = User::getConnectedUser();
+        $l->user_id = $u ? $u->id : 0;;
+        $l->target_id = 0;
+        $l->action = self::kDegrade;
+        $l->old_values = '{"section": "' . $tag . '"}';
+        $l->new_values = '{"section": "' . $tag . '"}';
         $l->insert();
     }
 }

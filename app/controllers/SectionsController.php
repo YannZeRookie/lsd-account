@@ -148,6 +148,9 @@ class SectionsController
                 $ok = $section->update();
             }
             if ($ok !== false) {
+                if ($section->archived) {
+                    Role::degradeOfficiers($section->tag);
+                }
                 \Slim\Slim::getInstance()->redirect('/sections');   // Go back to list if success
             }
         }

@@ -217,6 +217,7 @@ Meeting du 2019-07-22
 - X basculer PayPal : activer l'IPN
 - X basculer PayPal : retirer les pages VB, mettre à jour les liens pages d'accueil
 - X Bug: AngeDechu (id=41) est officier d'une section archivée => encore considérée officier. Solution validée par le Conseil: ne pas importer les officiers des sections archivées.
+- X Quand on archive une Section, il faut dégrader les officiers
 - Faire la page pour le site d'accueil
 - Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Permettre d'aller directemenent à une page après connexion (paramètre returnto à /login)
