@@ -221,6 +221,7 @@ Meeting du 2019-07-22
 - Faire la page pour le site d'accueil
 - Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Permettre d'aller directemenent à une page après connexion (paramètre returnto à /login)
+- Des Sections qui ont des Rôles associés : il faut mettre cela en database et pas hard-codé en UsersController.php:452
 - Autres notes persos:
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi
   - Sur un mobile, l'affichage des tableaux ne marche pas du tout.

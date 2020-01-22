@@ -449,7 +449,7 @@ class UsersController
         }
         //-- Section-specific roles
         if (Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
-            $specific = ['DU' => 'Dual-Universe'];
+            $specific = ['DU' => 'Dual-Universe', 'SC' => 'Star Citizen'];
             foreach($specific as $s_role => $d_role) {
                 $sr = $user->getSectionMembership($s_role);
                 if ($sr && !isset($d_otherroles[$d_role])) {
