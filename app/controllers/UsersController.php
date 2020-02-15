@@ -8,6 +8,10 @@
  *
  * CRUD of users
  */
+
+require_once __DIR__ . '/../models/Log.php';
+
+
 class UsersController
 {
     /**
@@ -99,6 +103,7 @@ class UsersController
             \Slim\Slim::getInstance()->redirect('/');
         }
 
+        Log::logExport($params);
         \Slim\Slim::getInstance()->contentType('text/plain; charset=UTF-8');
         $search = self::search($params, true);
         echo "id\tusername\temail\n";

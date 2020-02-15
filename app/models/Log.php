@@ -21,6 +21,7 @@ class Log extends LsdActiveRecord
     const kAdhesion = 'adhesion';
     const kCommented = 'commented';
     const kDegrade = 'degrade';
+    const kExport = 'export';
 
     public function __construct()
     {
@@ -178,5 +179,19 @@ class Log extends LsdActiveRecord
         $l->old_values = '{"section": "' . $tag . '"}';
         $l->new_values = '{"section": "' . $tag . '"}';
         $l->insert();
+    }
+
+    static public function logExport($params)
+    {
+        $l = new Log();
+        $l->created_on = time();
+        $u = User::getConnectedUser();
+        $l->user_id = $u ? $u->id : 0;;
+        $l->target_id = 0;
+        $l->action = self::kExport;
+        $l->old_values = '';
+        $l->new_values = json_encode($params);
+        $l->insert();
+
     }
 }
