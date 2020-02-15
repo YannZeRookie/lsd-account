@@ -103,7 +103,10 @@ class UsersController
         $search = self::search($params, true);
         echo "id\tusername\temail\n";
         foreach ($search['users'] as $u) {
-            echo $u->uid . "\t" . $u->discord_username . "\t" . $u->email . "\n";
+            echo $u->uid . "\t" ;
+            if ($u->discord_username{0} == '=') echo "'";   // Anti Excel safety
+            echo $u->discord_username . "\t";
+            echo $u->email . "\n";
         }
     }
 
