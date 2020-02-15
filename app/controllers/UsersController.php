@@ -30,9 +30,10 @@ class UsersController
     /**
      * AJAX search of users
      * @param array $params
+     * @param boolean $allPages true if all pages should be returned at once (=no paging)
      * @return array
      */
-    static public function search($params = [])
+    static public function search($params = [], $allPages=false)
     {
         $cur_user = self::checkAccess();
         //-- Analyse the search parameters and build the SQL query
@@ -74,9 +75,12 @@ class UsersController
         $pagination = 20;    // Number of items per page
         $page = intval($params['s_page'] ?? 1);
         $start = ($page-1)*$pagination;
+        if (!$allPages) {
+            $u->limit($start, $pagination);
+        }
 
         //-- Search
-        $users = $u->order('discord_username')->limit($start, $pagination)->findAll();
+        $users = $u->order('discord_username')->findAll();
         $total = LsdActiveRecord::rowCount();
         $pages = intdiv($total, $pagination) + ($total % $pagination ? 1 : 0);
         return [
@@ -86,6 +90,32 @@ class UsersController
             'pages' => $pages,
             'total' => $total,
         ];
+    }
+
+    static public function export($params = [])
+    {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user || !self::canExportUsers($cur_user->id)) {
+            \Slim\Slim::getInstance()->redirect('/');
+        }
+
+        \Slim\Slim::getInstance()->contentType('text/plain; charset=UTF-8');
+        $search = self::search($params, true);
+        echo "id\tusername\temail\n";
+        foreach ($search['users'] as $u) {
+            echo $u->uid . "\t" . $u->discord_username . "\t" . $u->email . "\n";
+        }
+    }
+
+
+    /**
+     * Can the user export users?
+     * @param $user_id
+     * @return bool
+     */
+    static public function canExportUsers($user_id)
+    {
+        return Role::hasAnyRole($user_id, [Role::kPresident, Role::kAdmin]);
     }
 
     /**

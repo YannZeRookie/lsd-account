@@ -22,7 +22,12 @@
 {% endblock %}
 
 {% block content %}
-<div style="float:right; margin-top:1.2em; text-align:right;">Total : <span id="count">...</span></div>
+<div style="float:right; margin-top:1.2em; text-align:right;">
+    {% if cur_user.isAdmin or cur_user.isPresident %}
+    <span id="export" style="margin-right: 3em;"><a id="export_url" href="#" download="lsd_export.txt">Exporter...</a></span>
+    {% endif %}
+    <span>Total : <span id="count">...</span></span>
+</div>
 <h1 class="h1">Liste des utilisateurs</h1>
 
 <article>
@@ -104,13 +109,19 @@
         return query;
     }
 
-    function searchUsers(page) {
-        $('#users').html('<tr><td colspan="99" align="center"><img src="/img/ajax-loader.gif"></td></tr>');
+    function buildQuery() {
         var query = '';
         query = addFilter('s_name', query);
         query = addFilter('s_role', query);
         query = addFilter('s_section', query);
         query = addFilter('s_vb', query);
+        return query;
+    }
+
+    function searchUsers(page) {
+        $('#users').html('<tr><td colspan="99" align="center"><img src="/img/ajax-loader.gif"></td></tr>');
+        var query = buildQuery();
+        $('#export_url').attr('href', '/users/export?'+query);
         query += (query?'&':'') + 's_page=' + page;
         $('#users').load('/users/search', query, function() {
             $('#count').html($('#total').val());

@@ -55,6 +55,11 @@ $app->get('/users', function () use ($app) {
 $app->get('/users/search', function () use ($app) {
     $app->render('users_search.html', UsersController::search($app->request()->get()));
 });
+// Export a list of users (list)
+$app->get('/users/export', function () use ($app) {
+    UsersController::export($app->request()->get());
+});
+// Candidates review
 $app->get('/users/review', function () use ($app) {
     $app->render('users_review.html', UsersController::review());
 });
