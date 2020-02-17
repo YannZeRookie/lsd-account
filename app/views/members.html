@@ -1,0 +1,70 @@
+<style>
+    @import 'https://fonts.googleapis.com/css?family=Roboto+Condensed';
+
+    #guilde_members h2 {
+        text-align: center;
+        font-weight: bold;
+        line-height: 20px;
+    }
+
+    #guilde_members ul.user_list {
+        text-align: center;
+        margin: 0;
+        padding: 0;
+    }
+
+    #guilde_members li.profile_user {
+        list-style-type: none;
+        display: inline-block;
+        padding: 1em;
+    }
+
+    #guilde_members li.profile_user a {
+        display: block;
+    }
+
+    #guilde_members .profile-photo {
+        max-width: 64px;
+        max-height: 64px !important;
+    }
+
+    #guilde_members .profile_title {
+        font-family: 'Roboto Condensed';
+    }
+
+    #guilde_members p {
+        font-family: arial, helvetica, sans-serif;
+        font-size: 10pt;
+    }
+
+    #guilde_members a {
+        color: #43A6DF;
+        text-decoration: none;
+        cursor: pointer;
+        font-family: 'Roboto Condensed';
+    }
+
+    #guilde_members a:hover {
+        color: #1B70A1;
+        text-decoration: underline;
+    }
+</style>
+
+<div id="guilde_members">
+    {% for n,m in members %}
+    <h2>{{n|e}}</h2>
+    <ul class="user_list">
+        {% for k,u in m %}
+        <li class="profile_user">
+            <img class="profile-photo" alt="{{u.discord_username|e}}" src="{{u.avatar}}" />
+            <div>{{u.discord_username|e}}</div>
+            {% if k matches '/^\\d+$/' %}{% else %}<div>{{k}}</div>{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+
+    <h2>Et sans oublier...</h2>
+    <p style="text-align:center;">...les centaines de Scorpions sans qui la guilde n'aurait pas de raison d'être.</p>
+    <p style="text-align:center; font-weight:bold; font-style:italic;">Merci à tous et bonnes parties !</p>
+</div>

@@ -168,6 +168,12 @@ $app->get('/logs/search', function () use ($app) {
     $app->render('logs_search.html', LogController::search($app->request()->get()));
 });
 
+//-- Members for Joomla
+require_once 'controllers/MembersController.php';
+$app->get('/members', function () use ($app) {
+    $app->render('members.html', MembersController::members());
+});
+
 //-- Use this for tests and debug:
 require_once 'controllers/HelloController.php';
 $app->get('/hello', function () use ($app) {
