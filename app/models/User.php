@@ -124,7 +124,9 @@ class User extends LsdActiveRecord
                 return "https://cdn.discordapp.com/avatars/{$discord_id}/{$discord_avatar}.png";
             }
         } else {
-            return '/img/blank_avatar.png';
+            $host = $_SERVER['HTTP_HOST'];
+            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+            return $protocol . '://' . $host . '/img/blank_avatar.png';
         }
     }
 
