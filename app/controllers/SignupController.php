@@ -61,6 +61,8 @@ class SignupController
                 $cur_user->submited_on = time();
                 $cur_user->save();
                 // If a Section was selected, attach it to the user
+                // TODO: some Sections will want to control their candidates, so this will have to be adapted
+                $section_message = '';
                 if ($params['section'] && $params['section'] != 'JDM') {
                     $r = new Role;
                     $r->user_id = $cur_user->id;
@@ -70,9 +72,10 @@ class SignupController
                         $r->extra2 = $params['pseudo'];
                     }
                     $r->insert();
+                    $section_message = ' pour la Section ' . $params['section'];
                 }
                 // Send a message to Discord in the "Conseil des Jeux" channel with a link
-                Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature, merci d'aller l'examiner rapidement !");
+                Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature" . $section_message . ", merci d'aller l'examiner rapidement !");
                 // Done, thank you and bye
                 \Slim\Slim::getInstance()->flash('success', 'Ta candidature a bien été enregistrée, merci !');
                 \Slim\Slim::getInstance()->redirect('/signup/pending');
@@ -133,7 +136,9 @@ class SignupController
             if ($vbUser) {
                 // Success
                 self::convertUserFromVB($vbUser, $cur_user);
-                // TODO ??? Mettre à jour aussi vers Discord ???
+                // Synch-up to Discord
+                UsersController::synchToDiscord($cur_user, $cur_user);
+                //
                 \Slim\Slim::getInstance()->flash('success', 'Informations forum importées avec succès !');
                 \Slim\Slim::getInstance()->redirect('/users/' . $cur_user->id);
             } else {
