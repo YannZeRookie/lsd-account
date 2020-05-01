@@ -154,7 +154,14 @@
                 <label>
                     <input class="{{r.class}}" type="checkbox" name="{{r.iname}}" value="{{r.role}}" {% if r.checked %}checked{% endif %}
                               {% if r.disabled %}disabled{% endif %} onchange="i_changed(this)">
-                    {{r.name}}</label><br>
+                    {{r.name}}</label>
+                    {% if r.invite_ui %}
+                        <input name="expiration" value="{{r.invite.expiration}}" size="2" style="margin-left: 2em;">&nbsp;j
+                        {% if r.invite.time_out %}
+                        - Fin : {{r.invite.time_out|date("d/m/Y")}}
+                        {% endif %}
+                    {% endif %}
+                    <br>
                 {% endfor %}
             </div>
             <div id="bureau">

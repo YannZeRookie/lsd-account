@@ -264,6 +264,10 @@ class UsersController
             $role_data['class'] = Role::isBasicRole($role) ? 'basic_role' : 'higher_role';
             $role_data['iname'] = Role::isBasicRole($role) ? 'irole' : 'i' . $role;
             $role_data['disabled'] = !$canChangeRoles || ($role_data['level'] >= $cur_user->_highest_level) || $role == Role::kOfficier;   // Officiers are set through the Section table
+            $role_data['invite_ui'] = ($role == Role::kInvite) && !$role_data['disabled'];
+            if ($role_data['invite_ui']) {
+                $role_data['invite'] = $user->getInviteData();
+            }
         }
         return $roles_table;
     }
@@ -368,6 +372,7 @@ class UsersController
         //-- Roles
         if ($cur_user->_highest_level > $user->_highest_level && isset($params['irole'])) {  // You can change roles only for people under yourself
             $user->setRole($params['irole'], null);
+            $user->CheckInvitation($params['expiration'], $cur_user);
         }
 
         //-- Conseiller & Bureau

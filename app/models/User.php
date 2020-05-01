@@ -8,6 +8,7 @@
 
 require_once __DIR__ . '/LsdActiveRecord.php';
 require_once __DIR__ . '/Role.php';
+require_once __DIR__ . '/Invitation.php';
 
 class User extends LsdActiveRecord
 {
@@ -137,6 +138,50 @@ class User extends LsdActiveRecord
     public function isScorpion()
     {
         return Role::isScorpion($this->id);
+    }
+
+    /**
+     * Is the user an Invite ?
+     * @return bool
+     */
+    public function isInvite()
+    {
+        return Role::isInvite($this->id);
+    }
+
+    /**
+     * Get the invitation data
+     * If none, time-out = 0
+     */
+    public function getInviteData()
+    {
+        $expiration = 7;
+        $time_out = 0;
+        if ($this->isInvite()) {
+            $invitation = Invitation::findInvitation($this->id);
+            if ($invitation) {
+                $expiration = $invitation->expiration;
+                $time_out = $invitation->getTimeOut();
+            }
+        }
+        return [
+            'expiration' => $expiration,
+            'time_out' => $time_out,
+        ];
+    }
+
+    /**
+     * Set or Remove the Invitation data
+     * @param $expiration
+     */
+    public function CheckInvitation($expiration, $cur_user)
+    {
+        Invitation::clear($this->id);
+        if ($this->isInvite()) {
+            $expiration = intval($expiration);
+            if ($expiration < 1) $expiration = 7;
+            Invitation::create($this->id, $cur_user->id, $expiration);
+        }
     }
 
     /**

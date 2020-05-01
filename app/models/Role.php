@@ -213,6 +213,16 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Is the user an Invite?
+     * @param $user_id
+     * @return bool
+     */
+    static public function isInvite($user_id)
+    {
+        return self::hasRole($user_id, self::kInvite);
+    }
+
+    /**
      * Is the user a Scorpion?
      * @param $user_id
      * @return bool
