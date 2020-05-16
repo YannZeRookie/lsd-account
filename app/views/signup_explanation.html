@@ -1,0 +1,42 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Comment s'inscrire ?{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+    #discord-link img {
+        max-width: 400px;
+    }
+    article p img {
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>Comment s'inscrire chez les Scorpions du Désert ?</h1>
+<p style="font-style: italic">C'est simple et rapide, si si !</p>
+<article>
+    <p>Cela se passe en 3 étapes :</p>
+    <ol>
+        <li>Aller sur notre Serveur Discord</li>
+        <li>Demander à notre Bot Discord un lien de connexion pour revenir sur ce site en étant connecté</li>
+        <li>Remplir le formulaire d'inscription</li>
+    </ol>
+
+    <h2>1. Aller sur notre Serveur Discord :</h2>
+    <p><a id="discord-link" href="https://discord.gg/MbuXUUs" title="Aller sur le serveur Discord des LSD"><img src="http://accueil.scorpions-du-desert.com/images/discord_logo.png"></a></p>
+
+    <h2>2. Demander à notre Bot Discord un lien de connexion</h2>
+    <p>Tape la commande <code>!inscription</code> dans n'importe quel canal. Le LSD-Bot t'enverra par message privé dans Discord un lien de connexion !</p>
+    <p><img src="/img/inscription.png" alt="Commande d'inscription"></p>
+
+    <h2>3. Remplir le formulaire d'inscription</h2>
+    <p>En suivant le lien donné par le Bot, tu te retrouveras connecté(e) sur ce site avec un formulaire à remplir :</p>
+    <p><img src="/img/formulaire.jpg" alt="Formulaire d'inscription"></p>
+
+    <h2><i>Voilà, à très bientôt !</i></h2>
+</article>
+{% endblock %}

@@ -214,4 +214,17 @@ class SignupController
         //-- Done
         return $target_user->save();
     }
+
+    /**
+     * A static page explaining how to sign-up
+     */
+    static public function inscription()
+    {
+        $cur_user = User::getConnectedUser();
+
+        return [
+            'cur_user' => $cur_user,
+        ];
+
+    }
 }

@@ -44,6 +44,9 @@ $app->get('/signup/vb', function () use ($app) {
 $app->post('/signup/vb', function () use ($app) {
     $app->render('signup_vb.html', SignupController::signupVBPost($app->request()->post()));
 });
+$app->get('/inscription', function () use ($app) {
+    $app->render('signup_explanation.html', SignupController::inscription());
+});
 
 //-- Users CRUD
 require_once 'controllers/UsersController.php';
