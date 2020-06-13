@@ -14,9 +14,12 @@ require_once __DIR__ . '/../models/User.php';
 
 class LogController
 {
+    /**
+     * Control who can have access
+     * @return ActiveRecord|bool
+     */
     static protected function checkAccess()
     {
-        //-- Check rights: the connected user can pay only if he/she is a Bureau member or admin
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->canSeeLogs()) {
             \Slim\Slim::getInstance()->redirect('/');

@@ -12,6 +12,25 @@ class Invitation extends LsdActiveRecord {
     public $table = 'lsd_invitations';
 
     /**
+     * magic function to GET the values of current object.
+     * Address some fields when they are null
+     */
+    public function & __get($var)
+    {
+        $value = parent::__get($var);
+        if ($value === null) {
+            switch ($var) {
+                case 'user_id':
+                    $value = 0;
+                    break;
+                default:
+                    $value = '';
+            }
+        }
+        return $value;
+    }
+
+    /**
      * Search for an invitation for a user
      * @param $user_id
      * @return mixed

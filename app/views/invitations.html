@@ -1,0 +1,86 @@
+{% extends "app.html" %}
+{% set category = 'user' %}
+
+{% block title %}Invitations{% endblock %}
+{% block banner %}{% endblock %}
+
+{% block css %}
+<style>
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="h1">Invitations</h1>
+<div class="row">
+    <div class="col">
+    </div>
+</div>
+<article>
+    <table id="logs_table" class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th width="10%">Date</th>
+            <th width="5%">Durée</th>
+            <th width="10%">Expiration</th>
+            <th width="35%">Invité</th>
+            <th width="35%">Mentor</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <select id="s_delay" class="form-control form-control-sm" onchange="changeFilter()">
+                    <option value="">&gt; 7</option>
+                    <option value="all" {% if delay %}selected{% endif %}>Toutes</option>
+                </select>
+            </th>
+            <th></th>
+            <th></th>
+            <th>
+                <select id="s_mentor" class="form-control form-control-sm" onchange="changeFilter()">
+                    <option value="">Tous</option>
+                    <option value="mine" {% if mentor %}selected{% endif %}>Moi</option>
+                </select>
+            </th>
+        </tr>
+        </thead>
+        <tbody id="invitations">
+        {% for invitation in invitations %}
+        <tr>
+            <td>{{invitation.created_on|date("d/m/Y")}}</td>
+            <td align="center">{{invitation.expiration}}</td>
+            <td>{{invitation.getTimeOut|date("d/m/Y")}}</td>
+            <td class="account">
+                {% if invitation.user_id %}
+                    <a href="/users/{{invitation.user_id}}">{{invitation.discord_username|e}}</a>
+                {% else %}
+                    {{invitation.discord_username|e}}
+                {% endif %}
+            </td>
+            <td class="account">
+                {{invitation.by_discord_username|e}}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="4"><i>Aucune invitation trouvée</i></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</article>
+<pre>
+{{debug}}
+</pre>
+{% endblock %}
+
+{% block js %}
+{{ parent() }}
+<script>
+    function changeFilter()
+    {
+        var delay = $('#s_delay').val();
+        var mentor = $('#s_mentor').val();
+        gotoURL('/invitations?delay=' + delay + '&mentor=' + mentor);
+    }
+</script>
+{% endblock %}

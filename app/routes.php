@@ -183,3 +183,8 @@ $app->get('/hello', function () use ($app) {
     $app->render('hello.html', HelloController::hello());
 });
 
+//-- Invitations
+require_once 'controllers/InvitationController.php';
+$app->get('/invitations', function () use ($app) {
+    $app->render('invitations.html', InvitationController::all($app->request()->get()));
+});
