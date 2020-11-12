@@ -10,6 +10,7 @@
  */
 
 require_once __DIR__ . '/../models/Log.php';
+require_once __DIR__ . '/../models/Adhesion.php';
 
 
 class UsersController
@@ -100,16 +101,15 @@ class UsersController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !self::canExportUsers($cur_user->id)) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
 
         Log::logExport($params);
-        \Slim\Slim::getInstance()->contentType('text/plain; charset=UTF-8');
         $search = self::search($params, true);
         echo "id\tusername\temail\n";
         foreach ($search['users'] as $u) {
             echo $u->uid . "\t" ;
-            if ($u->discord_username{0} == '=') echo "'";   // Anti Excel safety
+            if (substr($u->discord_username, 0, 1) == '=') echo "'";   // Anti Excel safety
             echo $u->discord_username . "\t";
             echo $u->email . "\n";
         }
@@ -128,13 +128,12 @@ class UsersController
 
     /**
      * Can the user list users?
-     * The user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
      * @param $user_id
      * @return bool
      */
     static public function canListUsers($user_id)
     {
-        return Role::hasAnyRole($user_id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]);
+        return Role::canListUsers($user_id);
     }
 
     /**
@@ -145,7 +144,7 @@ class UsersController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !self::canListUsers($cur_user->id)) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }
@@ -163,11 +162,11 @@ class UsersController
         $role_ok = Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM]);
         $scorpion = $cur_user->isScorpion();
         if (!$cur_user || !($role_ok || $scorpion || $cur_user->id == $id)) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         $cur_user->_read_only = !$role_ok && $scorpion && ($cur_user->id != $id);
         if (!$accept_read_only && $cur_user->_read_only) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         $cur_user->_highest_role = Role::getHighestRole($cur_user->id);
         $cur_user->_highest_level = Role::getRoleLevel($cur_user->_highest_role);
@@ -188,7 +187,7 @@ class UsersController
         $u = new User;
         $user = $u->find($id);
         if (!$user) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         $user->_highest_role = Role::getHighestRole($user->id);
         $user->_highest_level = Role::getRoleLevel($user->_highest_role);
@@ -304,7 +303,7 @@ class UsersController
      * @param $id
      * @return array
      */
-    static public function view($id)
+    static public function view($id, $query)
     {
         //-- Check rights: the connected user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin,
         //   or if he is looking at its own record
@@ -313,7 +312,6 @@ class UsersController
         $user = self::getTargetUser($id);
         $user->comments = $user->comments ?: '';
 
-        $query = \Slim\Slim::getInstance()->request()->get();
         $returnto = isset($query['returnto']) ? $query['returnto'] : false;
 
         $debug = '';
@@ -332,7 +330,7 @@ class UsersController
         ];
     }
 
-    static public function post($id, $params = [])
+    static public function post($app, $id, $query, $params = [])
     {
         $defaults = ['iconseiller' => false, 'adherent_ly' => false, 'adherent_cy' => false, 'adherent_ny' => false, 'cm' => false];
         $params = array_merge($defaults, $params); // Set defaults, as these might be missing from the $params
@@ -417,11 +415,13 @@ class UsersController
         self::synchToDiscord($cur_user, $user);
 
         //-- Check if we are supposed to return somewhere
-        $query = \Slim\Slim::getInstance()->request()->get();
         $returnto = isset($query['returnto']) ? $query['returnto'] : false;
         if (count($errors) == 0) {
             if ($returnto) {
-                \Slim\Slim::getInstance()->redirect($returnto);
+                $app->flash->addMessage('success', 'Mise à jour de '. $user->discord_username . ' effectuée');
+                redirectTo($returnto);
+            } else {
+                $app->flash->addMessageNow('success', 'Mise à jour effectuée');
             }
         }
 
@@ -535,7 +535,7 @@ class UsersController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->canReviewUsers()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }
@@ -591,7 +591,7 @@ class UsersController
             Discord::sendChannelMessage($discord_channel_review, "La candidature de `" . $target_user->discord_username . "` a été traitée par `" . $cur_user->discord_username . "`. Merci.");
 
         }
-        \Slim\Slim::getInstance()->redirect('/users/review');
+        redirectTo('/users/review');
         return [];
     }
 

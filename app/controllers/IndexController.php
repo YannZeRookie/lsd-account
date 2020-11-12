@@ -16,7 +16,7 @@ class IndexController
         //-- Do we have a connected user? If not, bail out
         $cur_user = User::getConnectedUser();
         if (!$cur_user) {
-            \Slim\Slim::getInstance()->redirect('/login/expired');
+            redirectTo('/login/expired');
         }
 
         //-- Depending on the type of users, we redirect to one page or another:
@@ -25,18 +25,18 @@ class IndexController
         //   - Privileged user (officer and above...) -> users list
         if (!$cur_user->isScorpion()) {
             if ($cur_user->submited_on == 0) {
-                \Slim\Slim::getInstance()->redirect('/signup'); // Enter the submission flow
+                redirectTo('/signup'); // Enter the submission flow
             } elseif ($cur_user->reviewed_on == 0) {
-                \Slim\Slim::getInstance()->redirect('/signup/pending'); // Submitted but not reviewed yet
+                redirectTo('/signup/pending'); // Submitted but not reviewed yet
             } else {
                 // Submitted, reviewed and not a Scorpion? Then it means a refusal
-                \Slim\Slim::getInstance()->redirect('/signup/refused');
+                redirectTo('/signup/refused');
             }
         }
-        elseif (UsersController::canListUsers($cur_user->id)) {
-            \Slim\Slim::getInstance()->redirect('/users');
+        elseif ($cur_user->canListUsers()) {
+            redirectTo('/users');
         }
-        \Slim\Slim::getInstance()->redirect('/users/' . $cur_user->id);
+        redirectTo('/users/' . $cur_user->id);
 
         return [];
     }

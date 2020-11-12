@@ -17,7 +17,7 @@ class AdminController
         //-- Check rights: the connected user can see the list of users only if he is a Conseiller, a Bureau member or an Admin
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !Role::hasAnyRole($cur_user->id, [Role::kAdmin])) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }

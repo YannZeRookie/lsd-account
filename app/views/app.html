@@ -82,24 +82,24 @@
 
 <div id="main">
     <section id="flash">
-        {% if flash.primary %}
-        <div class="alert alert-primary" role="alert">{{flash.primary}}</div>
-        {% endif %}
-        {% if flash.info %}
-        <div class="alert alert-info" role="alert">{{flash.info}}</div>
-        {% endif %}
-        {% if flash.success %}
-        <div class="alert alert-success" role="alert">{{flash.success}}</div>
-        {% endif %}
-        {% if flash.danger %}
-        <div class="alert alert-danger" role="alert">{{flash.danger}}</div>
-        {% endif %}
-        {% if flash.error %}
-        <div class="alert alert-danger" role="alert">{{flash.error}}</div>
-        {% endif %}
-        {% if flash.warning %}
-        <div class="alert alert-warning" role="alert">{{flash.warning}}</div>
-        {% endif %}
+        {% for msg in flash('primary') %}
+        <div class="alert alert-primary" role="alert">{{msg}}</div>
+        {% endfor %}
+        {% for msg in flash('info') %}
+        <div class="alert alert-info" role="alert">{{msg}}</div>
+        {% endfor %}
+        {% for msg in flash('success') %}
+        <div class="alert alert-success" role="alert">{{msg}}</div>
+        {% endfor %}
+        {% for msg in flash('danger') %}
+        <div class="alert alert-danger" role="alert">{{msg}}</div>
+        {% endfor %}
+        {% for msg in flash('error') %}
+        <div class="alert alert-danger" role="alert">{{msg}}</div>
+        {% endfor %}
+        {% for msg in flash('warning') %}
+        <div class="alert alert-warning" role="alert">{{msg}}</div>
+        {% endfor %}
     </section>
 
     <section id="content">

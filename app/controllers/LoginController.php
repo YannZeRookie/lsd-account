@@ -30,7 +30,7 @@ class LoginController
                 return ['error' => 'Utilisateur forcé non trouvé : ' . $connect_force_user . '. Vérifiez votre base de données.'];
             }
             $_SESSION['user_id'] = $user->id;
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         } else {
             //-- Find the connection key
             $key = preg_replace('/\W/', '', $key);  // anti-poisoning
@@ -78,12 +78,12 @@ class LoginController
             if ($user->isScorpion()) {
                 if ($created_new_user) {
                     // Go through the VB sign-up/linking
-                    \Slim\Slim::getInstance()->redirect('/signup/vb');
+                    redirectTo('/signup/vb');
                 } else {
-                    \Slim\Slim::getInstance()->redirect('/');
+                    redirectTo('/');
                 }
             } else {
-                \Slim\Slim::getInstance()->redirect('/signup');
+                redirectTo('/signup');
             }
         }
         return [
@@ -97,7 +97,7 @@ class LoginController
     static public function logout()
     {
         $_SESSION['user_id'] = null;
-        \Slim\Slim::getInstance()->redirect('/');
+        redirectTo('/');
     }
 
 }

@@ -629,6 +629,18 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Can the user list users?
+     * The user can see the list of users only if he is an Officer, a Conseiller, a CM, a Bureau member or an Admin
+     * @param $user_id
+     * @return bool
+     */
+    static public function canListUsers($user_id)
+    {
+        return self::hasAnyRole($user_id, [self::kOfficier, self::kConseiller, self::kSecretaire, self::kTresorier, self::kPresident, self::kAdmin, self::kCM]);
+    }
+
+
+    /**
      * Convert the Role into a JSON string
      * @return string
      */

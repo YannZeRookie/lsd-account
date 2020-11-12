@@ -22,7 +22,7 @@ class InvitationController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->canSeeInvitations()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }

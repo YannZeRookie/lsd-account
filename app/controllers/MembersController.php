@@ -33,7 +33,6 @@ class MembersController
         foreach ($sections as $s) {
             $members['Gradés ' . $s->name] = self::getUsersByRole(Role::kOfficier, $s->tag);
         }
-        \Slim\Slim::getInstance()->response()->headers()->set('Access-Control-Allow-Origin', '*');
 
         return [
             'members' => $members,

@@ -20,7 +20,7 @@ class AdhererController
         //-- Check rights: the connected user can pay only if he/she is a Scorpion
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->isScorpion()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }
@@ -82,7 +82,7 @@ class AdhererController
                 $pp_url .= '&cancel_return=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/adherer/annuler?aid=' . $adhesion->id);
                 $pp_url .= '&rm=1'; // Super important: go back to the return URLs with a POST and all the payment variables
                 $pp_url .= '&image_url=' . urlencode('http://' . $_SERVER['HTTP_HOST'] . '/img/LSD_Blason_bleu-50px.png');
-                \Slim\Slim::getInstance()->redirect($pp_url);
+                redirectTo($pp_url);
             } else {
                 $errors['Base de données'] = 'Désolé, un problème est survenu lors de la mise à jour de la base de données. Recommencez pour voir ?';
             }
@@ -162,8 +162,9 @@ class AdhererController
                     $adhesion->save();
                     //-- If transaction succeeded, set the Adherent role to the user
                     if ($output == 'VERIFIED' && ($adhesion->amount > 0) && $adhesion->user_id) {
-                        Role::setRole($adhesion->user_id, Role::kAdherent, date("Y"));
-                        Log::logAdhesion($adhesion->user_id, date("Y"), $adhesion->amount);
+                        $year = (date('m') == 12) ? date("Y") + 1 : date("Y");  // In December, it is applied to the next year
+                        Role::setRole($adhesion->user_id, Role::kAdherent, $year);
+                        Log::logAdhesion($adhesion->user_id, $year, $adhesion->amount);
                     }
                 }
             }

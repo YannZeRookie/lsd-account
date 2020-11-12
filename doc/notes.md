@@ -39,8 +39,11 @@ Par exemple pour YannZeGrunt (discord_id=404722937183076354 #5874) :
 DELETE FROM lsd_users WHERE id=6;
 DELETE FROM lsd_roles WHERE user_id=6;
 ```
-* Créer une clé de connection bidon:<br>
-`INSERT INTO lsd_login SET login_key='testkey', created_on=unix_timestamp(), discord_id='404722937183076354', discord_username='YannZeGrunt', discord_discriminator='5874'; `
+* Créer une clé de connection bidon:
+```
+INSERT INTO lsd_login SET login_key='testkey', created_on=unix_timestamp(), discord_id='404722937183076354', discord_username='YannZeGrunt', discord_discriminator='5874';
+INSERT INTO lsd_login SET login_key='testkey2', created_on=unix_timestamp(), discord_id='407273313484931073', discord_username='YannZeScorpion', discord_discriminator='1451';
+```
 * Se déconnecter du site: http://localhost:8080/logout
 * Lancer le flow: http://localhost:8080/login/testkey
 

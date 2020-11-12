@@ -415,6 +415,14 @@ class User extends LsdActiveRecord
         return Role::canReviewUsers($this->id);
     }
 
+    /**
+     * Can the user list users?
+     * @return bool
+     */
+    public function canListUsers()
+    {
+        return Role::canListUsers($this->id);
+    }
 
     /**
      * Get the VB login names - if there was an original VB account

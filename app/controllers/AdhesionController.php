@@ -19,7 +19,7 @@ class AdhesionController
         //-- Check rights: the connected user can pay only if he/she is a Bureau member or admin
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->canSeeAdhesions()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }
@@ -30,7 +30,7 @@ class AdhesionController
         $cur_user = self::checkAccess();
 
         $first_year = 2019;
-        $cur_year = date("Y");
+        $cur_year = (date('m') == 12) ? date("Y") + 1 : date("Y");  // In December, we look to the next year
         $year = intval($year);
         if (empty($year)) {
             $year = $cur_year;

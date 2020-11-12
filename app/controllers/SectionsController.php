@@ -27,7 +27,7 @@ class SectionsController
         //-- Check rights: the connected user can see the list of Sections only if he a privileged user
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !self::hasPrivilegedAccess($cur_user->id)) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }
@@ -36,7 +36,7 @@ class SectionsController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->isScorpion()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         $can_edit = self::hasPrivilegedAccess($cur_user->id);
         return $cur_user;
@@ -48,7 +48,7 @@ class SectionsController
         //-- Check rights for Notes: the connected user can see the list of Sections only if he is a member of the Section
         $cur_user = User::getConnectedUser();
         if (!$cur_user ||!$cur_user->isScorpion()) {
-            \Slim\Slim::getInstance()->redirect('/sections');
+            redirectTo('/sections');
         }
         $can_read = self::canReadNotes($cur_user, $tag);
         $can_edit = self::canEditNotes($cur_user, $tag);
@@ -126,7 +126,7 @@ class SectionsController
         ];
     }
 
-    static public function post($tag, $params = [])
+    static public function post($app, $tag, $params = [])
     {
         $cur_user = self::checkAccess();
         $params = array_merge(['tag' => '', 'name' => '', 'archived' => '0'], $params);
@@ -147,11 +147,12 @@ class SectionsController
             } else {
                 $ok = $section->update();
             }
+            $app->flash->addMessage('success', "Mise à jour de la Section {$tag} effectuée");
             if ($ok !== false) {
                 if ($section->archived) {
                     Role::degradeOfficiers($section->tag);
                 }
-                \Slim\Slim::getInstance()->redirect('/sections');   // Go back to list if success
+                redirectTo('/sections');   // Go back to list if success
             }
         }
 
@@ -169,7 +170,7 @@ class SectionsController
      * Section notes page
      * @param $tag
      */
-    static public function notes($tag, $params = [])
+    static public function notes($app, $tag, $params = [])
     {
         $cur_user = self::checkAccessNotes($tag, $can_read, $can_edit);
         $section = Section::getSection($tag);
@@ -177,7 +178,8 @@ class SectionsController
         if ($can_edit && isset($params['submit'])) {
             $section->notes = $params['markdown'];
             $section->save();
-            \Slim\Slim::getInstance()->redirect('/sections');
+            $app->flash->addMessage('success', "Mise à jour des notes de la Section {$tag} effectuée");
+            redirectTo('/sections');
         }
 
         $md = $section->notes;

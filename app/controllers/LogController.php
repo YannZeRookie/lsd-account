@@ -22,7 +22,7 @@ class LogController
     {
         $cur_user = User::getConnectedUser();
         if (!$cur_user || !$cur_user->canSeeLogs()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
         return $cur_user;
     }

@@ -18,18 +18,18 @@ class SignupController
         //-- Check rights
         $cur_user = User::getConnectedUser();
         if (!$cur_user) {
-            \Slim\Slim::getInstance()->redirect('/login/expired');
+            redirectTo('/login/expired');
         }
 
         //-- If the user is already a Scorpion, we have nothing to do here: go to the main page
         if (!$allow_scorpions && $cur_user->isScorpion()) {
-            \Slim\Slim::getInstance()->redirect('/');
+            redirectTo('/');
         }
 
         return $cur_user;
     }
 
-    static public function signup($params = [])
+    static public function signup($app, $params = [])
     {
         global $discord_channel_review; // Notification channel
 
@@ -77,8 +77,8 @@ class SignupController
                 // Send a message to Discord in the "Conseil des Jeux" channel with a link
                 Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature" . $section_message . ", merci d'aller l'examiner rapidement !");
                 // Done, thank you and bye
-                \Slim\Slim::getInstance()->flash('success', 'Ta candidature a bien été enregistrée, merci !');
-                \Slim\Slim::getInstance()->redirect('/signup/pending');
+                $app->flash('success', 'Ta candidature a bien été enregistrée, merci !');
+                redirectTo('/signup/pending');
             }
         }
 
@@ -118,7 +118,7 @@ class SignupController
         ];
     }
 
-    static public function signupVBPost($params)
+    static public function signupVBPost($app, $params)
     {
         $cur_user = self::checkAccess(true);
         $errors = [];
@@ -139,8 +139,8 @@ class SignupController
                 // Synch-up to Discord
                 UsersController::synchToDiscord($cur_user, $cur_user);
                 //
-                \Slim\Slim::getInstance()->flash('success', 'Informations forum importées avec succès !');
-                \Slim\Slim::getInstance()->redirect('/users/' . $cur_user->id);
+                $app->flash('success', 'Informations forum importées avec succès !');
+                redirectTo('/users/' . $cur_user->id);
             } else {
                 $errors[] = 'Pseudo ou Mot de passe incorrect';
             }

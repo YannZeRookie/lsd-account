@@ -152,9 +152,8 @@
                 <h4>Rôles</h4>
                 {% for r in roles_table %}
                 <label>
-                    <input class="{{r.class}}" type="checkbox" name="{{r.iname}}" value="{{r.role}}" {% if r.checked %}checked{% endif %}
-                              {% if r.disabled %}disabled{% endif %} onchange="i_changed(this)">
-                    {{r.name}}</label>
+                    <input class="{{r.class}}" type="checkbox" name="{{r.iname}}" value="{{r.role}}" {% if r.checked %} checked{% endif %} {% if r.disabled %} disabled{% endif %} onchange="i_changed(this)">
+                    &nbsp;{{r.name}}</label>
                     {% if r.invite_ui %}
                         <input name="expiration" value="{{r.invite.expiration}}" size="2" style="margin-left: 2em;">&nbsp;j
                         {% if r.invite.time_out %}
@@ -166,27 +165,27 @@
             </div>
             <div id="bureau">
                 Bureau :
-                <select name="bureau" {% if not(cur_user.isAdmin) %}disabled{% endif %}>
-                    <option value="" {% if not(user.isBureau) %}selected{% endif %}>-</option>
+                <select name="bureau" {% if not(cur_user.isAdmin) %} disabled{% endif %}>
+                    <option value="" {% if not(user.isBureau) %} selected{% endif %}>-</option>
                     {% for r in bureau_table %}
-                    <option value="{{r.role}}" {% if r.selected %}selected{% endif %}>{{r.name}}</option>
+                    <option value="{{r.role}}" {% if r.selected %} selected{% endif %}>{{r.name}}</option>
                     {% endfor %}
                 </select>
             </div>
             <div id="other_roles">
                 <h4>Divers</h4>
                 Adhérent :
-                <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %}checked{% endif %}
-                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.last}}</label>
-                <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %}checked{% endif %}
-                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.current}}</label>
-                <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %}checked{% endif %}
-                              {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> {{year.next}}</label>
+                <label><input type="checkbox" name="adherent_ly" value="1" {% if user._adherent_ly %} checked{% endif %}
+                              {% if not(cur_user._canSetOtherRoles) %} disabled{% endif %}>&nbsp;{{year.last}}</label>
+                <label><input type="checkbox" name="adherent_cy" value="1" {% if user._adherent_cy %} checked{% endif %}
+                              {% if not(cur_user._canSetOtherRoles) %} disabled{% endif %}>&nbsp;{{year.current}}</label>
+                <label><input type="checkbox" name="adherent_ny" value="1" {% if user._adherent_ny %} checked{% endif %}
+                              {% if not(cur_user._canSetOtherRoles) %} disabled{% endif %}>&nbsp;{{year.next}}</label>
                 {% if user._lastAdhesion %}
-                <div>Date de dernière cotisation : {{user._lastAdhesion.created_on|date('d/m/Y')}}</div>
+                <div>Date de dernière cotisation :&nbsp;{{user._lastAdhesion.created_on|date('d/m/Y')}}</div>
                 {% endif %}
                 <br>
-                <label><input type="checkbox" name="cm" value="1" {% if user._cm %}checked{% endif %} {% if not(cur_user._canSetOtherRoles) %}disabled{% endif %}> Gestionnaire de communauté</label><br>
+                <label><input type="checkbox" name="cm" value="1" {% if user._cm %} checked{% endif %} {% if not(cur_user._canSetOtherRoles) %} disabled{% endif %}> Gestionnaire de communauté</label><br>
             </div>
         </div>
 
@@ -200,8 +199,8 @@
                 </tr>
                 {% for s in sections %}
                 <tr>
-                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.role=='membre' %}checked{% endif %} {% if not(cur_user._canNameMembres) %}disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
-                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.role=='officier' %}checked{% endif %} {% if not(cur_user._canNameOfficiers) %}disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
+                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.role=='membre' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
+                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.role=='officier' %} checked{% endif %} {% if not(cur_user._canNameOfficiers) %} disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
                     <td>{{s.name|e}} ({{s.tag}})</td>
                     <td>
                         {% if cur_user._read_only %}
