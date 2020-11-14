@@ -88,6 +88,14 @@ http://localhost:8080/login/test
 
 ```
 
+Bons liens sur les packages composer
+====================================
+* Slim: https://packagist.org/packages/slim/slim
+* Twig: https://packagist.org/packages/twig/twig
+* slim/twig-view: https://packagist.org/packages/slim/twig-view
+* slim/flash: https://packagist.org/packages/slim/flash
+
+
 To-do
 =====
 
@@ -231,3 +239,11 @@ Meeting du 2019-07-22
 - Autres notes persos:
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi
   - Sur un mobile, l'affichage des tableaux ne marche pas du tout.
+
+2020-11-11: Passage à Slim 3 et Twig 3
+======================================
+
+Une tonne de changements mais je commence à mieux comprendre Composer !
+
+La tentative de passer à Slim 4 fut un échec à cause de Twig. Je suis resté à Slim 3 en attendant mieux. C'est toujours ça de fait...
+
