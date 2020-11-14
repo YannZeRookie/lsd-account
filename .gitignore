@@ -4,3 +4,4 @@ vendor/
 cache/
 config/config.php
 work/
+composer.phar
