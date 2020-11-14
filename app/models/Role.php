@@ -44,6 +44,15 @@ class Role extends LsdActiveRecord
     }
 
     /**
+     * Return the Role name as a string
+     * @return string
+     */
+    public function name()
+    {
+        return isset($this->data['role']) ? $this->data['role'] : '';
+    }
+
+    /**
      * Return the Roles as a sorted list: key => name
      * @param bool $all TRUE if you want to get the non-leveled ranks: kMembre, kCM, kAdherent...
      * @return array

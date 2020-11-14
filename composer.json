@@ -1,10 +1,16 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/YannZeRookie/slim-twig-flash"
+        }
+    ],
     "require": {
         "slim/slim": "3.*",
-        "twig/twig": "1.38",
+        "twig/twig": "~3.0",
         "bephp/activerecord": "~2.2",
         "slim/twig-view": "2.5.1",
-        "slim/flash": "^0.4.0",
-        "kanellov/slim-twig-flash": "^0.2.0"
+        "slim/flash": "~0.4.0",
+        "kanellov/slim-twig-flash": "dev-twig3"
     }
 }

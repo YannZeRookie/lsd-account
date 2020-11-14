@@ -199,8 +199,8 @@
                 </tr>
                 {% for s in sections %}
                 <tr>
-                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.role=='membre' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
-                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.role=='officier' %} checked{% endif %} {% if not(cur_user._canNameOfficiers) %} disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
+                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.name=='membre' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
+                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.name=='officier' %} checked{% endif %} {% if not(cur_user._canNameOfficiers) %} disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
                     <td>{{s.name|e}} ({{s.tag}})</td>
                     <td>
                         {% if cur_user._read_only %}
@@ -227,7 +227,6 @@
 
     <textarea class="form-control" id="comments" name="comments" rows="10" style="margin-bottom:2em;">{{user.comments|e}}</textarea>
     {% endif %}
-
 
     <div class="row justify-content-center">
         <div clas="col">

@@ -11,6 +11,12 @@ require_once 'controllers/HelloController.php';
 $app->get('/hello[/{coucou}]', function ($request, $response, $args) {
     return $this->view->render($response, 'hello.html', HelloController::hello($request, $response, $args));
 });
+if ($development) {
+    $app->get('/info', function ($request, $response, $args) {
+        phpinfo();
+        return $response;
+    });
+}
 
 
 require_once 'controllers/IndexController.php';

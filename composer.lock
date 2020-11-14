@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f7d73bee733753a55d407145ddb3bfe",
+    "content-hash": "b9bb6fa6bdb741bb3ca97fa141b8ed17",
     "packages": [
         {
             "name": "bephp/activerecord",
@@ -48,26 +48,30 @@
                 "pdo",
                 "relation"
             ],
+            "support": {
+                "issues": "https://github.com/bephp/activerecord/issues",
+                "source": "https://github.com/bephp/activerecord/tree/v2.2.1"
+            },
             "time": "2018-03-01T09:46:33+00:00"
         },
         {
             "name": "kanellov/slim-twig-flash",
-            "version": "0.2.0",
+            "version": "dev-twig3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/kanellov/slim-twig-flash.git",
-                "reference": "14a96919cfb116aa528b6ce9a611f544ac6d6a01"
+                "url": "https://github.com/YannZeRookie/slim-twig-flash.git",
+                "reference": "8820bf2e3305812caff6887ac12c31da8b8b32ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kanellov/slim-twig-flash/zipball/14a96919cfb116aa528b6ce9a611f544ac6d6a01",
-                "reference": "14a96919cfb116aa528b6ce9a611f544ac6d6a01",
+                "url": "https://api.github.com/repos/YannZeRookie/slim-twig-flash/zipball/8820bf2e3305812caff6887ac12c31da8b8b32ce",
+                "reference": "8820bf2e3305812caff6887ac12c31da8b8b32ce",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.5.0",
-                "slim/flash": ">=0.1.0",
-                "twig/twig": ">=1.18"
+                "slim/flash": "0.1 - 0.4",
+                "twig/twig": "^3.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "1.*",
@@ -81,9 +85,8 @@
                     "Knlv\\Slim\\Views\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GNU GPLv3"
+                "GPL-3.0-or-later"
             ],
             "authors": [
                 {
@@ -103,7 +106,10 @@
                 "twig",
                 "view"
             ],
-            "time": "2016-12-29T22:07:19+00:00"
+            "support": {
+                "source": "https://github.com/YannZeRookie/slim-twig-flash/tree/twig3"
+            },
+            "time": "2020-11-14T15:26:57+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -149,6 +155,10 @@
                 "router",
                 "routing"
             ],
+            "support": {
+                "issues": "https://github.com/nikic/FastRoute/issues",
+                "source": "https://github.com/nikic/FastRoute/tree/master"
+            },
             "time": "2018-02-13T20:26:39+00:00"
         },
         {
@@ -199,6 +209,10 @@
                 "container",
                 "dependency injection"
             ],
+            "support": {
+                "issues": "https://github.com/silexphp/Pimple/issues",
+                "source": "https://github.com/silexphp/Pimple/tree/master"
+            },
             "time": "2020-03-03T09:12:48+00:00"
         },
         {
@@ -248,6 +262,10 @@
                 "container-interop",
                 "psr"
             ],
+            "support": {
+                "issues": "https://github.com/php-fig/container/issues",
+                "source": "https://github.com/php-fig/container/tree/master"
+            },
             "time": "2017-02-14T16:28:37+00:00"
         },
         {
@@ -298,6 +316,9 @@
                 "request",
                 "response"
             ],
+            "support": {
+                "source": "https://github.com/php-fig/http-message/tree/master"
+            },
             "time": "2016-08-06T14:39:51+00:00"
         },
         {
@@ -346,6 +367,10 @@
                 "provider",
                 "slim"
             ],
+            "support": {
+                "issues": "https://github.com/slimphp/Slim-Flash/issues",
+                "source": "https://github.com/slimphp/Slim-Flash/tree/master"
+            },
             "time": "2017-10-22T10:35:05+00:00"
         },
         {
@@ -419,6 +444,10 @@
                 "micro",
                 "router"
             ],
+            "support": {
+                "issues": "https://github.com/slimphp/Slim/issues",
+                "source": "https://github.com/slimphp/Slim/tree/3.x"
+            },
             "time": "2019-11-28T17:40:33+00:00"
         },
         {
@@ -470,6 +499,10 @@
                 "twig",
                 "view"
             ],
+            "support": {
+                "issues": "https://github.com/slimphp/Twig-View/issues",
+                "source": "https://github.com/slimphp/Twig-View/tree/master"
+            },
             "time": "2019-11-28T18:03:50+00:00"
         },
         {
@@ -532,41 +565,135 @@
                 "polyfill",
                 "portable"
             ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-ctype/tree/v1.20.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
             "time": "2020-10-23T14:02:19+00:00"
         },
         {
-            "name": "twig/twig",
-            "version": "v1.38.0",
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.20.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/twigphp/Twig.git",
-                "reference": "754b8dfc0026585eb8498ec4bf5ff240b6b34db7"
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/754b8dfc0026585eb8498ec4bf5ff240b6b34db7",
-                "reference": "754b8dfc0026585eb8498ec4bf5ff240b6b34db7",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/39d483bdf39be819deabf04ec872eb0b2410b531",
+                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.4.0",
-                "symfony/polyfill-ctype": "^1.8"
+                "php": ">=7.1"
             },
-            "require-dev": {
-                "psr/container": "^1.0",
-                "symfony/debug": "^2.7",
-                "symfony/phpunit-bridge": "^3.4.19|^4.1.8"
+            "suggest": {
+                "ext-mbstring": "For best performance"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.38-dev"
+                    "dev-main": "1.20-dev"
+                },
+                "thanks": {
+                    "name": "symfony/polyfill",
+                    "url": "https://github.com/symfony/polyfill"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Twig_": "lib/"
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
                 },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.20.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-10-23T14:02:19+00:00"
+        },
+        {
+            "name": "twig/twig",
+            "version": "v3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/twigphp/Twig.git",
+                "reference": "b02fa41f3783a2616eccef7b92fbc2343ffed737"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/b02fa41f3783a2616eccef7b92fbc2343ffed737",
+                "reference": "b02fa41f3783a2616eccef7b92fbc2343ffed737",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/polyfill-ctype": "^1.8",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "require-dev": {
+                "psr/container": "^1.0",
+                "symfony/phpunit-bridge": "^4.4.9|^5.0.9"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
                 "psr-4": {
                     "Twig\\": "src/"
                 }
@@ -583,14 +710,13 @@
                     "role": "Lead Developer"
                 },
                 {
+                    "name": "Twig Team",
+                    "role": "Contributors"
+                },
+                {
                     "name": "Armin Ronacher",
                     "email": "armin.ronacher@active-4.com",
                     "role": "Project Founder"
-                },
-                {
-                    "name": "Twig Team",
-                    "homepage": "https://twig.symfony.com/contributors",
-                    "role": "Contributors"
                 }
             ],
             "description": "Twig, the flexible, fast, and secure template language for PHP",
@@ -598,15 +724,32 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2019-03-12T12:42:04+00:00"
+            "support": {
+                "issues": "https://github.com/twigphp/Twig/issues",
+                "source": "https://github.com/twigphp/Twig/tree/v3.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/twig/twig",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-10-27T19:28:23+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kanellov/slim-twig-flash": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
 }

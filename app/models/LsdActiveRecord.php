@@ -17,7 +17,7 @@ class LsdActiveRecord extends ActiveRecord
      */
     public function __set($var, $val)
     {
-        if ($var{0} == '_') {
+        if (substr($var, 0, 1) == '_') {
             $this->private[$var] = $val;
         } else {
             parent::__set($var, $val);
@@ -30,7 +30,7 @@ class LsdActiveRecord extends ActiveRecord
      */
     public function & __get($var)
     {
-        if ($var{0} == '_') {
+        if (substr($var, 0, 1) == '_') {
             if (isset($this->private[$var])) {
                 return $this->private[$var];
             } else {
