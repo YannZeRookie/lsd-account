@@ -77,7 +77,7 @@ class SignupController
                 // Send a message to Discord in the "Conseil des Jeux" channel with a link
                 Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature" . $section_message . ", merci d'aller l'examiner rapidement !");
                 // Done, thank you and bye
-                $app->flash('success', 'Ta candidature a bien été enregistrée, merci !');
+                $app->flash->addMessage('success', 'Ta candidature a bien été enregistrée, merci !');
                 redirectTo('/signup/pending');
             }
         }
@@ -139,7 +139,7 @@ class SignupController
                 // Synch-up to Discord
                 UsersController::synchToDiscord($cur_user, $cur_user);
                 //
-                $app->flash('success', 'Informations forum importées avec succès !');
+                $app->flash->addMessage('success', 'Informations forum importées avec succès !');
                 redirectTo('/users/' . $cur_user->id);
             } else {
                 $errors[] = 'Pseudo ou Mot de passe incorrect';

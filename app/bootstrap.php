@@ -36,10 +36,8 @@ $container = $app->getContainer();
 # Initialize Flash messages
 # See https://www.slimframework.com/docs/v3/features/flash.html
 # See https://github.com/kanellov/slim-twig-flash
-$flash = new \Slim\Flash\Messages();
 $container['flash'] = function () {
-    global $flash;
-    return $flash;
+    return new \Slim\Flash\Messages();
 };
 
 # Initialize Twig
@@ -49,7 +47,6 @@ $container['flash'] = function () {
 # https://github.com/slimphp/Twig-View
 $container['view'] = function ($container) {
     global $twig_debug, $twig_auto_reload;
-    global $flash;
     $view = new \Slim\Views\Twig(__DIR__ . '/views', [
         'cache' => __DIR__ . '/../cache',
         'debug' => $twig_debug,
@@ -59,7 +56,7 @@ $container['view'] = function ($container) {
     $router = $container->get('router');
     $uri = \Slim\Http\Uri::createFromEnvironment(new \Slim\Http\Environment($_SERVER));
     $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
-    $view->addExtension(new Knlv\Slim\Views\TwigMessages($flash));   // Flash messages see https://github.com/kanellov/slim-twig-flash
+    $view->addExtension(new Knlv\Slim\Views\TwigMessages($container->get('flash')));   // Flash messages see https://github.com/kanellov/slim-twig-flash
     if ($twig_debug) {
         $view->addExtension(new \Twig\Extension\DebugExtension());
     }

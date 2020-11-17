@@ -36,8 +36,9 @@ Par exemple pour YannZeGrunt (discord_id=404722937183076354 #5874) :
 * Commenter la ligne de `$connect_force_user` dans `config.php`
 * Détruire le record de l'utilisateur s'il y en a déjà un :<br>
 ```
-DELETE FROM lsd_users WHERE id=6;
-DELETE FROM lsd_roles WHERE user_id=6;
+SELECT * FROM lsd_users WHERE discord_id=404722937183076354;
+DELETE FROM lsd_users WHERE id=xxx;
+DELETE FROM lsd_roles WHERE user_id=xxx;
 ```
 * Créer une clé de connection bidon:
 ```
