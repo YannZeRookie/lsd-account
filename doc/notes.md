@@ -101,10 +101,10 @@ To-do
 =====
 
 * Synch lsd-account -> Discord when you change a role
-* Officers should have a list of submissions to validate
-* Make site pretty. We could use the "dark" look-and feel of Bootstrap? Of use our own CSS classes?
-* UI to pay (adherer)
-* UI to allow the Conseiller to check the adherants and payments
+X Officers should have a list of submissions to validate
+X Make site pretty. We could use the "dark" look-and feel of Bootstrap? Of use our own CSS classes?
+X UI to pay (adherer)
+X UI to allow the Conseiller to check the adherants and payments
 * Move to https : https://certbot.eff.org/
 * Totor0: When you create or edit a section, it would be great to have a quick look-up UI to add Officers. And remove them too.
 
@@ -232,11 +232,12 @@ Meeting du 2019-07-22
 - X Quand on archive une Section, il faut dégrader les officiers
 - X Export tab file
 - X Faire la page des membres pour le site d'accueil
+- X Des Sections qui ont des Rôles associés : il faut mettre cela en database et pas hard-codé en UsersController.php:452
+- X Après inscription et synchro VB, il n'y a pas de synchro vers Discord
+- X Avoir un système de recrutement contrôllé pour les Sections qui ont une phase de recrutement propre à elles
 - Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Permettre d'aller directemenent à une page après connexion (paramètre returnto à /login)
-- Des Sections qui ont des Rôles associés : il faut mettre cela en database et pas hard-codé en UsersController.php:452
 - Synchro mini-site -> VB à faire + authentification (?)
-- Après inscription et synchro VB, il n'y a pas de synchro vers Discord
 - Autres notes persos:
   - Jhynx n'a pas eu l'option de connexion à VB -> essayer de comprendre pourquoi
   - Sur un mobile, l'affichage des tableaux ne marche pas du tout.

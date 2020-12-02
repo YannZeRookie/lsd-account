@@ -22,11 +22,15 @@ class SectionsController
         return Role::hasAnyRole($user_id, [Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin]);
     }
 
-    static protected function checkAccess()
+    /**
+     * Check rights: the connected user can see the list of Sections only if he has the right privileges
+     * @param string $tag
+     * @return ActiveRecord|bool
+     */
+    static protected function checkAccess($tag)
     {
-        //-- Check rights: the connected user can see the list of Sections only if he a privileged user
         $cur_user = User::getConnectedUser();
-        if (!$cur_user || !self::hasPrivilegedAccess($cur_user->id)) {
+        if (!$cur_user || !self::canEditSection($cur_user, $tag)) {
             redirectTo('/');
         }
         return $cur_user;
@@ -47,12 +51,34 @@ class SectionsController
     {
         //-- Check rights for Notes: the connected user can see the list of Sections only if he is a member of the Section
         $cur_user = User::getConnectedUser();
-        if (!$cur_user ||!$cur_user->isScorpion()) {
+        if (!$cur_user || !$cur_user->isScorpion()) {
             redirectTo('/sections');
         }
         $can_read = self::canReadNotes($cur_user, $tag);
         $can_edit = self::canEditNotes($cur_user, $tag);
         return $cur_user;
+    }
+
+    /**
+     * Can edit the Section?
+     *
+     * @param User $cur_user
+     * @param string $tag
+     * @return bool
+     */
+    static protected function canEditSection($cur_user, $tag)
+    {
+        if (!$cur_user) return false;
+        if (self::hasPrivilegedAccess($cur_user->id)) return true;
+        $role = $cur_user->getSectionMembership($tag);
+        return $role ? ($role->role == Role::kOfficier && $tag != 'new') : false;   // Officers cannot create a new Section
+    }
+
+    static protected function canArchiveSection($tag)
+    {
+        $cur_user = User::getConnectedUser();
+        if (!$cur_user) return false;
+        return self::hasPrivilegedAccess($cur_user->id);
     }
 
     static protected function canReadNotes($cur_user, $tag)
@@ -80,11 +106,11 @@ class SectionsController
 
         $sections = [];
         $sections['Sections actives'] = Section::getActiveSections(true);
-        self::setNotesAccess($sections['Sections actives']);
+        self::setSectionAccess($sections['Sections actives']);
 
         if ($can_edit) {
             $sections['Sections archivées'] = Section::getArchivedSections(true);
-            self::setNotesAccess($sections['Sections archivées']);
+            self::setSectionAccess($sections['Sections archivées']);
         }
 
         //--
@@ -97,12 +123,14 @@ class SectionsController
         ];
     }
 
-    static protected function setNotesAccess(&$sections)
+    static protected function setSectionAccess(&$sections)
     {
+        $cur_user = User::getConnectedUser();
         foreach ($sections as &$section) {
             self::checkAccessNotes($section->tag, $can_read, $can_edit);
-            $section->_notes_can_read = $can_read;
-            $section->_notes_can_edit = $can_edit;
+            $section->_notes_can_read = self::canReadNotes($cur_user, $section->tag);
+            $section->_notes_can_edit = self::canEditNotes($cur_user, $section->tag);
+            $section->_can_edit = self::canEditSection($cur_user, $section->tag);
         }
     }
 
@@ -113,13 +141,14 @@ class SectionsController
      */
     static public function edit($tag)
     {
-        $cur_user = self::checkAccess();
+        $cur_user = self::checkAccess($tag);
         $section = Section::getSection($tag);
 
         $debug = '';
         return [
             'cur_user' => $cur_user,
             'new_tag' => ($tag == 'new'),
+            'can_archive_section' => self::canArchiveSection($tag),
             'section' => $section,
             'errors' => null,
             'debug' => print_r($debug, true),
@@ -128,15 +157,19 @@ class SectionsController
 
     static public function post($app, $tag, $params = [])
     {
-        $cur_user = self::checkAccess();
-        $params = array_merge(['tag' => '', 'name' => '', 'archived' => '0'], $params);
+        $cur_user = self::checkAccess($tag);
+        $can_archive_section = self::canArchiveSection($tag);
+        $params = array_merge(['tag' => '', 'name' => '', 'discord_role' => '', 'welcome' => '', 'controlled' => '0', 'archived' => '0'], $params);
         $section = Section::getSection($tag) ?: new Section();
 
         if ($tag == 'new') {
             $section->tag = strtoupper(trim($params['tag']));
         }
         $section->name = ucfirst(trim($params['name']));
-        $section->archived = $params['archived'] ? '1' : '0';
+        $section->discord_role = trim($params['discord_role']);
+        $section->welcome = trim($params['welcome']);
+        $section->controlled = $params['controlled'] ? '1' : '0';
+        if ($can_archive_section) $section->archived = $params['archived'] ? '1' : '0';
 
         //-- Check and save
         $errors = $section->validate($tag == 'new');

@@ -24,18 +24,16 @@
 
 {% block js %}
 <script>
-    function mo_changed(cb, otherClass)
+    function mo_changed(cb, fromClass)
     {
         var tr = $(cb).closest('tr');
-        var otherCheck = tr.find('input.' + otherClass);
+        tr.find('input:not(.'+fromClass+')').prop('checked', false);
+
         var pseudo = tr.find('input.section_pseudo');
         if (cb.checked) {
-            otherCheck.prop('checked', false);
             pseudo.show();
         } else {
-            if (!otherCheck.is(':checked')) {
-                pseudo.hide();
-            }
+            pseudo.hide();
         }
         check_officier()
     }
@@ -56,6 +54,7 @@
         if ($(el).hasClass('basic_role')) {
             $('#roles .basic_role').not(el).prop('checked', false);
             if ($(el).val() != 'scorpion') {
+                $('.section_c').prop('checked', false);
                 $('.section_m').prop('checked', false);
                 $('.section_o').prop('checked', false);
                 $('.higher_role').prop('checked', false);
@@ -192,16 +191,18 @@
         <div id="sections" class="col">
             <h4>Sections</h4>
             <table>
-                <tr>
-                    <th title="Membre">M</th>
-                    <th title="Officier">O</th>
+                <tr align="center">
+                    <th title="Candidat" width="18">C</th>
+                    <th title="Membre" width="18">M</th>
+                    <th title="Officier" width="18">O</th>
                     <th></th>
                 </tr>
                 {% for s in sections %}
                 <tr>
-                    <td><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.name=='membre' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
-                    <td><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.name=='officier' %} checked{% endif %} {% if not(cur_user._canNameOfficiers) %} disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
-                    <td>{{s.name|e}} ({{s.tag}})</td>
+                    <td align="center">{% if s.controlled %}<input class="section_c" type="checkbox" name="{{s.tag}}_C" {% if s._belong.name=='candidat' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Candidat {{s.name|e}}" onchange="mo_changed(this, 'section_c')">{% endif %}</td>
+                    <td align="center"><input class="section_m" type="checkbox" name="{{s.tag}}_M" {% if s._belong.name=='membre' %} checked{% endif %} {% if not(cur_user._canNameMembres) %} disabled{% endif %} title="Membre {{s.name|e}}" onchange="mo_changed(this, 'section_m')"></td>
+                    <td align="center"><input class="section_o" type="checkbox" name="{{s.tag}}_O" {% if s._belong.name=='officier' %} checked{% endif %} {% if not(cur_user._canNameOfficiers) %} disabled{% endif %} title="Officier {{s.name|e}}" onchange="mo_changed(this, 'section_o')"></td>
+                    <td style="padding-left: 0.3em;">{{s.name|e}} ({{s.tag}})</td>
                     <td>
                         {% if cur_user._read_only %}
                             {% if s._belong and s._belong.extra2 %}

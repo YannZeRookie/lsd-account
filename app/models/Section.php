@@ -103,6 +103,19 @@ class Section extends LsdActiveRecord
     }
 
     /**
+     * Is a section with controlled recruiting?
+     *
+     * @param string $tag
+     * @return bool
+     */
+    static public function isRecruitingControlled($tag)
+    {
+        $s = new Section;
+        $section = $s->eq('tag', $tag)->eq('controlled', 1)->find();
+        return $section;
+    }
+
+    /**
      * Return the total number of Sections
      * @return int
      */
@@ -136,5 +149,20 @@ class Section extends LsdActiveRecord
             return ['tag' => $result->tag, 'membre' => true, 'officier' => false];
         }
         return false;
+    }
+
+    /**
+     * Return the list of Discord Roles from Sections that have a specific Discord role
+     * @return array tag => Discord Role
+     */
+    static public function getSpecificDiscordRoles()
+    {
+        $result = array();
+        $s = new Section();
+        $sections = $s->notequal('discord_role', '')->findAll();
+        foreach ($sections as $section) {
+            $result[$section->tag] = $section->discord_role;
+        }
+        return $result;
     }
 }

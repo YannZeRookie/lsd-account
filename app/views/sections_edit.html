@@ -25,21 +25,55 @@
 
 <form method="post">
     <div class="form-group row">
-        <label for="name" class="col-sm-1 col-form-label">Tag :</label>
-        <div class="col-sm-11">
+        <label for="name" class="col-sm-2 col-form-label">Tag :</label>
+        <div class="col-sm-10">
             <input type="text" class="form-control col-sm-4 {% if errors.tag %}is-invalid{% endif %}" id="tag" name="tag" placeholder="Tag" value="{{section.tag | e}}" {% if not(new_tag) %}disabled{% endif %}>
         </div>
     </div>
     <div class="form-group row">
-        <label for="name" class="col-sm-1 col-form-label">Nom :</label>
-        <div class="col-sm-11">
+        <label for="name" class="col-sm-2 col-form-label">Nom :</label>
+        <div class="col-sm-10">
             <input type="text" class="form-control col-sm-4 {% if errors.nom %}is-invalid{% endif %}" id="name" name="name" placeholder="Nom" value="{{section.name | e}}">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="discord_role" class="col-sm-2 col-form-label">Rôle Discord :</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control col-sm-4 {% if errors.discord_role %}is-invalid{% endif %}" id="discord_role" name="discord_role" placeholder="" value="{{section.discord_role | e}}">
+            <small class="form-text text-muted">Laisser vide s'il n'y a pas de rôle Discord dédié à la Section</small>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="welcome" class="col-sm-2 col-form-label">Message d'accueil :</label>
+        <div class="col-sm-10">
+            <textarea class="form-control col-sm-8 {% if errors.welcome %}is-invalid{% endif %}" id="welcome"
+                  name="welcome" rows="3">{{section.welcome|e}}</textarea>
+        <small class="form-text text-muted">Le Bot enverra ce message en privé lors de l'acceptation de la candidature.</small>
         </div>
     </div>
     <fieldset class="form-group">
         <div class="row">
-            <legend class="col-form-label col-sm-1 pt-0">État :</legend>
-            <div class="col-sm-11">
+            <legend class="col-form-label col-sm-2 pt-0">Recrutement :</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="controlled" id="controlled1" value="0" {% if
+                           not(section.controlled) %}checked{% endif %}>
+                    <label class="form-check-label" for="controlled1">Libre</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input {% if errors.état %}is-invalid{% endif %}" type="radio" name="controlled" id="controlled2" value="1" {% if
+                           section.controlled %}checked{% endif %}>
+                    <label class="form-check-label" for="controlled2">Contrôlé</label>
+                </div>
+                <small class="form-text text-muted">En cas de recrutement contrôlé, le joueur sera candidat à la Section et non pas membre. Il faudra que les Officiers le fassent manuellement via sa fiche sur le mini-site.</small>
+            </div>
+        </div>
+    </fieldset>
+    {% if can_archive_section %}
+    <fieldset class="form-group">
+        <div class="row">
+            <legend class="col-form-label col-sm-2 pt-0">État :</legend>
+            <div class="col-sm-10">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="archived" id="archived1" value="0" {% if
                            not(section.archived) %}checked{% endif %}>
@@ -53,6 +87,7 @@
             </div>
         </div>
     </fieldset>
+    {% endif %}
     <div class="form-group row">
         <div class="col-sm-6">
             <a href="/sections" class="btn btn-secondary">Annuler</a>

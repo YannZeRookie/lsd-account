@@ -60,11 +60,11 @@ class UsersController
         }
         //--- Section
         if (isset($params['s_section']) && $params['s_section'] !== '') {
-            // If we ALSO specified membre or officer, then we must focus on this
-            if (isset($params['s_role']) && ($params['s_role'] == 'membre' || $params['s_role'] == 'officier')) {
+            // If we ALSO specified candidat, membre or officer, then we must focus on this
+            if (isset($params['s_role']) && ($params['s_role'] == 'candidat' || $params['s_role'] == 'membre' || $params['s_role'] == 'officier')) {
                 $role_sql = "r2.role='{$params['s_role']}'";
             } else {
-                $role_sql = "r2.role in ('membre', 'officier')";
+                $role_sql = "r2.role in ('candidat', 'membre', 'officier')";
             }
             $u->join('lsd_roles as r2', "r2.user_id=lsd_users.id AND $role_sql", 'INNER');
             $u->addCondition('r2.extra', '=', $params['s_section'], 'AND', 'join');
@@ -379,7 +379,7 @@ class UsersController
             $user->setBureauRole($params['bureau']);
         }
 
-        //-- Sections (Membre or Officier)
+        //-- Sections (Candidat, Membre or Officier)
         if ($cur_user->_canNameMembres || $cur_user->_canNameOfficiers) {
             if (isset($params['irole']) && ($params['irole'] == Role::kVisiteur || $params['irole'] == Role::kInvite)) {
                 //-- Remove user from all Sections
@@ -387,7 +387,9 @@ class UsersController
             } else {
                 $sections = self::buildSectionsTable($user);
                 foreach ($sections as $section) {
-                    $user->setSectionMembership($section->tag, isset($params[$section->tag . '_M']),
+                    $user->setSectionMembership($section->tag,
+                        isset($params[$section->tag . '_C']),
+                        isset($params[$section->tag . '_M']),
                         $cur_user->_canNameOfficiers ? isset($params[$section->tag . '_O']) : null,
                         trim($params[$section->tag . '_pseudo']));
                 }
@@ -492,7 +494,7 @@ class UsersController
         }
         //-- Section-specific roles
         if (Role::hasAnyRole($cur_user->id, [Role::kOfficier, Role::kConseiller, Role::kSecretaire, Role::kTresorier, Role::kPresident, Role::kAdmin, Role::kCM])) {
-            $specific = ['DU' => 'Dual-Universe', 'SC' => 'Star Citizen'];
+            $specific = Section::getSpecificDiscordRoles(); // Eg: ['DU' => 'Dual-Universe', 'SC' => 'Star Citizen'];
             foreach($specific as $s_role => $d_role) {
                 $sr = $user->getSectionMembership($s_role);
                 if ($sr && !isset($d_otherroles[$d_role])) {
@@ -550,7 +552,8 @@ class UsersController
         $cur_user = self::canReviewUsers();
         //--
         $u = new User;
-        $users = $u->select('distinct(lsd_users.id) as uid, lsd_users.*')
+        $users = $u->select('distinct(lsd_users.id) as uid, lsd_users.*, r.extra as tag')
+            ->join('lsd_roles as r', 'r.user_id=lsd_users.id and r.role in ("candidat", "membre", "officier") and r.extra != ""')
             ->notequal('submited_on', 0)
             ->equal('reviewed_on', 0)
             ->order('discord_username')
@@ -585,6 +588,7 @@ class UsersController
                 $target_user->setRole(Role::kScorpion); // Note that this will automatically remove kInvite and kVisiteur :-)
                 self::synchToDiscord($cur_user, $target_user); // Grant Scorpion role on Discord
                 Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été validée, bienvenue chez nous !");
+                self::SendSectionWelcomeMessage($target_user);  // Send Section's welcome message, if any
             } else {
                 Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été examinée mais n'a malheureusement pas été acceptée. Merci pour ton intérêt pour notre guilde et bonne continuation.");
             }
@@ -593,6 +597,20 @@ class UsersController
         }
         redirectTo('/users/review');
         return [];
+    }
+
+    /**
+     * Send the Section welcome message, if any
+     * @param User $user Target user
+     */
+    static public function SendSectionWelcomeMessage(User $user)
+    {
+        $sections = $user->getAllSections(true);
+        foreach ($sections as $section) {
+            if ($section->welcome) {
+                Discord::sendPrivateMessage($user->discord_id, $section->welcome);
+            }
+        }
     }
 
 

@@ -29,7 +29,7 @@
         <tbody>
         {% for s in l %}
         <tr>
-            <td nowrap>{% if can_edit %}<a href="/sections/{{s.tag}}">{{s.tag|e}}</a>{% else %}{{s.tag|e}}{% endif %}</td>
+            <td nowrap>{% if s._can_edit %}<a href="/sections/{{s.tag}}">{{s.tag|e}}</a>{% else %}{{s.tag|e}}{% endif %}</td>
             <td>{{ s.name |e}}</td>
             <td align="center">{% if (s.notes and s._notes_can_read) or s._notes_can_edit %}<a href="/sections/{{s.tag}}/notes" title="Notes de la Section {{ s.name |e}}">&#x1F5D2;</a>{% endif %}</td>
             <td align="center">{{s.count}}</td>

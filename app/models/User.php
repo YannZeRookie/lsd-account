@@ -126,7 +126,7 @@ class User extends LsdActiveRecord
             }
         } else {
             $host = $_SERVER['HTTP_HOST'];
-            $protocol=$_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
+            $protocol = $_SERVER['PROTOCOL'] = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) ? 'https' : 'http';
             return $protocol . '://' . $host . '/img/blank_avatar.png';
         }
     }
@@ -321,6 +321,7 @@ class User extends LsdActiveRecord
 
     /**
      * Does the user belong to a Section?
+     * Includes Candidats
      * If yes, return Role
      * If no, return false
      * @param $tag string Section tag
@@ -333,6 +334,7 @@ class User extends LsdActiveRecord
 
     /**
      * Get the user's sections as a comma-separated list
+     * Includes Candidats
      * @return string
      */
     public function sections()
@@ -343,7 +345,9 @@ class User extends LsdActiveRecord
         foreach ($sections as $section) {
             $belongs = $this->belongsToSection($section->tag);
             if ($belongs) {
-                if ($belongs->role == Role::kOfficier) {
+                if ($belongs->role == Role::kCandidat) {
+                    $res[] = '(' . $section->tag . ')';
+                } elseif ($belongs->role == Role::kOfficier) {
                     $res[] = $section->tag . '*';
                 } elseif ($belongs->role == Role::kMembre) {
                     $res[] = $section->tag;
@@ -357,17 +361,19 @@ class User extends LsdActiveRecord
      * Set (or reset) membership of a user to a Section
      * Note that $isOfficier takes precedence on $isMembre
      * @param $tag string Section tag
+     * @param $isCandidat bool
      * @param $isMembre bool
      * @param $isOfficier bool|null If null, it means 'don't do anything'
      * @param $sectionPseudo string Specific Pseudo if any
      */
-    public function setSectionMembership($tag, $isMembre, $isOfficier, $sectionPseudo='')
+    public function setSectionMembership($tag, $isCandidat, $isMembre, $isOfficier, $sectionPseudo = '')
     {
-        Role::setSectionMembership($this->id, $tag, $isMembre, $isOfficier, $sectionPseudo);
+        Role::setSectionMembership($this->id, $tag, $isCandidat, $isMembre, $isOfficier, $sectionPseudo);
     }
 
     /**
      * Get the Section membership of a user. Return the found Role if any
+     * Note : Candidats are NOT selected because they are NOT considered part
      * @param $tag
      * @return false|Role
      */
@@ -377,33 +383,59 @@ class User extends LsdActiveRecord
     }
 
     /**
+     * Return all the Sections the user belongs to.
+     * @param bool $includeCandidats
+     * @return array List of Section
+     */
+    public function getAllSections($includeCandidats=false)
+    {
+        $sections = array();
+        $roles = Role::getAllSections($this->id, $includeCandidats);
+        foreach($roles as $role) {
+            $s = new Section();
+            $sections[$role->extra] = $s->find($role->extra);
+        }
+        return $sections;
+    }
+
+    /**
      * Set the Pseudo for a Section
-     * @param $tag string Section tag
-     * @param $sectionPseudo string Specific Pseudo
+     * @param string $tag Section tag
+     * @param string $sectionPseudo Specific Pseudo
      */
     public function setPseudo($tag, $sectionPseudo)
     {
+        $role = Role::findRole($this->id, Role::kCandidat, $tag);
+        if ($this->setPseudoInRole($role, $sectionPseudo)) return;
         $role = Role::findRole($this->id, Role::kMembre, $tag);
-        if ($role && $role->extra2 != $sectionPseudo) {
-            $old_role = clone $role;
-            $role->extra2 = $sectionPseudo ?: null;
-            $role->save();
-            Log::logChange($this->id, $old_role, $role);
-            return;
-        }
+        if ($this->setPseudoInRole($role, $sectionPseudo)) return;
         $role = Role::findRole($this->id, Role::kOfficier, $tag);
+        if ($this->setPseudoInRole($role, $sectionPseudo)) return;
+    }
+
+    /**
+     * Low-level proc for above method
+     * @param Role $role
+     * @param string $sectionPseudo
+     * @return bool
+     */
+    protected function setPseudoInRole($role, $sectionPseudo)
+    {
         if ($role && $role->extra2 != $sectionPseudo) {
             $old_role = clone $role;
             $role->extra2 = $sectionPseudo ?: null;
             $role->save();
             Log::logChange($this->id, $old_role, $role);
-            return;
+            return true;
+        } else {
+            return false;
         }
     }
 
+
     public function RemoveFromAllSections()
     {
-        Role::removeRoles($this->id, [Role::kMembre, Role::kOfficier]);
+        Role::removeRoles($this->id, [Role::kCandidat, Role::kMembre, Role::kOfficier]);
     }
 
     /**
@@ -453,17 +485,17 @@ class User extends LsdActiveRecord
 
     public function toJSON()
     {
-        $data =  [
+        $data = [
             'id' => $this->id,
             'discord_username' => $this->discord_username,
-            ];
+        ];
         return json_encode($data, JSON_NUMERIC_CHECK);
     }
 
     public function getLastAdhesion()
     {
         $a = new Adhesion();
-        return $a->equal('user_id', $this->id)->orderby('id desc')->limit(0,1)->find();
+        return $a->equal('user_id', $this->id)->orderby('id desc')->limit(0, 1)->find();
     }
 
 }

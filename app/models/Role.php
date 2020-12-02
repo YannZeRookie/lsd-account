@@ -16,6 +16,7 @@ class Role extends LsdActiveRecord
     const kVisiteur = 'visiteur';
     const kInvite = 'invite';
     const kScorpion = 'scorpion';
+    const kCandidat = 'candidat';       // Candidate to a Section
     const kMembre = 'membre';           // Member of a Section
     const kOfficier = 'officier';       // Officer of a Section
     const kConseiller = 'conseiller';
@@ -74,6 +75,7 @@ class Role extends LsdActiveRecord
             $result[self::kPresident] = ['role' => self::kPresident, 'name' => 'Président', 'level' => self::getRoleLevel(self::kPresident)];
         }
         if ($others) {
+            $result[self::kCandidat] = ['role' => self::kCandidat, 'name' => 'Candidat', 'level' => self::getRoleLevel(self::kCandidat)];
             $result[self::kMembre] = ['role' => self::kMembre, 'name' => 'Membre', 'level' => self::getRoleLevel(self::kMembre)];
             $result[self::kCM] = ['role' => self::kCM, 'name' => 'Gestionnaire de Communauté', 'level' => self::getRoleLevel(self::kCM)];
             $result[self::kAdherent] = ['role' => self::kAdherent, 'name' => 'Adhérent', 'level' => self::getRoleLevel(self::kAdherent)];
@@ -402,7 +404,7 @@ class Role extends LsdActiveRecord
             return;
         }
         //-- Officier, Membre and Adherent should have some data
-        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherent) && empty($extra)) {
+        if (($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kAdherent || $newRole == self::kAdherent) && empty($extra)) {
             return;
         }
 
@@ -414,12 +416,17 @@ class Role extends LsdActiveRecord
             if ($newRole == self::kScorpion) {
                 self::setRole($user_id, self::kMembre, 'JDM');
             } else {
+                // TODO maybe we should remove the user from *all* Sections ???
+                self::removeRole($user_id, self::kCandidat, 'JDM');
                 self::removeRole($user_id, self::kMembre, 'JDM');
                 self::removeRole($user_id, self::kOfficier, 'JDM');
             }
         }
-        if ($newRole == self::kOfficier || $newRole == self::kMembre) {
-            self::removeRole($user_id, ($newRole == self::kOfficier ? self::kMembre : self::kOfficier), $extra);    // Because self::kOfficier and self::kMembre are exclusive
+        if ($newRole == self::kOfficier || $newRole == self::kMembre || $newRole == self::kCandidat) {
+            // Because self::kOfficier, self::kMembre and self::kCandidat are exclusive
+            if ($newRole != self::kCandidat) self::removeRole($user_id, self::kCandidat, $extra);
+            if ($newRole != self::kMembre) self::removeRole($user_id, self::kMembre, $extra);
+            if ($newRole != self::kOfficier) self::removeRole($user_id, self::kOfficier, $extra);
         }
 
         //-- Add it
@@ -514,6 +521,7 @@ class Role extends LsdActiveRecord
 
     /**
      * Does the user belong to a Section?
+     * Includes Candidats
      * If yes, return Role
      * If no, return false
      * @param $user_id integer user id
@@ -523,7 +531,7 @@ class Role extends LsdActiveRecord
     static public function belongsToSection($user_id, $tag)
     {
         $r = new Role;
-        $role = $r->equal('user_id', $user_id)->in('role', [self::kMembre, self::kOfficier])->equal('extra', $tag)->find();
+        $role = $r->equal('user_id', $user_id)->in('role', [self::kCandidat, self::kMembre, self::kOfficier])->equal('extra', $tag)->find();
         return $role ? $role : false;
     }
 
@@ -532,20 +540,23 @@ class Role extends LsdActiveRecord
      * Note that $isOfficier takes precedence on $isMembre
      * @param $user_id integer user id
      * @param $tag string Section tag
+     * @param $isCandidat bool
      * @param $isMembre bool
      * @param $isOfficier bool|null If null, it means 'don't do anything'
      * @param $sectionPseudo string Specific Pseudo if any
      */
-    static public function setSectionMembership($user_id, $tag, $isMembre, $isOfficier, $sectionPseudo='')
+    static public function setSectionMembership($user_id, $tag, $isCandidat, $isMembre, $isOfficier, $sectionPseudo='')
     {
         if ($isOfficier === null && self::hasRole($user_id, self::kOfficier, $tag))
         {
             return; // Can't touch this person: not enough privileges
         }
-        if ($isMembre || $isOfficier) {
-            self::setRole($user_id, ($isOfficier ? self::kOfficier : self::kMembre), $tag, empty($sectionPseudo) ? null : $sectionPseudo);
+        if ($isCandidat || $isMembre || $isOfficier) {
+            $role = $isCandidat ? self::kCandidat : ($isOfficier ? self::kOfficier : self::kMembre);
+            self::setRole($user_id, $role, $tag, empty($sectionPseudo) ? null : $sectionPseudo);
         } else {
             if (!($tag == 'JDM' && self::isScorpion($user_id))) {
+                self::removeRole($user_id, self::kCandidat, $tag);
                 self::removeRole($user_id, self::kMembre, $tag);
                 self::removeRole($user_id, self::kOfficier, $tag);
             }
@@ -564,6 +575,8 @@ class Role extends LsdActiveRecord
 
     /**
      * Get the Section membership of a user. Return the found Role if any
+     * Note : Candidats are NOT selected because they are NOT considered part
+     * of the Section yet.
      * @param $user_id
      * @param $tag
      * @return false|Role
@@ -575,6 +588,19 @@ class Role extends LsdActiveRecord
             $role = self::findRole($user_id, self::kMembre, $tag);
         }
         return $role;
+    }
+
+    /**
+     * Return all the Sections the user belongs to.
+     * @param integer $user_id
+     * @param bool $includeCandidats
+     * @return mixed
+     */
+    static public function getAllSections($user_id, $includeCandidats=false)
+    {
+        $r = new Role;
+        $filter = $includeCandidats ? [self::kCandidat, self::kMembre, self::kOfficier] : [self::kMembre, self::kOfficier];
+        return $r->equal('user_id', $user_id)->in('role', $filter)->findAll();
     }
 
     /**

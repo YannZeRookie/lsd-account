@@ -61,12 +61,15 @@ class SignupController
                 $cur_user->submited_on = time();
                 $cur_user->save();
                 // If a Section was selected, attach it to the user
-                // TODO: some Sections will want to control their candidates, so this will have to be adapted
                 $section_message = '';
                 if ($params['section'] && $params['section'] != 'JDM') {
                     $r = new Role;
                     $r->user_id = $cur_user->id;
-                    $r->role = Role::kMembre;
+                    if (Section::isRecruitingControlled($params['section'])) {
+                        $r->role = Role::kCandidat;
+                    } else {
+                        $r->role = Role::kMembre;
+                    }
                     $r->extra = $params['section'];
                     if ($params['pseudo']) {
                         $r->extra2 = $params['pseudo'];
