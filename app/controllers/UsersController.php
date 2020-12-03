@@ -552,7 +552,7 @@ class UsersController
         $cur_user = self::canReviewUsers();
         //--
         $u = new User;
-        $users = $u->select('distinct(lsd_users.id) as uid, lsd_users.*, r.extra as tag')
+        $users = $u->select('distinct(lsd_users.id) as uid, lsd_users.*, ifnull(r.extra, "") as tag')
             ->join('lsd_roles as r', 'r.user_id=lsd_users.id and r.role in ("candidat", "membre", "officier") and r.extra != ""')
             ->notequal('submited_on', 0)
             ->equal('reviewed_on', 0)
