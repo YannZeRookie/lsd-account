@@ -25,7 +25,8 @@ class MembersController
         $members['Bureau de l\'Association']['Trésorier(e)'] = self::getOneUserByRole(Role::kTresorier);
         $members['Bureau de l\'Association']['Secrétaire']= self::getOneUserByRole(Role::kSecretaire);
         $members['Conseil de l\'Association'] = self::getUsersByRole(Role::kConseiller);
-        $members['Adhérents'] = self::getUsersByRole(Role::kAdherent, date('Y'));
+        $year = (date('m') == 12) ? date("Y") + 1 : date("Y");  // In December, we look to the next year
+        $members['Adhérents ' . $year] = self::getUsersByRole(Role::kAdherent, $year);
         //$members['Modérateurs'] = [];
         $members['Gestionnaires de communauté'] = self::getUsersByRole(Role::kCM);
         $members['Administrateurs techniques'] = self::getUsersByRole(Role::kAdmin);
