@@ -65,6 +65,21 @@
     {% endfor %}
 
     <h2>Et sans oublier...</h2>
-    <p style="text-align:center;">...les centaines de Scorpions sans qui la guilde n'aurait pas de raison d'être.</p>
-    <p style="text-align:center; font-weight:bold; font-style:italic;">Merci à tous et bonnes parties !</p>
+    <p style="text-align:center;">...les centaines de Scorpions sans qui la guilde n'aurait pas de raison d'être :</p>
+    <p style="text-align:center;">Sélectionnez une Section :
+        <select onchange="show_section(this.value)">
+            <option value="">-</option>
+            {% for s in sections %}
+            <option value="{{ s.tag }}">{{ s.name | e }}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <ul id="section_list" class="user_list">
+    </ul>
 </div>
+
+<script>
+    function show_section(tag) {
+        $('#section_list').load('http://localhost:8080/members/section/' + tag);
+    }
+</script>

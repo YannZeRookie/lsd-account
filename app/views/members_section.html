@@ -1,0 +1,9 @@
+{% for k,u in members %}
+<li class="profile_user">
+    <img class="profile-photo" alt="{{u.discord_username|e}}" src="{{u.avatar}}"/>
+    <div>{{u.discord_username|e}}</div>
+    {% if k matches '/^\\d+$/' %}{% else %}
+    <div>{{k}}</div>
+    {% endif %}
+</li>
+{% endfor %}

@@ -37,9 +37,25 @@ class MembersController
 
         return [
             'members' => $members,
+            'sections' => $sections,
             'debug' => print_r($debug,true),
         ];
     }
+
+    /**
+     * Get the members of a Section
+     * AJAX call
+     * @param $tag
+     */
+    static public function sectionMembers($tag)
+    {
+        $members = self::getUsersByRole(Role::kMembre, $tag);
+        return [
+            'members' => $members
+        ];
+
+    }
+
 
     /**
      * Get a list of users by a role
@@ -62,7 +78,7 @@ class MembersController
     }
 
     /**
-     * Get one User by a rol
+     * Get one User by a role
      * @param string $role See Role constants
      * @param string $extra
      * @return User

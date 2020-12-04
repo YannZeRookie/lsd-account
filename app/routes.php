@@ -196,3 +196,6 @@ require_once 'controllers/MembersController.php';
 $app->get('/members', function ($request, $response, $args) {
     return $this->view->render($response->withHeader('Access-Control-Allow-Origin', '*'), 'members.html', MembersController::members());
 });
+$app->get('/members/section/{tag:\w+}', function ($request, $response, $args) {
+    return $this->view->render($response->withHeader('Access-Control-Allow-Origin', '*'), 'members_section.html', MembersController::sectionMembers($args['tag']));
+});
