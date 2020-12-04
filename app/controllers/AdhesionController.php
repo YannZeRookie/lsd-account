@@ -35,8 +35,8 @@ class AdhesionController
         if (empty($year)) {
             $year = $cur_year;
         }
-        $from = mktime(0, 0, 0, 1, 1, $year);
-        $to = mktime(23, 59, 59, 12, 31, $year);
+        $from = mktime(0, 0, 0, 12, 1, $year-1);
+        $to = mktime(23, 59, 59, 11, 30, $year);
 
         $a = new Adhesion();
         $where = "lsd_adhesions.created_on between $from and $to";
