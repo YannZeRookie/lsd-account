@@ -75,12 +75,12 @@ class SignupController
                         $r->extra2 = $params['pseudo'];
                     }
                     $r->insert();
-                    $section_message = ' pour la Section ' . $params['section'];
+                    $section_message = ' et demande à entrer dans la Section ' . $params['section'];
                 }
                 // Send a message to Discord in the "Conseil des Jeux" channel with a link
-                Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` a posté sa candidature" . $section_message . ", merci d'aller l'examiner rapidement !");
+                Discord::sendChannelMessage($discord_channel_review, "Le joueur `" . $cur_user->discord_username . "` s'est inscrit" . $section_message . ". Merci d'aller l'examiner rapidement !");
                 // Done, thank you and bye
-                $app->flash->addMessage('success', 'Ta candidature a bien été enregistrée, merci !');
+                $app->flash->addMessage('success', "Ta demande d'inscription a bien été enregistrée, merci !");
                 redirectTo('/signup/pending');
             }
         }

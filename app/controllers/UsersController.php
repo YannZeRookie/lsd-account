@@ -587,12 +587,12 @@ class UsersController
             if (isset($params['validate'])) {
                 $target_user->setRole(Role::kScorpion); // Note that this will automatically remove kInvite and kVisiteur :-)
                 self::synchToDiscord($cur_user, $target_user); // Grant Scorpion role on Discord
-                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été validée, bienvenue chez nous !");
+                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ton inscription à la guilde Les Scorpions du Désert a été validée, bienvenue chez nous !");
                 self::SendSectionWelcomeMessage($target_user);  // Send Section's welcome message, if any
             } else {
-                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ta candidature à la guilde Les Scorpions du Désert a été examinée mais n'a malheureusement pas été acceptée. Merci pour ton intérêt pour notre guilde et bonne continuation.");
+                Discord::sendPrivateMessage($target_user->discord_id, "Bonjour, ton inscription à la guilde Les Scorpions du Désert a été examinée mais n'a malheureusement pas été acceptée. Merci pour ton intérêt pour notre guilde et bonne continuation.");
             }
-            Discord::sendChannelMessage($discord_channel_review, "La candidature de `" . $target_user->discord_username . "` a été traitée par `" . $cur_user->discord_username . "`. Merci.");
+            Discord::sendChannelMessage($discord_channel_review, "L'inscription de `" . $target_user->discord_username . "` a été traitée par `" . $cur_user->discord_username . "`. Merci.");
 
         }
         redirectTo('/users/review');

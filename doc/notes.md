@@ -235,6 +235,7 @@ Meeting du 2019-07-22
 - X Des Sections qui ont des Rôles associés : il faut mettre cela en database et pas hard-codé en UsersController.php:452
 - X Après inscription et synchro VB, il n'y a pas de synchro vers Discord
 - X Avoir un système de recrutement contrôllé pour les Sections qui ont une phase de recrutement propre à elles
+- X Ajouter la sélection des Sections dans la page sur les membres pour montrer les membres d'une Section
 - Virer tout le code de patch que j'avais fait dans VB pour l'inscription
 - Permettre d'aller directemenent à une page après connexion (paramètre returnto à /login)
 - Synchro mini-site -> VB à faire + authentification (?)

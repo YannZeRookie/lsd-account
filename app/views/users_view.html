@@ -79,7 +79,7 @@
             <div class="col">{{ user.created_on|date('d/m/Y') }}</div>
             {% if user.submited_on %}
             <div class="w-100"></div>
-            <div class="col-sm-4">Candidature&nbsp;:</div>
+            <div class="col-sm-4">Inscription&nbsp;:</div>
             <div class="col">{{ user.submited_on|date('d/m/Y') }}</div>
             {% endif %}
             {% if user.reviewed_on %}
@@ -126,7 +126,7 @@
     {% endif %}
 
     {% if user.testimony %}
-    <h4>Message de candidature :</h4>
+    <h4>Message d'inscription :</h4>
     <p class="col-sm-6" style="border:1px solid lightgray; padding:8px; font-style:italic;">
         {{user.testimony|e|nl2br}}</p>
     {% endif %}
